@@ -301,14 +301,14 @@
             activeGame: null,
             score: 0,
             questionIndex: 0,
-            maxQuestions: 20, // Kuis dinaikkan ke 20 ronde agar seru
+            maxQuestions: 20, 
             currentData: null, 
             memoryCards: [],
             selectedCards: [],
-            platformer: null // Menyimpan state khusus game Petualangan
+            platformer: null 
         };
 
-        // Synthesizer Efek Suara (Web Audio API - Bebas kuota internet)
+        // Synthesizer Efek Suara (Web Audio API)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSynthSound(type) {
@@ -404,7 +404,7 @@
             speakText(state.currentData.instruction);
         }
 
-        // Canvas Confetti Selebrasi (Kembang Api)
+        // Canvas Confetti Selebrasi (Kembang Api) - PERBAIKAN BUG LOOP TERUS MENERUS
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         let confettiActive = false;
@@ -432,9 +432,15 @@
                 this.y += this.speedY;
                 this.x += this.speedX;
                 this.rotation += this.rotationSpeed;
+                
+                // PERBAIKAN: Jika confettiActive sudah false, jangan lakukan daur ulang partikel ke atas layar!
                 if (this.y > canvas.height) {
-                    this.y = -20;
-                    this.x = Math.random() * canvas.width;
+                    if (confettiActive) {
+                        this.y = -20;
+                        this.x = Math.random() * canvas.width;
+                    } else {
+                        this.y = canvas.height + 500; // Letakkan di luar jangkauan agar tidak digambar lagi
+                    }
                 }
             }
             draw() {
@@ -454,11 +460,16 @@
             }
             confettiActive = true;
             animateConfetti();
-            setTimeout(() => confettiActive = false, 4000);
+            // Durasi semburan aktif dihentikan setelah 4 detik (partikel tersisa akan jatuh habis secara natural)
+            setTimeout(() => {
+                confettiActive = false;
+            }, 4000);
         }
 
         function animateConfetti() {
-            if (!confettiActive && confettiArray.every(p => p.y > canvas.height)) {
+            // Periksa jika seluruh partikel sudah jatuh di luar layar, maka hentikan requestAnimationFrame loop
+            const allOut = confettiArray.every(p => p.y > canvas.height);
+            if (!confettiActive && allOut) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 return;
             }
@@ -583,9 +594,9 @@
                 document.getElementById('game-progress-text').innerText = 'Kumpulkan Semua Pasangan!';
                 document.getElementById('game-progress-bar').style.width = '50%';
             } else if (state.activeGame === 'petualangan') {
-                state.maxQuestions = 1;
-                document.getElementById('game-progress-text').innerText = 'Kalahkan Monster & Raih 100 Poin!';
-                document.getElementById('game-progress-bar').style.width = '100%';
+                state.maxQuestions = 30; // 30 Tingkat/Stage
+                document.getElementById('game-progress-text').innerText = 'Stage 1 / 30';
+                document.getElementById('game-progress-bar').style.width = '3.33%';
             } else {
                 state.maxQuestions = 20; // 20 Ronde Kuis
                 updateProgressBar();
@@ -754,7 +765,7 @@
         function buildHewanGame(container) {
             const correctAnimal = ANIMALS_DB[Math.floor(Math.random() * ANIMALS_DB.length)];
             const wrongAnimals = shuffleArray(ANIMALS_DB.filter(a => a.name !== correctAnimal.name)).slice(0, 3);
-            const choices = shuffleArray([correctAnimal.name, ...wrongAnimals.map(a => a.name)]); // Fix Bug [object Object]
+            const choices = shuffleArray([correctAnimal.name, ...wrongAnimals.map(a => a.name)]); 
 
             state.currentData = {
                 correctAnswer: correctAnimal.name,
@@ -786,7 +797,7 @@
         function buildBuahGame(container) {
             const correctFruit = FRUITS_DB[Math.floor(Math.random() * FRUITS_DB.length)];
             const wrongFruits = shuffleArray(FRUITS_DB.filter(f => f.name !== correctFruit.name)).slice(0, 3);
-            const choices = shuffleArray([correctFruit.name, ...wrongFruits.map(f => f.name)]); // Fix Bug [object Object]
+            const choices = shuffleArray([correctFruit.name, ...wrongFruits.map(f => f.name)]); 
 
             state.currentData = {
                 correctAnswer: correctFruit.name,
@@ -971,10 +982,9 @@
         }
 
         // ==========================================
-        // 8. GAME BARU: PETUALANGAN HERO (MARIO STYLE)
+        // 8. GAME: PETUALANGAN HERO (MARIO STYLE - UP TO STAGE 30)
         // ==========================================
         function buildPetualanganGame(container) {
-            // Container Layout Canvas dan Kontrol Virtual untuk Mobile
             container.innerHTML = `
                 <div class="flex flex-col items-center w-full max-w-md mx-auto pop-effect">
                     <canvas id="platformer-canvas" width="400" height="220" class="w-full bg-gradient-to-b from-sky-300 to-sky-100 rounded-3xl border-4 border-sky-400 shadow-inner block"></canvas>
@@ -990,11 +1000,10 @@
                             <button id="btn-jump" class="bg-indigo-500 active:bg-indigo-400 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-indigo-700"><i class="fa-solid fa-arrow-up"></i></button>
                         </div>
                     </div>
-                    <p class="text-[9px] text-slate-400 font-bold mt-2 hidden sm:block">PC: Gunakan Tombol Arrow (Kiri/Kanan) untuk berjalan, Arrow Atas untuk lompat, dan F untuk menembak.</p>
+                    <p class="text-[9px] text-slate-400 font-bold mt-2 hidden sm:block">PC: Tombol Arrow (Kiri/Kanan/Atas) & F (Tembak). Sentuh Tiang Bendera Merah untuk Next Stage!</p>
                 </div>
             `;
 
-            // Mulai Inisialisasi Game Loop Platformer
             initPlatformerEngine();
         }
 
@@ -1003,8 +1012,9 @@
             if (!canvasEl) return;
             const pCtx = canvasEl.getContext('2d');
 
-            // Setup State Fisika Platformer
+            // Setup State Fisika Platformer dengan Stage Awal
             state.platformer = {
+                stage: 1,
                 hero: {
                     x: 30, y: 150,
                     w: 24, h: 24,
@@ -1015,21 +1025,10 @@
                     facing: 'right'
                 },
                 bullets: [],
-                enemies: [
-                    { x: 120, y: 166, w: 20, h: 20, vx: 0.8, xMin: 80, xMax: 200, active: true },
-                    { x: 260, y: 96, w: 20, h: 20, vx: -1, xMin: 220, xMax: 340, active: true },
-                    { x: 300, y: 166, w: 20, h: 20, vx: 1.2, xMin: 240, xMax: 380, active: true }
-                ],
-                stars: [
-                    { x: 150, y: 110, w: 16, h: 16, collected: false },
-                    { x: 280, y: 50, w: 16, h: 16, matched: false },
-                    { x: 370, y: 130, w: 16, h: 16, collected: false }
-                ],
-                platforms: [
-                    { x: 0, y: 190, w: 400, h: 30 }, // Lantai Dasar
-                    { x: 80, y: 140, w: 100, h: 12 }, // Platform Kiri
-                    { x: 220, y: 110, w: 120, h: 12 }, // Platform Kanan
-                ],
+                enemies: [],
+                stars: [],
+                platforms: [],
+                goal: { x: 360, y: 140, w: 20, h: 50 }, // Portal / Tiang Bendera Goal
                 keys: { left: false, right: false, jump: false, shoot: false },
                 gravity: 0.35,
                 friction: 0.8,
@@ -1037,9 +1036,12 @@
                 animationFrameId: null
             };
 
+            // Bangun stage awal
+            generateStageLayout(1);
+
             const p = state.platformer;
 
-            // Integrasi Tombol Input keyboard Desktop
+            // Integrasi Input Keyboard
             const keydownHandler = (e) => {
                 if (e.key === 'ArrowLeft' || e.key === 'a') p.keys.left = true;
                 if (e.key === 'ArrowRight' || e.key === 'd') p.keys.right = true;
@@ -1061,7 +1063,7 @@
             window.addEventListener('keydown', keydownHandler);
             window.addEventListener('keyup', keyupHandler);
 
-            // Integrasi Tombol Touch Input Mobile
+            // Integrasi Input Tombol Virtual Mobile
             const setupMobileBtn = (btnId, keyProp) => {
                 const btn = document.getElementById(btnId);
                 if (btn) {
@@ -1093,13 +1095,13 @@
                 });
             }
 
-            // CORE PHYSICS LOOP GAME PLATFORMER
+            // CORE PHYSICS LOOP PLATFORMER
             function gameLoop() {
                 if (!state.platformer) return;
 
-                // 1. Fisika Pergerakan Kiri / Kanan Hero
-                if (state.platformer.hero.vx > 0.1) state.platformer.hero.facing = 'right';
-                if (state.platformer.hero.vx < -0.1) state.platformer.hero.facing = 'left';
+                // 1. Arah hadap pahlawan
+                if (p.hero.vx > 0.1) p.hero.facing = 'right';
+                if (p.hero.vx < -0.1) p.hero.facing = 'left';
 
                 if (p.keys.left) {
                     p.hero.vx = -p.hero.speed;
@@ -1109,7 +1111,7 @@
                     p.hero.vx *= p.friction;
                 }
 
-                // 2. Gravitasi Pahlawan
+                // 2. Efek Gravitasi
                 p.hero.vy += p.gravity;
                 p.hero.x += p.hero.vx;
                 p.hero.y += p.hero.vy;
@@ -1123,9 +1125,8 @@
 
                 p.hero.grounded = false;
 
-                // 3. Deteksi Tabrakan Platformer (Ground / Floating Platform)
+                // 3. Tabrakan Platform
                 p.platforms.forEach(plat => {
-                    // Cek jika menapak di atas platform
                     if (p.hero.x + p.hero.w > plat.x && p.hero.x < plat.x + plat.w) {
                         if (p.hero.y + p.hero.h >= plat.y && p.hero.y + p.hero.h - p.hero.vy <= plat.y + 6) {
                             p.hero.y = plat.y - p.hero.h;
@@ -1135,34 +1136,33 @@
                     }
                 });
 
-                // Pembatasan Batas Kiri / Kanan Layar Canvas
+                // Pembatasan Layar
                 if (p.hero.x < 0) p.hero.x = 0;
                 if (p.hero.x + p.hero.w > canvasEl.width) p.hero.x = canvasEl.width - p.hero.w;
 
-                // Jaring Pengaman Jatuh Jurang
+                // Jatuh Jurang
                 if (p.hero.y > canvasEl.height) {
                     playSynthSound('incorrect');
                     respawnHero();
                 }
 
-                // 4. Update Posisi Peluru Bintang
+                // 4. Update Peluru
                 p.bullets.forEach((b, bIdx) => {
                     b.x += b.vx;
-                    // Hapus peluru keluar layar
                     if (b.x < 0 || b.x > canvasEl.width) {
                         p.bullets.splice(bIdx, 1);
                     }
                 });
 
-                // 5. Pergerakan Monster Musuh (👾 Slime)
+                // 5. Pergerakan Slime Monster (👾)
                 p.enemies.forEach((enemy) => {
                     if (!enemy.active) return;
                     enemy.x += enemy.vx;
                     if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
-                        enemy.vx *= -1; // Membalik arah pergerakan
+                        enemy.vx *= -1; 
                     }
 
-                    // Cek jika musuh menabrak pahlawan 🐱
+                    // Menabrak Pahlawan 🐱
                     if (p.hero.x < enemy.x + enemy.w && p.hero.x + p.hero.w > enemy.x &&
                         p.hero.y < enemy.y + enemy.h && p.hero.y + p.hero.h > enemy.y) {
                         playSynthSound('incorrect');
@@ -1170,17 +1170,16 @@
                     }
                 });
 
-                // 6. Deteksi Peluru Menabrak Musuh
+                // 6. Tembak Musuh
                 p.bullets.forEach((b, bIdx) => {
                     p.enemies.forEach((enemy) => {
                         if (!enemy.active) return;
                         if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
                             b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
-                            // Monster kalah!
                             playSynthSound('correct');
                             enemy.active = false;
                             p.bullets.splice(bIdx, 1);
-                            addGamePoints(20); // Tambah skor
+                            addGamePoints(10); 
                         }
                     });
                 });
@@ -1190,23 +1189,39 @@
                     if (star.collected) return;
                     if (p.hero.x < star.x + star.w && p.hero.x + p.hero.w > star.x &&
                         p.hero.y < star.y + star.h && p.hero.y + p.hero.h > star.y) {
-                        // Bintang terambil!
                         playSynthSound('correct');
                         star.collected = true;
-                        addGamePoints(20);
+                        addGamePoints(15);
                     }
                 });
 
-                // 8. RENDER GRAFIS CANVAS UTAMA
+                // 8. Cek Menyentuh Tiang Bendera Goal (Maju Stage!)
+                if (p.hero.x < p.goal.x + p.goal.w && p.hero.x + p.hero.w > p.goal.x &&
+                    p.hero.y < p.goal.y + p.goal.h && p.hero.y + p.hero.h > p.goal.y) {
+                    advanceStage();
+                    return; // Hentikan loop frame saat transisi layout
+                }
+
+                // RENDER GAMBAR CANVAS
                 pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-                // Menggambar Platform Hijau
+                // Menggambar Platform
                 p.platforms.forEach(plat => {
-                    pCtx.fillStyle = '#22c55e'; // Hijau Rumput
+                    pCtx.fillStyle = '#22c55e'; 
                     pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
-                    pCtx.fillStyle = '#15803d'; // Detail Bawah Tanah
+                    pCtx.fillStyle = '#15803d'; 
                     pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
                 });
+
+                // Menggambar Tiang Bendera Goal (Flagpole)
+                pCtx.fillStyle = '#a16207'; // Tiang kayu coklat
+                pCtx.fillRect(p.goal.x + 8, p.goal.y, 4, p.goal.h);
+                pCtx.fillStyle = '#ef4444'; // Bendera merah
+                pCtx.beginPath();
+                pCtx.moveTo(p.goal.x + 12, p.goal.y);
+                pCtx.lineTo(p.goal.x + 28, p.goal.y + 10);
+                pCtx.lineTo(p.goal.x + 12, p.goal.y + 20);
+                pCtx.fill();
 
                 // Menggambar Bintang (⭐)
                 p.stars.forEach(star => {
@@ -1230,19 +1245,9 @@
 
                 // Menggambar Karakter Pahlawan Kucing (🐱)
                 pCtx.font = '20px Arial';
-                pCtx.fillText(p.hero.facing === 'right' ? '🐱' : '🐱', p.hero.x, p.hero.y + 18);
+                pCtx.fillText('🐱', p.hero.x, p.hero.y + 18);
 
-                // Cek Kemenangan
-                if (p.scoreLocal >= 100) {
-                    triggerConfetti();
-                    setTimeout(() => {
-                        state.score = p.scoreLocal;
-                        endGameSession();
-                    }, 800);
-                    return; // Hentikan game loop
-                }
-
-                // Teruskan Frame Berikutnya
+                // Jalankan loop berikutnya
                 p.animationFrameId = requestAnimationFrame(gameLoop);
             }
 
@@ -1251,8 +1256,6 @@
                 p.hero.y = 150;
                 p.hero.vx = 0;
                 p.hero.vy = 0;
-                p.scoreLocal = Math.max(0, p.scoreLocal - 10); // Pengurangan skor jika kalah agar mendidik
-                document.getElementById('game-score').innerText = p.scoreLocal;
             }
 
             function addGamePoints(pts) {
@@ -1260,8 +1263,268 @@
                 document.getElementById('game-score').innerText = p.scoreLocal;
             }
 
-            // Mulai Loop pertama
             p.animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function generateStageLayout(stage) {
+            if (!state.platformer) return;
+            const p = state.platformer;
+            p.bullets = [];
+            p.hero.x = 30;
+            p.hero.y = 150;
+            p.hero.vx = 0;
+            p.hero.vy = 0;
+
+            // Platform Tanah Utama
+            p.platforms = [{ x: 0, y: 190, w: 400, h: 30 }];
+
+            // Sistem layout dinamis berulang berdasarkan pola Stage modulo 3
+            const layoutType = stage % 3;
+            const extraSpeed = stage * 0.04; // Kecepatan musuh meningkat perlahan per stage
+
+            if (layoutType === 1) {
+                p.platforms.push({ x: 80, y: 140, w: 100, h: 12 });
+                p.platforms.push({ x: 220, y: 100, w: 100, h: 12 });
+                
+                p.stars = [
+                    { x: 130, y: 110, w: 16, h: 16, collected: false },
+                    { x: 270, y: 70, w: 16, h: 16, collected: false },
+                    { x: 180, y: 160, w: 16, h: 16, collected: false }
+                ];
+                
+                p.enemies = [
+                    { x: 100, y: 116, w: 20, h: 20, vx: 0.6 + extraSpeed, xMin: 80, xMax: 170, active: true },
+                    { x: 240, y: 76, w: 20, h: 20, vx: -(0.6 + extraSpeed), xMin: 220, xMax: 310, active: true }
+                ];
+            } else if (layoutType === 2) {
+                p.platforms.push({ x: 50, y: 150, w: 80, h: 12 });
+                p.platforms.push({ x: 160, y: 110, w: 80, h: 12 });
+                p.platforms.push({ x: 270, y: 140, w: 80, h: 12 });
+                
+                p.stars = [
+                    { x: 90, y: 120, w: 16, h: 16, collected: false },
+                    { x: 200, y: 80, w: 16, h: 16, collected: false },
+                    { x: 310, y: 110, w: 16, h: 16, collected: false }
+                ];
+                
+                p.enemies = [
+                    { x: 60, y: 126, w: 20, h: 20, vx: 0.7 + extraSpeed, xMin: 50, xMax: 120, active: true },
+                    { x: 280, y: 116, w: 20, h: 20, vx: -(0.7 + extraSpeed), xMin: 270, xMax: 340, active: true }
+                ];
+            } else { // layoutType === 0
+                p.platforms.push({ x: 60, y: 130, w: 120, h: 12 });
+                p.platforms.push({ x: 220, y: 140, w: 120, h: 12 });
+                
+                p.stars = [
+                    { x: 120, y: 100, w: 16, h: 16, collected: false },
+                    { x: 280, y: 110, w: 16, h: 16, collected: false },
+                    { x: 350, y: 160, w: 16, h: 16, collected: false }
+                ];
+                
+                p.enemies = [
+                    { x: 80, y: 106, w: 20, h: 20, vx: 0.8 + extraSpeed, xMin: 60, xMax: 170, active: true },
+                    { x: 240, y: 116, w: 20, h: 20, vx: -(0.8 + extraSpeed), xMin: 220, xMax: 330, active: true }
+                ];
+            }
+
+            // Tambahkan monster ekstra berjalan di tanah bawah jika level sudah tinggi (> 10)
+            if (stage > 10) {
+                p.enemies.push({ x: 180, y: 166, w: 20, h: 20, vx: 1.1 + extraSpeed, xMin: 140, xMax: 240, active: true });
+            }
+            if (stage > 20) {
+                p.enemies.push({ x: 120, y: 166, w: 20, h: 20, vx: -(1.3 + extraSpeed), xMin: 80, xMax: 280, active: true });
+            }
+        }
+
+        function advanceStage() {
+            if (!state.platformer) return;
+            const p = state.platformer;
+
+            // Hentikan sejenak gameLoop animasi lama agar transisi mulus
+            if (p.animationFrameId) {
+                cancelAnimationFrame(p.animationFrameId);
+            }
+
+            playSynthSound('complete');
+            triggerConfetti(); // Efek kembang api menyala sementara (sekarang akan berhenti habis otomatis)
+
+            if (p.stage < 30) {
+                p.stage++;
+                
+                // Tambahkan sisa skor local ke global score
+                state.score = p.scoreLocal + 50; 
+                document.getElementById('game-score').innerText = state.score;
+
+                document.getElementById('game-progress-text').innerText = `Stage ${p.stage} / 30`;
+                document.getElementById('game-progress-bar').style.width = `${(p.stage / 30) * 100}%`;
+
+                // Regenerasi platform untuk stage baru
+                generateStageLayout(p.stage);
+                
+                // Nyalakan kembali loop game
+                p.animationFrameId = requestAnimationFrame(pCtx.canvas.id === 'platformer-canvas' ? () => {
+                    const canvasEl = document.getElementById('platformer-canvas');
+                    if (canvasEl) {
+                        const newLoop = state.platformer;
+                        // Trigger loop fisika baru
+                        initPlatformerEngineLoop();
+                    }
+                } : () => {});
+                
+                // Re-init manual loop
+                restartEngineFrame();
+
+            } else {
+                // Berhasil menamatkan Stage 30! Kemenangan mutlak!
+                state.score = p.scoreLocal + 150; // Bonus besar tamat kuis petualangan
+                document.getElementById('game-score').innerText = state.score;
+                endGameSession();
+                state.platformer = null;
+            }
+        }
+
+        function restartEngineFrame() {
+            const canvasEl = document.getElementById('platformer-canvas');
+            if (!canvasEl) return;
+            const pCtx = canvasEl.getContext('2d');
+            
+            function loop() {
+                if (!state.platformer) return;
+                // Jalankan loop fisika seperti biasa
+                state.platformer.hero.vy += state.platformer.gravity;
+                state.platformer.hero.x += state.platformer.hero.vx;
+                state.platformer.hero.y += state.platformer.hero.vy;
+
+                if (state.platformer.keys.left) {
+                    state.platformer.hero.vx = -state.platformer.hero.speed;
+                } else if (state.platformer.keys.right) {
+                    state.platformer.hero.vx = state.platformer.hero.speed;
+                } else {
+                    state.platformer.hero.vx *= state.platformer.friction;
+                }
+
+                if (state.platformer.keys.jump && state.platformer.hero.grounded) {
+                    playSynthSound('jump');
+                    state.platformer.hero.vy = -state.platformer.hero.jumpForce;
+                    state.platformer.hero.grounded = false;
+                }
+
+                state.platformer.hero.grounded = false;
+
+                state.platformer.platforms.forEach(plat => {
+                    if (state.platformer.hero.x + state.platformer.hero.w > plat.x && state.platformer.hero.x < plat.x + plat.w) {
+                        if (state.platformer.hero.y + state.platformer.hero.h >= plat.y && state.platformer.hero.y + state.platformer.hero.h - state.platformer.hero.vy <= plat.y + 6) {
+                            state.platformer.hero.y = plat.y - state.platformer.hero.h;
+                            state.platformer.hero.vy = 0;
+                            state.platformer.hero.grounded = true;
+                        }
+                    }
+                });
+
+                if (state.platformer.hero.x < 0) state.platformer.hero.x = 0;
+                if (state.platformer.hero.x + state.platformer.hero.w > canvasEl.width) state.platformer.hero.x = canvasEl.width - state.platformer.hero.w;
+
+                if (state.platformer.hero.y > canvasEl.height) {
+                    playSynthSound('incorrect');
+                    state.platformer.hero.x = 30;
+                    state.platformer.hero.y = 150;
+                }
+
+                state.platformer.bullets.forEach((b, bIdx) => {
+                    b.x += b.vx;
+                    if (b.x < 0 || b.x > canvasEl.width) {
+                        state.platformer.bullets.splice(bIdx, 1);
+                    }
+                });
+
+                state.platformer.enemies.forEach((enemy) => {
+                    if (!enemy.active) return;
+                    enemy.x += enemy.vx;
+                    if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
+                        enemy.vx *= -1;
+                    }
+
+                    if (state.platformer.hero.x < enemy.x + enemy.w && state.platformer.hero.x + state.platformer.hero.w > enemy.x &&
+                        state.platformer.hero.y < enemy.y + enemy.h && state.platformer.hero.y + state.platformer.hero.h > enemy.y) {
+                        playSynthSound('incorrect');
+                        state.platformer.hero.x = 30;
+                        state.platformer.hero.y = 150;
+                    }
+                });
+
+                state.platformer.bullets.forEach((b, bIdx) => {
+                    state.platformer.enemies.forEach((enemy) => {
+                        if (!enemy.active) return;
+                        if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
+                            b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
+                            playSynthSound('correct');
+                            enemy.active = false;
+                            state.platformer.bullets.splice(bIdx, 1);
+                            state.platformer.scoreLocal += 10;
+                            document.getElementById('game-score').innerText = state.platformer.scoreLocal;
+                        }
+                    });
+                });
+
+                state.platformer.stars.forEach((star) => {
+                    if (star.collected) return;
+                    if (state.platformer.hero.x < star.x + star.w && state.platformer.hero.x + state.platformer.hero.w > star.x &&
+                        state.platformer.hero.y < star.y + star.h && state.platformer.hero.y + state.platformer.hero.h > star.y) {
+                        playSynthSound('correct');
+                        star.collected = true;
+                        state.platformer.scoreLocal += 15;
+                        document.getElementById('game-score').innerText = state.platformer.scoreLocal;
+                    }
+                });
+
+                if (state.platformer.hero.x < state.platformer.goal.x + state.platformer.goal.w && state.platformer.hero.x + state.platformer.hero.w > state.platformer.goal.x &&
+                    state.platformer.hero.y < state.platformer.goal.y + state.platformer.goal.h && state.platformer.hero.y + state.platformer.hero.h > state.platformer.goal.y) {
+                    advanceStage();
+                    return;
+                }
+
+                pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+                state.platformer.platforms.forEach(plat => {
+                    pCtx.fillStyle = '#22c55e';
+                    pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
+                    pCtx.fillStyle = '#15803d';
+                    pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
+                });
+
+                pCtx.fillStyle = '#a16207';
+                pCtx.fillRect(state.platformer.goal.x + 8, state.platformer.goal.y, 4, state.platformer.goal.h);
+                pCtx.fillStyle = '#ef4444';
+                pCtx.beginPath();
+                pCtx.moveTo(state.platformer.goal.x + 12, state.platformer.goal.y);
+                pCtx.lineTo(state.platformer.goal.x + 28, state.platformer.goal.y + 10);
+                pCtx.lineTo(state.platformer.goal.x + 12, state.platformer.goal.y + 20);
+                pCtx.fill();
+
+                state.platformer.stars.forEach(star => {
+                    if (star.collected) return;
+                    pCtx.font = '14px Arial';
+                    pCtx.fillText('⭐', star.x, star.y + 12);
+                });
+
+                state.platformer.enemies.forEach(enemy => {
+                    if (!enemy.active) return;
+                    pCtx.font = '16px Arial';
+                    pCtx.fillText('👾', enemy.x, enemy.y + 16);
+                });
+
+                state.platformer.bullets.forEach(b => {
+                    pCtx.font = '10px Arial';
+                    pCtx.fillText('✨', b.x, b.y + 8);
+                });
+
+                pCtx.font = '20px Arial';
+                pCtx.fillText('🐱', state.platformer.hero.x, state.platformer.hero.y + 18);
+
+                state.platformer.animationFrameId = requestAnimationFrame(loop);
+            }
+            
+            state.platformer.animationFrameId = requestAnimationFrame(loop);
         }
 
         // ==========================================
@@ -1277,7 +1540,7 @@
                 buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-emerald-500 bg-emerald-50 text-emerald-600');
                 buttonElement.innerHTML += ' 🌟';
 
-                state.score += 5; // Maksimal skor adalah 100 (5 pts x 20 kuis)
+                state.score += 5; 
                 document.getElementById('game-score').innerText = state.score;
 
                 setTimeout(() => {
