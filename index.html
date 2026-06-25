@@ -21,7 +21,7 @@
             user-select: none;
         }
         
-        /* Bubble Floating Animation */
+        /* Animasi Balon Udara/Gelembung Melayang */
         .bubble-bg {
             position: absolute;
             border-radius: 50%;
@@ -37,7 +37,7 @@
             100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
         }
 
-        /* Bounce Custom Classes */
+        /* Hover Bounce Lembut */
         .bounce-hover:hover {
             transform: scale(1.05) rotate(2deg);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -46,7 +46,7 @@
             transform: scale(0.95);
         }
 
-        /* Memory Card Flip Animation */
+        /* Efek Balik Kartu Memori */
         .card-perspective {
             perspective: 1000px;
         }
@@ -64,7 +64,7 @@
             transform: rotateY(180deg);
         }
 
-        /* Sparkle & Pop Animations */
+        /* Animasi Pop-up Kuis */
         @keyframes pop {
             0% { transform: scale(0.8); }
             50% { transform: scale(1.1); }
@@ -74,9 +74,9 @@
             animation: pop 0.4s ease-out;
         }
 
-        /* Custom Scrollbar for clean aesthetics */
+        /* Desain Scrollbar Lucu */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         ::-webkit-scrollbar-track {
             background: #ecfeff;
@@ -89,148 +89,136 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between relative overflow-hidden text-slate-700">
 
-    <!-- Confetti Canvas for Celebrations -->
+    <!-- Canvas Selebrasi Kembang Api (Confetti) -->
     <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
 
-    <!-- Decorative Floating Bubbles -->
+    <!-- Gelembung Latar Belakang -->
     <div id="bubble-container" class="absolute inset-0 pointer-events-none z-0"></div>
 
-    <!-- MAIN APP CONTAINER -->
-    <main class="w-full max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-6 z-10 flex-grow flex flex-col justify-center">
+    <!-- UTAMA CONTAINER -->
+    <main class="w-full max-w-4xl mx-auto px-4 py-4 z-10 flex-grow flex flex-col justify-center">
         
-        <!-- HEADER APP -->
-        <header class="flex justify-between items-center mb-4 sm:mb-6 bg-white/70 backdrop-blur-md p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-md border-2 sm:border-4 border-cyan-100">
+        <!-- HEADER APP UTAMA -->
+        <header class="flex justify-between items-center mb-4 bg-white/70 backdrop-blur-md p-3 sm:p-4 rounded-3xl shadow-md border-4 border-cyan-100">
             <div class="flex items-center gap-2 sm:gap-3 cursor-pointer" onclick="goToScreen('home')">
-                <div class="bg-gradient-to-tr from-amber-400 to-pink-500 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-lg shadow-amber-300/50 transform rotate-6 hover:rotate-12 transition-transform">
+                <div class="bg-gradient-to-tr from-amber-400 to-pink-500 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg shadow-amber-300/50 transform rotate-6 hover:rotate-12 transition-transform">
                     🌈
                 </div>
                 <div>
-                    <h1 class="text-base sm:text-xl md:text-2xl font-extrabold bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-400 bg-clip-text text-transparent leading-tight">
+                    <h1 class="text-base sm:text-2xl font-bold bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-400 bg-clip-text text-transparent leading-none">
                         Kids Learning World
                     </h1>
-                    <p class="text-[8px] sm:text-xs text-slate-500 font-semibold tracking-wide">TAMAN BELAJAR & BERMAIN</p>
+                    <p class="text-[9px] sm:text-xs text-slate-500 font-bold tracking-wide mt-1">TAMAN BELAJAR & BERMAIN</p>
                 </div>
             </div>
 
-            <!-- Global Status Buttons (Sound & Total Star) -->
+            <!-- Panel Status Bintang & Audio -->
             <div class="flex items-center gap-1.5 sm:gap-2">
-                <!-- Total Star Badge -->
-                <div class="bg-amber-100 text-amber-600 font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border border-amber-300 flex items-center gap-1 shadow-sm">
-                    <span class="text-base sm:text-xl">⭐</span>
-                    <span id="global-stars" class="text-xs sm:text-sm md:text-base">0</span>
+                <div class="bg-amber-100 text-amber-600 font-bold px-2 sm:px-3 py-1 sm:py-2 rounded-2xl border-2 border-amber-300 flex items-center gap-1 shadow-sm text-xs sm:text-sm">
+                    <span class="text-sm sm:text-xl">⭐</span>
+                    <span id="global-stars">0</span>
                 </div>
-                <!-- Sound Toggle Button -->
-                <button id="btn-sound" onclick="toggleSound()" class="bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm">
+                <button id="btn-sound" onclick="toggleSound()" class="bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm">
                     <i id="sound-icon" class="fa-solid fa-volume-high"></i>
                 </button>
-                <!-- Text To Speech Playback Repeat -->
-                <button id="btn-tts" onclick="speakCurrentQuestion()" class="bg-purple-100 text-purple-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border border-purple-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm hidden">
+                <button id="btn-tts" onclick="speakCurrentQuestion()" class="bg-indigo-100 text-indigo-600 w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border-2 border-indigo-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm hidden">
                     <i class="fa-solid fa-microphone-lines"></i>
                 </button>
             </div>
         </header>
 
-        <!-- SCREEN 1: HOME/MENU -->
-        <section id="screen-home" class="space-y-4 sm:space-y-6">
-            <div class="text-center space-y-2 mb-4 sm:mb-8 pop-effect">
-                <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider inline-block transform -rotate-2">HALO TEMAN-TEMAN! 👋</span>
-                <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-cyan-600 drop-shadow-sm">Mau Belajar & Bermain Apa Hari Ini?</h2>
-                <p class="text-slate-500 text-xs sm:text-sm md:text-base">Pilih salah satu dunia permainan seru di bawah ini ya!</p>
+        <!-- SCREEN 1: MENU UTAMA -->
+        <section id="screen-home" class="space-y-4">
+            <div class="text-center space-y-1 mb-4 sm:mb-6 pop-effect">
+                <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider inline-block transform -rotate-1">HALO ANAK PINTAR! 👋</span>
+                <h2 class="text-xl sm:text-3xl font-extrabold text-cyan-600 drop-shadow-sm leading-tight">Mau Belajar & Bermain Apa Hari Ini?</h2>
+                <p class="text-slate-500 text-xs sm:text-sm">Pilih salah satu dunia permainan seru di bawah ini ya!</p>
             </div>
 
-            <!-- Game Categories Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5" id="menu-grid">
-                <!-- Cards will be dynamically injected here to maintain local stats -->
+            <!-- Grid Kategori Permainan -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="menu-grid">
+                <!-- Diisi otomatis oleh JavaScript -->
             </div>
         </section>
 
-        <!-- SCREEN 2: GAMEPLAY WORKSPACE -->
-        <section id="screen-game" class="hidden flex-col items-center justify-center space-y-4 sm:space-y-6">
-            <!-- Game Info Bar -->
-            <div class="w-full bg-white/80 backdrop-blur-md p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-cyan-100 shadow-md flex justify-between items-center gap-2">
-                <!-- Back Button -->
-                <button onclick="goToScreen('home')" class="bg-rose-100 text-rose-600 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-rose-300 font-bold flex items-center gap-1.5 bounce-hover text-xs sm:text-sm">
+        <!-- SCREEN 2: AREA BERMAIN GAME -->
+        <section id="screen-game" class="hidden flex-col items-center justify-center space-y-4">
+            <!-- Header Status Permainan -->
+            <div class="w-full bg-white/80 backdrop-blur-md p-3 rounded-2xl border-4 border-cyan-100 shadow-md flex justify-between items-center gap-2">
+                <button onclick="goToScreen('home')" class="bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl border-2 border-rose-300 font-bold flex items-center gap-1 bounce-hover text-xs">
                     <i class="fa-solid fa-house"></i> Menu
                 </button>
-                <!-- Game Title Inside Header -->
-                <div class="text-center flex-1 min-w-0">
-                    <h3 id="game-title" class="text-sm sm:text-lg md:text-xl font-bold text-cyan-600 truncate">Nama Game</h3>
-                    <!-- Progress Dots/Bar -->
-                    <div class="flex items-center gap-1 justify-center mt-0.5">
-                        <span id="game-progress-text" class="text-[10px] sm:text-xs font-semibold text-slate-400">Soal 1 / 20</span>
-                    </div>
+                <div class="text-center">
+                    <h3 id="game-title" class="text-sm sm:text-base font-bold text-cyan-600">Nama Game</h3>
+                    <span id="game-progress-text" class="text-[10px] font-semibold text-slate-400 block mt-0.5">Soal 1 / 20</span>
                 </div>
-                <!-- Game Score & Local Stars -->
-                <div class="flex items-center gap-1 sm:gap-2">
-                    <div class="bg-pink-50 text-pink-500 font-bold px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border border-pink-200 text-[10px] sm:text-xs md:text-sm">
-                        Skor: <span id="game-score">0</span>
-                    </div>
+                <div class="bg-pink-50 text-pink-500 font-bold px-2 sm:px-3 py-1 rounded-lg border border-pink-200 text-xs">
+                    Skor: <span id="game-score">0</span>
                 </div>
             </div>
 
-            <!-- Progress Bar Indicator -->
-            <div class="w-full bg-slate-200 h-3 sm:h-4 rounded-full overflow-hidden border border-slate-300 p-0.5">
+            <!-- Progress Bar Indikator -->
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden border border-slate-300 p-0.5">
                 <div id="game-progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
             </div>
 
-            <!-- MAIN GAMEBOARD VIEWPORT -->
-            <div id="game-viewport" class="w-full bg-white/95 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-cyan-300 shadow-xl min-h-[300px] sm:min-h-[350px] flex flex-col justify-between items-center relative z-10">
-                <!-- Content injected dynamically via JS based on selected game -->
+            <!-- AREA VIEWPORT DINDING PERMAINAN -->
+            <div id="game-viewport" class="w-full bg-white/95 p-4 sm:p-6 rounded-[2rem] border-4 border-cyan-300 shadow-xl min-h-[300px] sm:min-h-[350px] flex flex-col justify-between items-center relative z-10 overflow-hidden">
+                <!-- Konten dinamis game dimasukkan di sini oleh JS -->
             </div>
 
-            <!-- Restart Control Bar -->
-            <div class="flex justify-center gap-3 w-full">
-                <button onclick="restartCurrentGame()" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-amber-600 bounce-hover text-sm sm:text-base flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> Ulangi Permainan
+            <!-- Tombol Kontrol Restart -->
+            <div class="flex justify-center gap-3">
+                <button onclick="restartCurrentGame()" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-xl shadow-md border-b-4 border-amber-600 bounce-hover text-xs flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> Ulangi Game
                 </button>
             </div>
         </section>
 
-        <!-- SCREEN 3: SCOREBOARD POPUP / MODAL (REWARD DIALOG) -->
+        <!-- SCREEN 3: POPUP BOARD PENILAIAN & BINTANG -->
         <div id="reward-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-white max-w-sm sm:max-w-md w-full rounded-[2rem] sm:rounded-[2.5rem] border-4 sm:border-8 border-amber-400 p-5 sm:p-8 text-center space-y-4 sm:space-y-6 shadow-2xl relative pop-effect max-h-[95vh] overflow-y-auto">
+            <div class="bg-white max-w-sm w-full rounded-[2rem] border-8 border-amber-400 p-5 text-center space-y-4 shadow-2xl relative pop-effect">
                 
-                <!-- Ribbon & Characters -->
                 <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 text-5xl">
                     🎉🌟🎉
                 </div>
 
-                <div class="space-y-1 sm:space-y-2 mt-2">
-                    <h4 id="reward-congrats" class="text-2xl sm:text-3xl font-extrabold text-amber-500 drop-shadow-sm">HEBAT SEKALI!</h4>
-                    <p id="reward-subtitle" class="text-slate-500 text-xs sm:text-sm font-semibold">Kamu sudah menyelesaikan tantangan ini!</p>
+                <div class="space-y-1 mt-2">
+                    <h4 id="reward-congrats" class="text-2xl font-extrabold text-amber-500 drop-shadow-sm">HEBAT SEKALI!</h4>
+                    <p id="reward-subtitle" class="text-slate-500 text-xs font-semibold">Tantangan bermain berhasil diselesaikan!</p>
                 </div>
 
-                <!-- Animated Big Stars -->
-                <div class="flex justify-center items-center gap-2 sm:gap-3 py-1 text-4xl sm:text-5xl md:text-6xl" id="reward-stars-container">
+                <!-- Tampilan Bintang Prestasi -->
+                <div class="flex justify-center items-center gap-2 py-1 text-4xl sm:text-5xl" id="reward-stars-container">
                     <span class="animate-bounce" style="animation-delay: 0.1s;">⭐</span>
                     <span class="animate-bounce" style="animation-delay: 0.3s;">⭐</span>
                     <span class="animate-bounce" style="animation-delay: 0.5s;">⭐</span>
                 </div>
 
-                <!-- Score Board Details -->
-                <div class="bg-gradient-to-tr from-cyan-50 to-indigo-50 p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-cyan-100 flex justify-around">
+                <!-- Detail Papan Skor -->
+                <div class="bg-gradient-to-tr from-cyan-50 to-indigo-50 p-3 rounded-2xl border-2 border-cyan-100 flex justify-around text-center">
                     <div>
-                        <span class="text-[10px] text-slate-400 font-bold block">SKOR KAMU</span>
-                        <span id="reward-score" class="text-xl sm:text-2xl font-bold text-cyan-600">0</span>
+                        <span class="text-[9px] text-slate-400 font-bold block uppercase">SKOR AKHIR</span>
+                        <span id="reward-score" class="text-xl font-bold text-cyan-600">0</span>
                     </div>
                     <div class="border-r border-slate-200"></div>
                     <div>
-                        <span class="text-[10px] text-slate-400 font-bold block">BINTANG BARU</span>
-                        <span id="reward-stars-earned" class="text-xl sm:text-2xl font-bold text-amber-500">+3</span>
+                        <span class="text-[9px] text-slate-400 font-bold block uppercase">BINTANG BARU</span>
+                        <span id="reward-stars-earned" class="text-xl font-bold text-amber-500">+3</span>
                     </div>
                 </div>
 
-                <!-- Play Voice Congratulation Button -->
-                <button onclick="speakText(document.getElementById('reward-congrats').innerText + ', skor kamu adalah ' + document.getElementById('reward-score').innerText)" class="bg-purple-100 text-purple-600 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-purple-300 flex items-center justify-center text-lg sm:text-xl bounce-hover mx-auto shadow-sm">
+                <!-- Tombol Audio Selamat -->
+                <button onclick="speakText(document.getElementById('reward-congrats').innerText + '. Skor kamu adalah ' + document.getElementById('reward-score').innerText)" class="bg-purple-100 text-purple-600 w-10 h-10 rounded-full border-2 border-purple-300 flex items-center justify-center text-base bounce-hover mx-auto shadow-sm">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
 
-                <!-- Footer Buttons -->
-                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
-                    <button onclick="closeRewardModal('home')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-rose-600 bounce-hover flex-1 text-xs sm:text-sm">
+                <!-- Tombol Navigasi Modal -->
+                <div class="flex gap-2 justify-center">
+                    <button onclick="closeRewardModal('home')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold px-4 py-2.5 rounded-xl shadow-md border-b-4 border-rose-600 bounce-hover flex-1 text-xs">
                         <i class="fa-solid fa-house"></i> Menu Utama
                     </button>
-                    <button onclick="closeRewardModal('replay')" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-emerald-600 bounce-hover flex-1 text-xs sm:text-sm">
+                    <button onclick="closeRewardModal('replay')" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl shadow-md border-b-4 border-emerald-600 bounce-hover flex-1 text-xs">
                         <i class="fa-solid fa-play"></i> Main Lagi
                     </button>
                 </div>
@@ -239,14 +227,14 @@
 
     </main>
 
-    <!-- FOOTER DESIGN -->
-    <footer class="w-full text-center py-4 bg-white/40 border-t border-cyan-100/50 text-[10px] sm:text-xs font-semibold text-slate-400 z-10">
+    <!-- FOOTER HALAMAN -->
+    <footer class="w-full text-center py-3 bg-white/40 border-t border-cyan-100/50 text-[10px] font-bold text-slate-400 z-10">
         © 2026 Kids Learning World. Dibuat penuh cinta untuk anak-anak cerdas Indonesia 🇮🇩
     </footer>
 
-    <!-- JAVASCRIPT GAME ENGINE -->
+    <!-- ENGINE UTAMA PERMAINAN (JAVASCRIPT) -->
     <script>
-        // Game configuration & Database
+        // Konfigurasi Database Kategori Permainan
         const CATEGORIES = [
             { id: 'warna', name: 'Belajar Warna', icon: '🎨', color: 'from-pink-400 to-rose-400', border: 'border-pink-300' },
             { id: 'huruf', name: 'Tebak Huruf', icon: '🅰️', color: 'from-amber-400 to-yellow-400', border: 'border-amber-300' },
@@ -254,130 +242,77 @@
             { id: 'hewan', name: 'Tebak Hewan', icon: '🦁', color: 'from-cyan-400 to-blue-400', border: 'border-cyan-300' },
             { id: 'buah', name: 'Tebak Buah', icon: '🍓', color: 'from-red-400 to-orange-400', border: 'border-red-300' },
             { id: 'memory', name: 'Memory Card', icon: '🃏', color: 'from-purple-400 to-indigo-400', border: 'border-purple-300' },
-            { id: 'matematika', name: 'Matematika Dasar', icon: '➕', color: 'from-sky-400 to-teal-400', border: 'border-sky-300' }
+            { id: 'matematika', name: 'Matematika Dasar', icon: '➕', color: 'from-sky-400 to-teal-400', border: 'border-sky-300' },
+            { id: 'petualangan', name: 'Petualangan Hero', icon: '🏃‍♂️', color: 'from-orange-400 to-amber-500', border: 'border-orange-300' }
         ];
 
-        // Expanded 20 Colors database for "Belajar Warna" game
+        // Database Kuis Lengkap (Masing-masing berisi 20+ data untuk variasi game dinamis)
         const COLORS_DB = [
-            { name: 'Merah', hex: '#ef4444' },
-            { name: 'Biru', hex: '#3b82f6' },
-            { name: 'Hijau', hex: '#22c55e' },
-            { name: 'Kuning', hex: '#eab308' },
-            { name: 'Jingga', hex: '#f97316' },
-            { name: 'Ungu', hex: '#a855f7' },
-            { name: 'Merah Muda', hex: '#ec4899' },
-            { name: 'Cokelat', hex: '#78350f' },
-            { name: 'Abu-abu', hex: '#64748b' },
-            { name: 'Hitam', hex: '#0f172a' },
-            { name: 'Putih', hex: '#ffffff' },
-            { name: 'Emas', hex: '#fbbf24' },
-            { name: 'Perak', hex: '#cbd5e1' },
-            { name: 'Hijau Toska', hex: '#0d9488' },
-            { name: 'Nila', hex: '#4f46e5' },
-            { name: 'Hijau Zaitun', hex: '#65a30d' },
-            { name: 'Krem', hex: '#fef3c7' },
-            { name: 'Salem', hex: '#fda4af' },
-            { name: 'Biru Langit', hex: '#38bdf8' },
-            { name: 'Kuning Lemon', hex: '#fef08a' }
+            { name: 'Merah', hex: '#ef4444' }, { name: 'Biru', hex: '#3b82f6' }, { name: 'Hijau', hex: '#22c55e' },
+            { name: 'Kuning', hex: '#eab308' }, { name: 'Jingga', hex: '#f97316' }, { name: 'Ungu', hex: '#a855f7' },
+            { name: 'Merah Muda', hex: '#ec4899' }, { name: 'Cokelat', hex: '#78350f' }, { name: 'Abu-Abu', hex: '#64748b' },
+            { name: 'Hitam', hex: '#0f172a' }, { name: 'Putih', hex: '#ffffff' }, { name: 'Sian', hex: '#06b6d4' },
+            { name: 'Emas', hex: '#d97706' }, { name: 'Toska', hex: '#0d9488' }, { name: 'Zaitun', hex: '#65a30d' },
+            { name: 'Indigo', hex: '#4f46e5' }, { name: 'Krem', hex: '#fef08a' }, { name: 'Magenta', hex: '#db2777' },
+            { name: 'Marun', hex: '#991b1b' }, { name: 'Perak', hex: '#94a3b8' }
         ];
 
-        // Expanded 21 Items database for Tebak Huruf
         const LETTER_OBJECTS = [
-            { word: 'Apel', letter: 'A', emoji: '🍎' },
-            { word: 'Buku', letter: 'B', emoji: '📘' },
-            { word: 'Ceri', letter: 'C', emoji: '🍒' },
-            { word: 'Domba', letter: 'D', emoji: '🐑' },
-            { word: 'Ember', letter: 'E', emoji: '🪣' },
-            { word: 'Fosil', letter: 'F', emoji: '🦖' },
-            { word: 'Gajah', letter: 'G', emoji: '🐘' },
-            { word: 'Harimau', letter: 'H', emoji: '🐯' },
-            { word: 'Ikan', letter: 'I', emoji: '🐟' },
-            { word: 'Jeruk', letter: 'J', emoji: '🍊' },
-            { word: 'Kucing', letter: 'K', emoji: '🐱' },
-            { word: 'Lemon', letter: 'L', emoji: '🍋' },
-            { word: 'Monyet', letter: 'M', emoji: '🐒' },
-            { word: 'Nanas', letter: 'N', emoji: '🍍' },
-            { word: 'Obor', letter: 'O', emoji: '🔥' },
-            { word: 'Pisang', letter: 'P', emoji: '🍌' },
-            { word: 'Ratu', letter: 'R', emoji: '👸' },
-            { word: 'Sapi', letter: 'S', emoji: '🐄' },
-            { word: 'Topi', letter: 'T', emoji: '🎩' },
-            { word: 'Ular', letter: 'U', emoji: '🐍' },
-            { word: 'Wortel', letter: 'W', emoji: '🥕' }
+            { word: 'Apel', letter: 'A', emoji: '🍎' }, { word: 'Buku', letter: 'B', emoji: '📘' },
+            { word: 'Ceri', letter: 'C', emoji: '🍒' }, { word: 'Domba', letter: 'D', emoji: '🐑' },
+            { word: 'Ember', letter: 'E', emoji: '🪣' }, { word: 'Fosil', letter: 'F', emoji: '🦖' },
+            { word: 'Gajah', letter: 'G', emoji: '🐘' }, { word: 'Harimau', letter: 'H', emoji: '🐯' },
+            { word: 'Ikan', letter: 'I', emoji: '🐟' }, { word: 'Jeruk', letter: 'J', emoji: '🍊' },
+            { word: 'Kucing', letter: 'K', emoji: '🐱' }, { word: 'Lemon', letter: 'L', emoji: '🍋' },
+            { word: 'Monyet', letter: 'M', emoji: '🐒' }, { word: 'Nanas', letter: 'N', emoji: '🍍' },
+            { word: 'Obor', letter: 'O', emoji: '🔥' }, { word: 'Pisang', letter: 'P', emoji: '🍌' },
+            { word: 'Ratu', letter: 'R', emoji: '👸' }, { word: 'Sapi', letter: 'S', emoji: '🐄' },
+            { word: 'Topi', letter: 'T', emoji: '🎩' }, { word: 'Ular', letter: 'U', emoji: '🐍' },
+            { word: 'Wortel', letter: 'W', emoji: '🥕' }, { word: 'Yoyo', letter: 'Y', emoji: '🪀' }
         ];
 
-        // Expanded 20 Animals Database (Tebak Hewan)
         const ANIMALS_DB = [
-            { name: 'Gajah', emoji: '🐘' },
-            { name: 'Singa', emoji: '🦁' },
-            { name: 'Monyet', emoji: '🐒' },
-            { name: 'Kelinci', emoji: '🐰' },
-            { name: 'Kura-kura', emoji: '🐢' },
-            { name: 'Sapi', emoji: '🐄' },
-            { name: 'Ayam', emoji: '🐔' },
-            { name: 'Kucing', emoji: '🐱' },
-            { name: 'Anjing', emoji: '🐶' },
-            { name: 'Panda', emoji: '🐼' },
-            { name: 'Harimau', emoji: '🐯' },
-            { name: 'Ular', emoji: '🐍' },
-            { name: 'Koala', emoji: '🐨' },
-            { name: 'Penguin', emoji: '🐧' },
-            { name: 'Kanguru', emoji: '🦘' },
-            { name: 'Jerapah', emoji: '🦒' },
-            { name: 'Zebra', emoji: '🦓' },
-            { name: 'Burung', emoji: '🐦' },
-            { name: 'Buaya', emoji: '🐊' },
-            { name: 'Kuda', emoji: '🐎' }
+            { name: 'Gajah', emoji: '🐘' }, { name: 'Singa', emoji: '🦁' }, { name: 'Monyet', emoji: '🐒' },
+            { name: 'Kelinci', emoji: '🐰' }, { name: 'Kura-kura', emoji: '🐢' }, { name: 'Sapi', emoji: '🐄' },
+            { name: 'Ayam', emoji: '🐔' }, { name: 'Kucing', emoji: '🐱' }, { name: 'Anjing', emoji: '🐶' },
+            { name: 'Panda', emoji: '🐼' }, { name: 'Harimau', emoji: '🐯' }, { name: 'Ular', emoji: '🐍' },
+            { name: 'Kuda', emoji: '🐴' }, { name: 'Koala', emoji: '🐨' }, { name: 'Burung', emoji: '🐦' },
+            { name: 'Kambing', emoji: '🐐' }, { name: 'Katak', emoji: '🐸' }, { name: 'Gurita', emoji: '🐙' },
+            { name: 'Buaya', emoji: '🐊' }, { name: 'Pinguin', emoji: '🐧' }
         ];
 
-        // Expanded 20 Fruits Database (Tebak Buah)
         const FRUITS_DB = [
-            { name: 'Apel', emoji: '🍎' },
-            { name: 'Pisang', emoji: '🍌' },
-            { name: 'Stroberi', emoji: '🍓' },
-            { name: 'Anggur', emoji: '🍇' },
-            { name: 'Semangka', emoji: '🍉' },
-            { name: 'Jeruk', emoji: '🍊' },
-            { name: 'Nanas', emoji: '🍍' },
-            { name: 'Ceri', emoji: '🍒' },
-            { name: 'Alpukat', emoji: '🥑' },
-            { name: 'Lemon', emoji: '🍋' },
-            { name: 'Mangga', emoji: '🥭' },
-            { name: 'Kelapa', emoji: '🥥' },
-            { name: 'Kiwi', emoji: '🥝' },
-            { name: 'Persik', emoji: '🍑' },
-            { name: 'Melon', emoji: '🍈' },
-            { name: 'Pir', emoji: '🍐' },
-            { name: 'Blueberry', emoji: '🫐' },
-            { name: 'Delima', emoji: '🍅' },
-            { name: 'Tomat', emoji: '🍅' },
-            { name: 'Pepaya', emoji: '🍈' }
+            { name: 'Apel', emoji: '🍎' }, { name: 'Pisang', emoji: '🍌' }, { name: 'Stroberi', emoji: '🍓' },
+            { name: 'Anggur', emoji: '🍇' }, { name: 'Semangka', emoji: '🍉' }, { name: 'Jeruk', emoji: '🍊' },
+            { name: 'Nanas', emoji: '🍍' }, { name: 'Ceri', emoji: '🍒' }, { name: 'Alpukat', emoji: '🥑' },
+            { name: 'Lemon', emoji: '🍋' }, { name: 'Melon', emoji: '🍈' }, { name: 'Pir', emoji: '🍐' },
+            { name: 'Peach', emoji: '🍑' }, { name: 'Mangga', emoji: '🥭' }, { name: 'Kelapa', emoji: '🥥' },
+            { name: 'Kiwi', emoji: '🥝' }, { name: 'Tomat', emoji: '🍅' }, { name: 'Terong', emoji: '🍆' },
+            { name: 'Jagung', emoji: '🌽' }, { name: 'Cabai', emoji: '🌶️' }
         ];
 
-        // Expanded Memory game emojis list
-        const MEMORY_EMOJIS = ['🦁', '🐙', '🍓', '🚗', '🚁', '🍔', '🦊', '🚀', '🥑', '🎈', '🍰', '🐼', '🦖', '⚽', '🍦', '🍩', '🥕', '🎨', '⛵', '⏰'];
+        const MEMORY_EMOJIS = ['🦁', '🐙', '🍓', '🚗', '🚁', '🍔', '🦊', '🚀', '🥑', '🎈', '🍰', '🐼', '🦄', '🦖', '⚽', '🍩'];
 
-        // Global State
+        // State Global Aplikasi
         let state = {
-            stars: {}, // stars per category e.g. { warna: 3, angka: 2 }
+            stars: {}, 
             soundEnabled: true,
             activeScreen: 'home',
             activeGame: null,
             score: 0,
             questionIndex: 0,
-            maxQuestions: 20, // INCREASED TO 20 QUIZZES PER CATEGORY
-            currentData: null, // Holds details of the currently running question
+            maxQuestions: 20, // Kuis dinaikkan ke 20 ronde agar seru
+            currentData: null, 
             memoryCards: [],
-            selectedCards: []
+            selectedCards: [],
+            platformer: null // Menyimpan state khusus game Petualangan
         };
 
-        // Initialize Web Audio API Synth Engine (No external sound files required)
+        // Synthesizer Efek Suara (Web Audio API - Bebas kuota internet)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSynthSound(type) {
             if (!state.soundEnabled) return;
-            
-            // Resume context if suspended
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -386,70 +321,76 @@
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             const now = audioCtx.currentTime;
 
             if (type === 'click') {
-                // Short bubbly high click
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
                 osc.start(now);
                 osc.stop(now + 0.08);
-            } else if (type === 'correct') {
-                // Lovely joyful double-note major chord
+            } else if (type === 'jump') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'shoot') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); 
+                osc.frequency.setValueAtTime(659.25, now + 0.1); 
                 gain.gain.setValueAtTime(0.2, now);
                 gain.gain.setValueAtTime(0.2, now + 0.1);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now);
                 osc.stop(now + 0.3);
             } else if (type === 'incorrect') {
-                // Low playful buzzer
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(160, now);
                 osc.frequency.linearRampToValueAtTime(90, now + 0.25);
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
                 osc.start(now);
                 osc.stop(now + 0.25);
             } else if (type === 'complete') {
-                // Happy major chord arpeggio
-                const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+                const notes = [261.63, 329.63, 392.00, 523.25]; 
                 notes.forEach((freq, idx) => {
-                    const oscNode = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    oscNode.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    
-                    oscNode.type = 'sine';
-                    oscNode.frequency.setValueAtTime(freq, now + idx * 0.1);
-                    gainNode.gain.setValueAtTime(0.15, now + idx * 0.1);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
-                    
-                    oscNode.start(now + idx * 0.1);
-                    oscNode.stop(now + idx * 0.1 + 0.4);
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    g.gain.setValueAtTime(0.15, now + idx * 0.1);
+                    g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
+                    o.start(now + idx * 0.1);
+                    o.stop(now + idx * 0.1 + 0.4);
                 });
             }
         }
 
-        // TEXT TO SPEECH COMPONENT (Indonesian Language Companion)
+        // Asisten Suara Bahasa Indonesia (Text-To-Speech)
         function speakText(text) {
             if (!state.soundEnabled) return;
             if ('speechSynthesis' in window) {
-                // Cancel ongoing speakings
                 window.speechSynthesis.cancel();
-                
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'id-ID'; // Set to Indonesian
-                utterance.rate = 1.0;     // Normal tempo
-                utterance.pitch = 1.25;   // Slightly higher kids-friendly pitch
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;     
+                utterance.pitch = 1.3;   
                 
-                // Try finding an Indonesian voice
                 const voices = window.speechSynthesis.getVoices();
                 const idVoice = voices.find(v => v.lang.includes('id') || v.name.toLowerCase().includes('indonesia'));
                 if (idVoice) utterance.voice = idVoice;
@@ -458,12 +399,12 @@
             }
         }
 
-        // Auto-retrigger voices load
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {};
+        function speakCurrentQuestion() {
+            if (!state.currentData || !state.currentData.instruction) return;
+            speakText(state.currentData.instruction);
         }
 
-        // CONFETTI CELEBRATION SYSTEM (Vanilla HTML5 Canvas Implementation)
+        // Canvas Confetti Selebrasi (Kembang Api)
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         let confettiActive = false;
@@ -508,14 +449,12 @@
 
         function triggerConfetti() {
             confettiArray = [];
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 80; i++) {
                 confettiArray.push(new ConfettiParticle());
             }
             confettiActive = true;
             animateConfetti();
-            setTimeout(() => {
-                confettiActive = false;
-            }, 4000); // Stop drawing after 4 seconds
+            setTimeout(() => confettiActive = false, 4000);
         }
 
         function animateConfetti() {
@@ -531,9 +470,10 @@
             requestAnimationFrame(animateConfetti);
         }
 
-        // GENERATE FLOATING BUBBLES
+        // Generator Balon/Gelembung Melayang Latar Belakang
         const bubbleContainer = document.getElementById('bubble-container');
         function createBubbles() {
+            bubbleContainer.innerHTML = '';
             for (let i = 0; i < 15; i++) {
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble-bg';
@@ -548,46 +488,37 @@
         }
         createBubbles();
 
-        // RENDER HOMEPAGE GRID CARDS DYNAMICALLY
+        // Menggambar Grid Menu Kategori
         function renderMenuGrid() {
             const menuGrid = document.getElementById('menu-grid');
             menuGrid.innerHTML = '';
 
             CATEGORIES.forEach(cat => {
                 const starsEarned = state.stars[cat.id] || 0;
-                
-                // Build Star indicator template
                 let starsHTML = '';
                 for (let s = 1; s <= 3; s++) {
-                    if (s <= starsEarned) {
-                        starsHTML += '<span class="text-amber-400">★</span>';
-                    } else {
-                        starsHTML += '<span class="text-slate-300">★</span>';
-                    }
+                    starsHTML += s <= starsEarned ? '<span class="text-amber-400">★</span>' : '<span class="text-slate-300">★</span>';
                 }
 
                 const card = document.createElement('button');
                 card.onclick = () => selectGame(cat.id);
-                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-3 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[140px] sm:min-h-[190px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
+                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-4 rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[170px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
                 card.innerHTML = `
-                    <div class="absolute -right-4 -bottom-4 text-white/10 text-5xl sm:text-7xl font-bold select-none pointer-events-none">
-                        ${cat.icon}
-                    </div>
-                    <div class="text-3xl sm:text-5xl my-1.5 sm:my-2">${cat.icon}</div>
-                    <div class="font-bold text-xs sm:text-base md:text-lg leading-tight">${cat.name}</div>
-                    <div class="bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-slate-600 font-bold text-[10px] sm:text-xs flex items-center gap-0.5 border border-white/50 shadow-inner mt-1.5 sm:mt-2">
-                        ${starsHTML} <span class="ml-0.5">${starsEarned}/3</span>
+                    <div class="absolute -right-4 -bottom-4 text-white/10 text-6xl font-bold select-none pointer-events-none">${cat.icon}</div>
+                    <div class="text-4xl my-1.5">${cat.icon}</div>
+                    <div class="font-bold text-sm leading-tight">${cat.name}</div>
+                    <div class="bg-white/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-slate-600 font-bold text-[10px] flex items-center gap-0.5 border border-white/50 shadow-inner mt-1.5">
+                        ${starsHTML} <span class="ml-1">${starsEarned}/3</span>
                     </div>
                 `;
                 menuGrid.appendChild(card);
             });
 
-            // Update Global stars
             const totalStars = Object.values(state.stars).reduce((a, b) => a + b, 0);
             document.getElementById('global-stars').innerText = totalStars;
         }
 
-        // CORE SYSTEM EVENT CONTROLLERS
+        // Pengontrol Audio & Layar
         function toggleSound() {
             state.soundEnabled = !state.soundEnabled;
             const icon = document.getElementById('sound-icon');
@@ -595,23 +526,26 @@
             
             if (state.soundEnabled) {
                 icon.className = 'fa-solid fa-volume-high';
-                btn.className = 'bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
+                btn.className = 'bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
                 playSynthSound('click');
             } else {
                 icon.className = 'fa-solid fa-volume-xmark';
-                btn.className = 'bg-rose-100 text-rose-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border-2 border-rose-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                }
+                btn.className = 'bg-rose-100 text-rose-600 w-8 h-8 sm:w-10 sm:h-10 rounded-2xl border-2 border-rose-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             }
         }
 
         function goToScreen(screen) {
             playSynthSound('click');
-            
             document.getElementById('screen-home').classList.add('hidden');
             document.getElementById('screen-game').classList.add('hidden');
             document.getElementById('btn-tts').classList.add('hidden');
+
+            // Membersihkan game loop platformer jika berganti layar
+            if (state.platformer && state.platformer.animationFrameId) {
+                cancelAnimationFrame(state.platformer.animationFrameId);
+                state.platformer = null;
+            }
 
             if (screen === 'home') {
                 document.getElementById('screen-home').classList.remove('hidden');
@@ -634,17 +568,26 @@
             state.questionIndex = 0;
             state.selectedCards = [];
             
+            // Bersihkan game loop platformer
+            if (state.platformer && state.platformer.animationFrameId) {
+                cancelAnimationFrame(state.platformer.animationFrameId);
+                state.platformer = null;
+            }
+
             const cat = CATEGORIES.find(c => c.id === state.activeGame);
             document.getElementById('game-title').innerText = cat.name;
             document.getElementById('game-score').innerText = state.score;
 
-            // Handle memory max rounds setup uniquely
             if (state.activeGame === 'memory') {
-                state.maxQuestions = 1; // Pure one large match round
+                state.maxQuestions = 1; 
                 document.getElementById('game-progress-text').innerText = 'Kumpulkan Semua Pasangan!';
                 document.getElementById('game-progress-bar').style.width = '50%';
+            } else if (state.activeGame === 'petualangan') {
+                state.maxQuestions = 1;
+                document.getElementById('game-progress-text').innerText = 'Kalahkan Monster & Raih 100 Poin!';
+                document.getElementById('game-progress-bar').style.width = '100%';
             } else {
-                state.maxQuestions = 20; // Expanded to 20 questions!
+                state.maxQuestions = 20; // 20 Ronde Kuis
                 updateProgressBar();
             }
 
@@ -652,20 +595,14 @@
         }
 
         function updateProgressBar() {
-            if (state.activeGame === 'memory') return;
+            if (state.activeGame === 'memory' || state.activeGame === 'petualangan') return;
             const progressPercent = ((state.questionIndex) / state.maxQuestions) * 100;
             document.getElementById('game-progress-text').innerText = `Pertanyaan ${state.questionIndex + 1} / ${state.maxQuestions}`;
-            document.getElementById('game-progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('game-progress-bar').style.width = `${Math.max(5, progressPercent)}%`;
         }
 
-        function speakCurrentQuestion() {
-            if (!state.currentData || !state.currentData.instruction) return;
-            speakText(state.currentData.instruction);
-        }
-
-        // MAIN ROUTER FOR QUESTION INJECTIONS
         function nextQuestion() {
-            if (state.questionIndex >= state.maxQuestions && state.activeGame !== 'memory') {
+            if (state.questionIndex >= state.maxQuestions && state.activeGame !== 'memory' && state.activeGame !== 'petualangan') {
                 endGameSession();
                 return;
             }
@@ -673,53 +610,35 @@
             updateProgressBar();
             const viewport = document.getElementById('game-viewport');
             viewport.innerHTML = '';
-
-            // Enable TTS button for educational voice guidance
             document.getElementById('btn-tts').classList.remove('hidden');
 
-            // Dispatch to specific game script builders
             switch(state.activeGame) {
-                case 'warna':
-                    buildWarnaGame(viewport);
-                    break;
-                case 'huruf':
-                    buildHurufGame(viewport);
-                    break;
-                case 'angka':
-                    buildAngkaGame(viewport);
-                    break;
-                case 'hewan':
-                    buildHewanGame(viewport);
-                    break;
-                case 'buah':
-                    buildBuahGame(viewport);
-                    break;
-                case 'memory':
-                    buildMemoryGame(viewport);
-                    break;
-                case 'matematika':
-                    buildMatematikaGame(viewport);
-                    break;
+                case 'warna': buildWarnaGame(viewport); break;
+                case 'huruf': buildHurufGame(viewport); break;
+                case 'angka': buildAngkaGame(viewport); break;
+                case 'hewan': buildHewanGame(viewport); break;
+                case 'buah': buildBuahGame(viewport); break;
+                case 'memory': buildMemoryGame(viewport); break;
+                case 'matematika': buildMatematikaGame(viewport); break;
+                case 'petualangan': buildPetualanganGame(viewport); break;
             }
 
-            // Speak instruction automatically with short delay
-            setTimeout(() => {
-                speakCurrentQuestion();
-            }, 300);
+            if (state.activeGame !== 'petualangan') {
+                setTimeout(() => speakCurrentQuestion(), 300);
+            } else {
+                document.getElementById('btn-tts').classList.add('hidden'); // Sembunyikan TTS di game petualangan
+            }
         }
 
-        // UTILITY: Random shuffler for randomized dynamic choices
         function shuffleArray(array) {
             return array.sort(() => Math.random() - 0.5);
         }
 
         // ==========================================
-        // 1. GAME: BELAJAR WARNA (LEARN COLORS)
+        // 1. GAME: BELAJAR WARNA
         // ==========================================
         function buildWarnaGame(container) {
             const correctColor = COLORS_DB[Math.floor(Math.random() * COLORS_DB.length)];
-            
-            // Get 3 incorrect colors
             const wrongColors = shuffleArray(COLORS_DB.filter(c => c.name !== correctColor.name)).slice(0, 3);
             const choices = shuffleArray([correctColor, ...wrongColors]);
 
@@ -729,22 +648,20 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Pilih warna di bawah ini yang bernama:</h4>
-                    <div class="text-3xl sm:text-5xl font-extrabold tracking-wide drop-shadow-sm transition-all transform hover:scale-105" style="color: ${correctColor.hex}">
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Pilih warna di bawah yang bernama:</h4>
+                    <div class="text-3xl sm:text-4xl font-extrabold tracking-wide drop-shadow-sm" style="color: ${correctColor.hex}">
                         ${correctColor.name.toUpperCase()}
                     </div>
                     
-                    <!-- Huge Colored Target Balloon -->
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto shadow-lg border-2 sm:border-4 border-slate-100 flex items-center justify-center text-3xl sm:text-4xl animate-bounce" style="background-color: ${correctColor.hex}">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto shadow-md border-4 border-slate-100 flex items-center justify-center text-3xl sm:text-4xl animate-pulse" style="background-color: ${correctColor.hex}">
                         🎈
                     </div>
 
-                    <!-- Choices Option Grid -->
-                    <div class="grid grid-cols-2 gap-2 sm:gap-4 max-w-md mx-auto w-full">
+                    <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
                         ${choices.map(c => `
-                            <button onclick="checkAnswer('${c.name}', this)" class="bg-white hover:bg-slate-50 border-2 sm:border-4 border-slate-200 hover:border-cyan-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-slate-700 shadow-md bounce-hover flex items-center gap-1.5 sm:gap-2 justify-center transition-all">
-                                <span class="w-4.5 h-4.5 rounded-full inline-block border border-slate-300" style="background-color: ${c.hex}"></span>
+                            <button onclick="checkAnswer('${c.name}', this)" class="bg-white hover:bg-slate-50 border-4 border-slate-200 hover:border-cyan-400 p-2 sm:p-3 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 shadow-md bounce-hover flex items-center gap-1.5 justify-center transition-all">
+                                <span class="w-4 h-4 rounded-full inline-block border border-slate-300" style="background-color: ${c.hex}"></span>
                                 ${c.name}
                             </button>
                         `).join('')}
@@ -754,16 +671,13 @@
         }
 
         // ==========================================
-        // 2. GAME: TEBAK HURUF (LETTER INIT CORRESPONDENCE)
+        // 2. GAME: TEBAK HURUF
         // ==========================================
         function buildHurufGame(container) {
             const currentItem = LETTER_OBJECTS[Math.floor(Math.random() * LETTER_OBJECTS.length)];
-            
-            // Collect other letters as wrong options
             const wrongLetters = shuffleArray(
                 [...new Set(LETTER_OBJECTS.map(item => item.letter).filter(l => l !== currentItem.letter))]
             ).slice(0, 3);
-
             const choices = shuffleArray([currentItem.letter, ...wrongLetters]);
 
             state.currentData = {
@@ -772,19 +686,17 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Huruf Awal Gambar Ini:</h4>
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Tebak Huruf Depan Gambar Ini:</h4>
                     
-                    <!-- Giant interactive illustration box -->
-                    <div class="bg-gradient-to-tr from-cyan-50 to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 sm:border-4 border-dashed border-cyan-200 inline-block mx-auto">
-                        <div class="text-6xl sm:text-8xl animate-bounce">${currentItem.emoji}</div>
-                        <div class="mt-1 sm:mt-2 text-lg sm:text-2xl font-bold text-cyan-600">${currentItem.word.toUpperCase()}</div>
+                    <div class="bg-slate-50 p-4 rounded-3xl border-2 border-slate-200 max-w-[150px] mx-auto">
+                        <span class="text-5xl sm:text-6xl block leading-none">${currentItem.emoji}</span>
+                        <span class="text-xs font-bold text-slate-500 mt-2 block">${currentItem.word.toUpperCase()}</span>
                     </div>
 
-                    <!-- Options Grid -->
-                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full mt-2 sm:mt-4">
+                    <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto w-full">
                         ${choices.map(letter => `
-                            <button onclick="checkAnswer('${letter}', this)" class="bg-white hover:bg-amber-50 border-2 sm:border-4 border-slate-200 hover:border-amber-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-black text-amber-500 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${letter}', this)" class="bg-white hover:bg-slate-50 border-4 border-slate-200 hover:border-cyan-400 py-3 rounded-2xl text-sm sm:text-xl font-extrabold text-amber-500 shadow-md bounce-hover transition-all">
                                 ${letter}
                             </button>
                         `).join('')}
@@ -794,47 +706,40 @@
         }
 
         // ==========================================
-        // 3. GAME: TEBAK ANGKA (COUNTING EXERCISE)
+        // 3. GAME: TEBAK ANGKA (MENGHITUNG)
         // ==========================================
         function buildAngkaGame(container) {
-            const count = Math.floor(Math.random() * 9) + 1; // Range 1 - 9
+            const count = Math.floor(Math.random() * 9) + 1; 
             const emojis = ['🎈', '🍓', '🍌', '🚗', '🐱', '🐣', '🍄', '🥕', '🍩', '🐼'];
             const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-            // Create array representing emojis to repeat
             let displayHTML = '';
             for (let i = 0; i < count; i++) {
-                displayHTML += `<span class="text-3xl sm:text-5xl drop-shadow">${randomEmoji}</span>`;
+                displayHTML += `<span class="text-2xl sm:text-3.5xl drop-shadow">${randomEmoji}</span>`;
             }
 
-            // Create randomized numeric choices
             const choiceSet = new Set([count]);
             while (choiceSet.size < 4) {
-                const wrongValue = Math.floor(Math.random() * 9) + 1;
-                choiceSet.add(wrongValue);
+                choiceSet.add(Math.floor(Math.random() * 9) + 1);
             }
             const choices = shuffleArray([...choiceSet]);
 
             state.currentData = {
                 correctAnswer: count.toString(),
-                instruction: `Ayo hitung, ada berapa benda di dalam kotak?`
+                instruction: `Ayo hitung benda di dalam kotak!`
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Hitung Jumlah Benda Di Bawah Ini:</h4>
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Hitung Jumlah Benda Ini:</h4>
                     
-                    <!-- Counting Box container -->
-                    <div class="bg-emerald-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-emerald-200 max-w-lg mx-auto flex flex-wrap gap-2 sm:gap-3 justify-center items-center shadow-inner min-h-[100px] sm:min-h-[120px]">
+                    <div class="bg-emerald-50/50 p-4 rounded-3xl border-4 border-emerald-200 max-w-sm mx-auto flex flex-wrap gap-2 justify-center items-center shadow-inner min-h-[90px]">
                         ${displayHTML}
                     </div>
 
-                    <p class="text-xs sm:text-sm text-slate-400 font-semibold">Ada berapa, ya? Sentuh jawabannya!</p>
-
-                    <!-- Answer Options -->
-                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full">
+                    <div class="grid grid-cols-4 gap-2 max-w-xs mx-auto w-full">
                         ${choices.map(num => `
-                            <button onclick="checkAnswer('${num}', this)" class="bg-white hover:bg-emerald-50 border-2 sm:border-4 border-slate-200 hover:border-emerald-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-bold text-emerald-600 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${num}', this)" class="bg-white hover:bg-emerald-50 border-4 border-slate-200 hover:border-emerald-400 py-2.5 rounded-2xl text-sm sm:text-lg font-bold text-emerald-600 shadow-md bounce-hover transition-all">
                                 ${num}
                             </button>
                         `).join('')}
@@ -844,14 +749,12 @@
         }
 
         // ==========================================
-        // 4. GAME: TEBAK HEWAN (ANIMAL GUESSER)
+        // 4. GAME: TEBAK HEWAN
         // ==========================================
         function buildHewanGame(container) {
             const correctAnimal = ANIMALS_DB[Math.floor(Math.random() * ANIMALS_DB.length)];
-            
-            // Fetch wrong animals
             const wrongAnimals = shuffleArray(ANIMALS_DB.filter(a => a.name !== correctAnimal.name)).slice(0, 3);
-            const choices = shuffleArray([correctAnimal.name, ...wrongAnimals.map(a => a.name)]);
+            const choices = shuffleArray([correctAnimal.name, ...wrongAnimals.map(a => a.name)]); // Fix Bug [object Object]
 
             state.currentData = {
                 correctAnswer: correctAnimal.name,
@@ -859,19 +762,17 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Nama Hewan Ini:</h4>
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Tebak Nama Hewan Ini:</h4>
                     
-                    <!-- Display Box -->
-                    <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-50 border-2 sm:border-4 border-indigo-200 shadow-md flex items-center justify-center text-6xl sm:text-7xl mx-auto transform rotate-2 animate-pulse">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-slate-50 border-2 border-slate-100 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl mx-auto shadow-sm">
                         ${correctAnimal.emoji}
                     </div>
 
-                    <!-- Grid choices -->
-                    <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto w-full mt-2 sm:mt-4">
-                        ${choices.map(animalName => `
-                            <button onclick="checkAnswer('${animalName}', this)" class="bg-white hover:bg-indigo-50 border-2 sm:border-4 border-slate-200 hover:border-indigo-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-indigo-600 shadow-md bounce-hover transition-all">
-                                ${animalName}
+                    <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                        ${choices.map(name => `
+                            <button onclick="checkAnswer('${name}', this)" class="bg-white hover:bg-indigo-50 border-4 border-slate-200 hover:border-indigo-400 p-2 sm:p-3 rounded-2xl text-xs sm:text-sm font-bold text-indigo-600 shadow-md bounce-hover transition-all">
+                                ${name}
                             </button>
                         `).join('')}
                     </div>
@@ -880,14 +781,12 @@
         }
 
         // ==========================================
-        // 5. GAME: TEBAK BUAH (FRUIT GUESSER)
+        // 5. GAME: TEBAK BUAH
         // ==========================================
         function buildBuahGame(container) {
             const correctFruit = FRUITS_DB[Math.floor(Math.random() * FRUITS_DB.length)];
-            
-            // Fetch wrong choices
             const wrongFruits = shuffleArray(FRUITS_DB.filter(f => f.name !== correctFruit.name)).slice(0, 3);
-            const choices = shuffleArray([correctFruit.name, ...wrongFruits.map(f => f.name)]);
+            const choices = shuffleArray([correctFruit.name, ...wrongFruits.map(f => f.name)]); // Fix Bug [object Object]
 
             state.currentData = {
                 correctAnswer: correctFruit.name,
@@ -895,19 +794,17 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Nama Buah Ini:</h4>
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Tebak Nama Buah Ini:</h4>
                     
-                    <!-- Display Box -->
-                    <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-[1.5rem] sm:rounded-[2rem] bg-rose-50 border-2 sm:border-4 border-rose-200 shadow-md flex items-center justify-center text-6xl sm:text-7xl mx-auto transform -rotate-2 animate-bounce">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-slate-50 border-2 border-slate-100 rounded-3xl flex items-center justify-center text-4xl sm:text-5xl mx-auto shadow-sm animate-bounce">
                         ${correctFruit.emoji}
                     </div>
 
-                    <!-- Choices Grid -->
-                    <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto w-full mt-2 sm:mt-4">
-                        ${choices.map(fruitName => `
-                            <button onclick="checkAnswer('${fruitName}', this)" class="bg-white hover:bg-rose-50 border-2 sm:border-4 border-slate-200 hover:border-rose-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-rose-500 shadow-md bounce-hover transition-all">
-                                ${fruitName}
+                    <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                        ${choices.map(name => `
+                            <button onclick="checkAnswer('${name}', this)" class="bg-white hover:bg-rose-50 border-4 border-slate-200 hover:border-rose-400 p-2 sm:p-3 rounded-2xl text-xs sm:text-sm font-bold text-rose-500 shadow-md bounce-hover transition-all">
+                                ${name}
                             </button>
                         `).join('')}
                     </div>
@@ -916,11 +813,10 @@
         }
 
         // ==========================================
-        // 6. GAME: MEMORY MATCHING CARDS
+        // 6. GAME: MEMORY MATCHING CARD
         // ==========================================
         function buildMemoryGame(container) {
-            // Emojis mapping for match pairs
-            const selectedEmojis = shuffleArray(MEMORY_EMOJIS).slice(0, 6); // 6 pairs = 12 cards grid
+            const selectedEmojis = shuffleArray(MEMORY_EMOJIS).slice(0, 6); 
             const doubleArray = [...selectedEmojis, ...selectedEmojis];
             const shuffledCards = shuffleArray(doubleArray).map((emoji, index) => ({
                 id: index,
@@ -932,30 +828,19 @@
             state.selectedCards = [];
 
             state.currentData = {
-                instruction: 'Temukan semua pasangan kartu bergambar sama!'
+                instruction: 'Cari dua kartu bergambar sama!'
             };
 
-            // Custom design container for layout matching card grids (Scales down h-16 dynamically on mobile)
             container.innerHTML = `
-                <div class="text-center space-y-3 sm:space-y-4 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-base sm:text-2xl font-bold text-slate-700">Buka 2 Kartu Berwarna Sama Dan Cari Pasangannya!</h4>
+                <div class="text-center space-y-3 w-full pop-effect">
+                    <h4 class="text-xs sm:text-sm font-bold text-slate-500 leading-snug">Sentuh kartu dan cari pasangannya!</h4>
                     
-                    <!-- Grid container 4 cols x 3 rows -->
-                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-md mx-auto w-full mt-2 sm:mt-4 animate-pop" id="memory-board">
+                    <div class="grid grid-cols-4 gap-2 max-w-xs mx-auto w-full mt-2" id="memory-board">
                         ${shuffledCards.map(card => `
-                            <div onclick="flipMemoryCard(${card.id}, this)" class="card-perspective cursor-pointer h-16 sm:h-20 md:h-24 w-full select-none animate-pop" data-card-id="${card.id}">
-                                <div class="card-inner w-full h-full relative rounded-xl sm:rounded-2xl shadow-md border-2 border-purple-200" style="transform-style: preserve-3d;">
-                                    
-                                    <!-- FRONT OF CARD (Back Cover Visual) -->
-                                    <div class="card-front absolute inset-0 bg-gradient-to-tr from-purple-400 to-indigo-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl text-white font-extrabold" style="backface-visibility: hidden;">
-                                        ❓
-                                    </div>
-
-                                    <!-- BACK OF CARD (Item Revealed) -->
-                                    <div class="card-back absolute inset-0 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-4xl border-2 border-emerald-400" style="backface-visibility: hidden; transform: rotateY(180deg);">
-                                        ${card.emoji}
-                                    </div>
-
+                            <div onclick="flipMemoryCard(${card.id}, this)" class="card-perspective cursor-pointer h-16 sm:h-20 w-full select-none" data-card-id="${card.id}">
+                                <div class="card-inner w-full h-full relative rounded-2xl shadow-md border-2 border-purple-200" style="transform-style: preserve-3d;">
+                                    <div class="card-front absolute inset-0 bg-gradient-to-tr from-purple-400 to-indigo-500 rounded-2xl flex items-center justify-center text-xl text-white font-extrabold" style="backface-visibility: hidden;">❓</div>
+                                    <div class="card-back absolute inset-0 bg-white rounded-2xl flex items-center justify-center text-2xl border-2 border-emerald-400" style="backface-visibility: hidden; transform: rotateY(180deg);">${card.emoji}</div>
                                 </div>
                             </div>
                         `).join('')}
@@ -965,76 +850,59 @@
         }
 
         function flipMemoryCard(id, element) {
-            // Validate flip allowance
             if (state.selectedCards.length >= 2) return;
             const cardObj = state.memoryCards.find(c => c.id === id);
             if (cardObj.matched) return;
             if (state.selectedCards.some(c => c.id === id)) return;
 
             playSynthSound('click');
-            const innerCard = element.querySelector('.card-inner');
-            innerCard.classList.add('card-flipped');
-
+            element.querySelector('.card-inner').classList.add('card-flipped');
             state.selectedCards.push({ id, emoji: cardObj.emoji, element });
 
-            // Evaluate if two cards are flipped
             if (state.selectedCards.length === 2) {
                 const card1 = state.selectedCards[0];
                 const card2 = state.selectedCards[1];
 
                 if (card1.emoji === card2.emoji) {
-                    // MATCH!
                     setTimeout(() => {
                         playSynthSound('correct');
-                        
-                        // Mark true
                         state.memoryCards.find(c => c.id === card1.id).matched = true;
                         state.memoryCards.find(c => c.id === card2.id).matched = true;
 
-                        // Visual highlight updates
                         card1.element.querySelector('.card-back').classList.add('bg-emerald-50');
                         card2.element.querySelector('.card-back').classList.add('bg-emerald-50');
 
                         state.score += 20;
                         document.getElementById('game-score').innerText = state.score;
-
                         state.selectedCards = [];
 
-                        // Check if all matched
                         if (state.memoryCards.every(c => c.matched)) {
                             triggerConfetti();
-                            setTimeout(() => {
-                                endGameSession();
-                            }, 800);
+                            setTimeout(() => endGameSession(), 1000);
                         }
                     }, 500);
                 } else {
-                    // NO MATCH! flip back
                     setTimeout(() => {
                         playSynthSound('incorrect');
                         card1.element.querySelector('.card-inner').classList.remove('card-flipped');
                         card2.element.querySelector('.card-inner').classList.remove('card-flipped');
                         state.selectedCards = [];
-                    }, 1200);
+                    }, 1000);
                 }
             }
         }
 
         // ==========================================
-        // 7. GAME: MATEMATIKA DASAR (BASIC MATH)
+        // 7. GAME: MATEMATIKA DASAR
         // ==========================================
         function buildMatematikaGame(container) {
-            // Set simple levels
-            const num1 = Math.floor(Math.random() * 5) + 1; // 1-5
-            const num2 = Math.floor(Math.random() * 4) + 1; // 1-4
-            
-            // Choose operator: add (+) or subtract (-)
+            const num1 = Math.floor(Math.random() * 5) + 1; 
+            const num2 = Math.floor(Math.random() * 4) + 1; 
             const isAdd = Math.random() > 0.4;
             let equationText = '';
             let valResult = 0;
             let mathSymbol = '';
 
-            // Visual emoji builder for counting assistance
             const mathEmoji = ['🍎', '🍕', '🍰', '🍪', '🎈'][Math.floor(Math.random() * 5)];
             let operand1Emoji = '';
             let operand2Emoji = '';
@@ -1047,7 +915,6 @@
                 equationText = `${num1} tambah ${num2}`;
                 for (let i = 0; i < num2; i++) operand2Emoji += mathEmoji;
             } else {
-                // Ensure non-negative arithmetic outputs
                 const high = Math.max(num1, num2);
                 const low = Math.min(num1, num2);
                 valResult = high - low;
@@ -1059,48 +926,42 @@
                 for (let i = 0; i < low; i++) operand2Emoji += mathEmoji;
             }
 
-            // Generate answer range
             const optionsSet = new Set([valResult]);
             while (optionsSet.size < 4) {
-                const randomOffset = Math.floor(Math.random() * 8);
-                optionsSet.add(randomOffset);
+                optionsSet.add(Math.floor(Math.random() * 8));
             }
             const choices = shuffleArray([...optionsSet]);
 
             state.currentData = {
                 correctAnswer: valResult.toString(),
-                instruction: `Berapakah hasil dari ${equationText}? Ayo dihitung!`
+                instruction: `Berapakah hasil dari ${equationText}?`
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
-                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tantangan Berhitung:</h4>
+                <div class="text-center space-y-4 w-full pop-effect flex flex-col justify-between h-full">
+                    <h4 class="text-base sm:text-xl font-bold text-slate-700">Tantangan Matematika:</h4>
                     
-                    <!-- Illustrated Equations Visual aids (Fully responsive flex-wrap layout) -->
-                    <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-4 bg-amber-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-amber-200 inline-block max-w-full mx-auto">
+                    <div class="flex justify-center items-center gap-2 sm:gap-3 bg-amber-50/50 p-4 rounded-3xl border-4 border-amber-200 inline-block max-w-full mx-auto">
                         <div class="flex flex-col items-center">
-                            <span class="text-xl sm:text-2xl font-black bg-white px-3 py-1 sm:px-4 sm:py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num1 : Math.max(num1, num2)}</span>
-                            <span class="text-[10px] sm:text-xs text-slate-400 font-bold mt-1 max-w-[100px] truncate">${operand1Emoji}</span>
+                            <span class="text-lg sm:text-xl font-black bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-100">${isAdd ? num1 : Math.max(num1, num2)}</span>
+                            <span class="text-[8px] text-slate-400 font-bold mt-1 max-w-[80px] truncate">${operand1Emoji}</span>
                         </div>
                         
-                        <div class="text-2xl sm:text-3xl font-black text-amber-500">${mathSymbol}</div>
+                        <div class="text-xl font-black text-amber-500">${mathSymbol}</div>
                         
                         <div class="flex flex-col items-center">
-                            <span class="text-xl sm:text-2xl font-black bg-white px-3 py-1 sm:px-4 sm:py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num2 : Math.min(num1, num2)}</span>
-                            <span class="text-[10px] sm:text-xs text-slate-400 font-bold mt-1 max-w-[100px] truncate">${operand2Emoji}</span>
+                            <span class="text-lg sm:text-xl font-black bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-100">${isAdd ? num2 : Math.min(num1, num2)}</span>
+                            <span class="text-[8px] text-slate-400 font-bold mt-1 max-w-[80px] truncate">${operand2Emoji}</span>
                         </div>
 
-                        <div class="text-2xl sm:text-3xl font-black text-slate-400">＝</div>
+                        <div class="text-xl font-black text-slate-400">＝</div>
 
-                        <div class="bg-cyan-100 text-cyan-600 w-12 h-10 sm:w-16 sm:h-14 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-dashed border-cyan-300 flex items-center justify-center text-xl sm:text-3xl font-black animate-pulse">
-                            ?
-                        </div>
+                        <div class="bg-cyan-100 text-cyan-600 w-12 h-10 rounded-xl border-4 border-dashed border-cyan-300 flex items-center justify-center text-lg font-black animate-pulse">?</div>
                     </div>
 
-                    <!-- Choices Option Grid -->
-                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full mt-2 sm:mt-4">
+                    <div class="grid grid-cols-4 gap-2 max-w-xs mx-auto w-full">
                         ${choices.map(choice => `
-                            <button onclick="checkAnswer('${choice}', this)" class="bg-white hover:bg-cyan-50 border-2 sm:border-4 border-slate-200 hover:border-cyan-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-bold text-cyan-600 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${choice}', this)" class="bg-white hover:bg-cyan-50 border-4 border-slate-200 hover:border-cyan-400 py-2 rounded-xl text-base sm:text-lg font-bold text-cyan-600 shadow-md bounce-hover transition-all">
                                 ${choice}
                             </button>
                         `).join('')}
@@ -1110,23 +971,313 @@
         }
 
         // ==========================================
-        // ANSWER ASSESSMENT SYSTEM
+        // 8. GAME BARU: PETUALANGAN HERO (MARIO STYLE)
+        // ==========================================
+        function buildPetualanganGame(container) {
+            // Container Layout Canvas dan Kontrol Virtual untuk Mobile
+            container.innerHTML = `
+                <div class="flex flex-col items-center w-full max-w-md mx-auto pop-effect">
+                    <canvas id="platformer-canvas" width="400" height="220" class="w-full bg-gradient-to-b from-sky-300 to-sky-100 rounded-3xl border-4 border-sky-400 shadow-inner block"></canvas>
+                    
+                    <!-- Kontrol Virtual Responsif khusus untuk layar Smartphone -->
+                    <div class="flex justify-between items-center w-full mt-3 gap-3">
+                        <div class="flex gap-2">
+                            <button id="btn-left" class="bg-slate-700 active:bg-slate-600 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-slate-900"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button id="btn-right" class="bg-slate-700 active:bg-slate-600 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-slate-900"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="btn-shoot" class="bg-rose-500 active:bg-rose-400 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-rose-700"><i class="fa-solid fa-star"></i></button>
+                            <button id="btn-jump" class="bg-indigo-500 active:bg-indigo-400 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-indigo-700"><i class="fa-solid fa-arrow-up"></i></button>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-slate-400 font-bold mt-2 hidden sm:block">PC: Gunakan Tombol Arrow (Kiri/Kanan) untuk berjalan, Arrow Atas untuk lompat, dan F untuk menembak.</p>
+                </div>
+            `;
+
+            // Mulai Inisialisasi Game Loop Platformer
+            initPlatformerEngine();
+        }
+
+        function initPlatformerEngine() {
+            const canvasEl = document.getElementById('platformer-canvas');
+            if (!canvasEl) return;
+            const pCtx = canvasEl.getContext('2d');
+
+            // Setup State Fisika Platformer
+            state.platformer = {
+                hero: {
+                    x: 30, y: 150,
+                    w: 24, h: 24,
+                    vx: 0, vy: 0,
+                    speed: 3,
+                    jumpForce: 7.5,
+                    grounded: false,
+                    facing: 'right'
+                },
+                bullets: [],
+                enemies: [
+                    { x: 120, y: 166, w: 20, h: 20, vx: 0.8, xMin: 80, xMax: 200, active: true },
+                    { x: 260, y: 96, w: 20, h: 20, vx: -1, xMin: 220, xMax: 340, active: true },
+                    { x: 300, y: 166, w: 20, h: 20, vx: 1.2, xMin: 240, xMax: 380, active: true }
+                ],
+                stars: [
+                    { x: 150, y: 110, w: 16, h: 16, collected: false },
+                    { x: 280, y: 50, w: 16, h: 16, matched: false },
+                    { x: 370, y: 130, w: 16, h: 16, collected: false }
+                ],
+                platforms: [
+                    { x: 0, y: 190, w: 400, h: 30 }, // Lantai Dasar
+                    { x: 80, y: 140, w: 100, h: 12 }, // Platform Kiri
+                    { x: 220, y: 110, w: 120, h: 12 }, // Platform Kanan
+                ],
+                keys: { left: false, right: false, jump: false, shoot: false },
+                gravity: 0.35,
+                friction: 0.8,
+                scoreLocal: 0,
+                animationFrameId: null
+            };
+
+            const p = state.platformer;
+
+            // Integrasi Tombol Input keyboard Desktop
+            const keydownHandler = (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') p.keys.left = true;
+                if (e.key === 'ArrowRight' || e.key === 'd') p.keys.right = true;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') {
+                    p.keys.jump = true;
+                    e.preventDefault();
+                }
+                if (e.key === 'f') {
+                    shootBullet();
+                }
+            };
+
+            const keyupHandler = (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') p.keys.left = false;
+                if (e.key === 'ArrowRight' || e.key === 'd') p.keys.right = false;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') p.keys.jump = false;
+            };
+
+            window.addEventListener('keydown', keydownHandler);
+            window.addEventListener('keyup', keyupHandler);
+
+            // Integrasi Tombol Touch Input Mobile
+            const setupMobileBtn = (btnId, keyProp) => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.addEventListener('touchstart', (e) => { e.preventDefault(); p.keys[keyProp] = true; });
+                    btn.addEventListener('touchend', (e) => { e.preventDefault(); p.keys[keyProp] = false; });
+                    btn.addEventListener('mousedown', () => p.keys[keyProp] = true);
+                    btn.addEventListener('mouseup', () => p.keys[keyProp] = false);
+                }
+            };
+
+            setupMobileBtn('btn-left', 'left');
+            setupMobileBtn('btn-right', 'right');
+            setupMobileBtn('btn-jump', 'jump');
+
+            const btnShoot = document.getElementById('btn-shoot');
+            if (btnShoot) {
+                btnShoot.addEventListener('touchstart', (e) => { e.preventDefault(); shootBullet(); });
+                btnShoot.addEventListener('mousedown', () => shootBullet());
+            }
+
+            function shootBullet() {
+                if (!state.platformer) return;
+                playSynthSound('shoot');
+                p.bullets.push({
+                    x: p.hero.facing === 'right' ? p.hero.x + p.hero.w : p.hero.x - 6,
+                    y: p.hero.y + p.hero.h / 2 - 3,
+                    w: 8, h: 8,
+                    vx: p.hero.facing === 'right' ? 5 : -5
+                });
+            }
+
+            // CORE PHYSICS LOOP GAME PLATFORMER
+            function gameLoop() {
+                if (!state.platformer) return;
+
+                // 1. Fisika Pergerakan Kiri / Kanan Hero
+                if (state.platformer.hero.vx > 0.1) state.platformer.hero.facing = 'right';
+                if (state.platformer.hero.vx < -0.1) state.platformer.hero.facing = 'left';
+
+                if (p.keys.left) {
+                    p.hero.vx = -p.hero.speed;
+                } else if (p.keys.right) {
+                    p.hero.vx = p.hero.speed;
+                } else {
+                    p.hero.vx *= p.friction;
+                }
+
+                // 2. Gravitasi Pahlawan
+                p.hero.vy += p.gravity;
+                p.hero.x += p.hero.vx;
+                p.hero.y += p.hero.vy;
+
+                // Lompat
+                if (p.keys.jump && p.hero.grounded) {
+                    playSynthSound('jump');
+                    p.hero.vy = -p.hero.jumpForce;
+                    p.hero.grounded = false;
+                }
+
+                p.hero.grounded = false;
+
+                // 3. Deteksi Tabrakan Platformer (Ground / Floating Platform)
+                p.platforms.forEach(plat => {
+                    // Cek jika menapak di atas platform
+                    if (p.hero.x + p.hero.w > plat.x && p.hero.x < plat.x + plat.w) {
+                        if (p.hero.y + p.hero.h >= plat.y && p.hero.y + p.hero.h - p.hero.vy <= plat.y + 6) {
+                            p.hero.y = plat.y - p.hero.h;
+                            p.hero.vy = 0;
+                            p.hero.grounded = true;
+                        }
+                    }
+                });
+
+                // Pembatasan Batas Kiri / Kanan Layar Canvas
+                if (p.hero.x < 0) p.hero.x = 0;
+                if (p.hero.x + p.hero.w > canvasEl.width) p.hero.x = canvasEl.width - p.hero.w;
+
+                // Jaring Pengaman Jatuh Jurang
+                if (p.hero.y > canvasEl.height) {
+                    playSynthSound('incorrect');
+                    respawnHero();
+                }
+
+                // 4. Update Posisi Peluru Bintang
+                p.bullets.forEach((b, bIdx) => {
+                    b.x += b.vx;
+                    // Hapus peluru keluar layar
+                    if (b.x < 0 || b.x > canvasEl.width) {
+                        p.bullets.splice(bIdx, 1);
+                    }
+                });
+
+                // 5. Pergerakan Monster Musuh (👾 Slime)
+                p.enemies.forEach((enemy) => {
+                    if (!enemy.active) return;
+                    enemy.x += enemy.vx;
+                    if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
+                        enemy.vx *= -1; // Membalik arah pergerakan
+                    }
+
+                    // Cek jika musuh menabrak pahlawan 🐱
+                    if (p.hero.x < enemy.x + enemy.w && p.hero.x + p.hero.w > enemy.x &&
+                        p.hero.y < enemy.y + enemy.h && p.hero.y + p.hero.h > enemy.y) {
+                        playSynthSound('incorrect');
+                        respawnHero();
+                    }
+                });
+
+                // 6. Deteksi Peluru Menabrak Musuh
+                p.bullets.forEach((b, bIdx) => {
+                    p.enemies.forEach((enemy) => {
+                        if (!enemy.active) return;
+                        if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
+                            b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
+                            // Monster kalah!
+                            playSynthSound('correct');
+                            enemy.active = false;
+                            p.bullets.splice(bIdx, 1);
+                            addGamePoints(20); // Tambah skor
+                        }
+                    });
+                });
+
+                // 7. Ambil Bintang Emas (⭐)
+                p.stars.forEach((star) => {
+                    if (star.collected) return;
+                    if (p.hero.x < star.x + star.w && p.hero.x + p.hero.w > star.x &&
+                        p.hero.y < star.y + star.h && p.hero.y + p.hero.h > star.y) {
+                        // Bintang terambil!
+                        playSynthSound('correct');
+                        star.collected = true;
+                        addGamePoints(20);
+                    }
+                });
+
+                // 8. RENDER GRAFIS CANVAS UTAMA
+                pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+                // Menggambar Platform Hijau
+                p.platforms.forEach(plat => {
+                    pCtx.fillStyle = '#22c55e'; // Hijau Rumput
+                    pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
+                    pCtx.fillStyle = '#15803d'; // Detail Bawah Tanah
+                    pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
+                });
+
+                // Menggambar Bintang (⭐)
+                p.stars.forEach(star => {
+                    if (star.collected) return;
+                    pCtx.font = '14px Arial';
+                    pCtx.fillText('⭐', star.x, star.y + 12);
+                });
+
+                // Menggambar Musuh Monster (👾)
+                p.enemies.forEach(enemy => {
+                    if (!enemy.active) return;
+                    pCtx.font = '16px Arial';
+                    pCtx.fillText('👾', enemy.x, enemy.y + 16);
+                });
+
+                // Menggambar Peluru (✨)
+                p.bullets.forEach(b => {
+                    pCtx.font = '10px Arial';
+                    pCtx.fillText('✨', b.x, b.y + 8);
+                });
+
+                // Menggambar Karakter Pahlawan Kucing (🐱)
+                pCtx.font = '20px Arial';
+                pCtx.fillText(p.hero.facing === 'right' ? '🐱' : '🐱', p.hero.x, p.hero.y + 18);
+
+                // Cek Kemenangan
+                if (p.scoreLocal >= 100) {
+                    triggerConfetti();
+                    setTimeout(() => {
+                        state.score = p.scoreLocal;
+                        endGameSession();
+                    }, 800);
+                    return; // Hentikan game loop
+                }
+
+                // Teruskan Frame Berikutnya
+                p.animationFrameId = requestAnimationFrame(gameLoop);
+            }
+
+            function respawnHero() {
+                p.hero.x = 30;
+                p.hero.y = 150;
+                p.hero.vx = 0;
+                p.hero.vy = 0;
+                p.scoreLocal = Math.max(0, p.scoreLocal - 10); // Pengurangan skor jika kalah agar mendidik
+                document.getElementById('game-score').innerText = p.scoreLocal;
+            }
+
+            function addGamePoints(pts) {
+                p.scoreLocal += pts;
+                document.getElementById('game-score').innerText = p.scoreLocal;
+            }
+
+            // Mulai Loop pertama
+            p.animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        // ==========================================
+        // PROSES PENILAIAN JAWABAN KUIS (SELAIN PLATFORMER)
         // ==========================================
         function checkAnswer(answerSelected, buttonElement) {
-            // Prevent spamming taps during animations
             const parent = buttonElement.parentElement;
             const buttons = parent.querySelectorAll('button');
             buttons.forEach(btn => btn.disabled = true);
 
             if (answerSelected === state.currentData.correctAnswer) {
-                // CORRECT CHOICE!
                 playSynthSound('correct');
                 buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-emerald-500 bg-emerald-50 text-emerald-600');
-                
-                // Spawn a quick micro confetti blast inside button
                 buttonElement.innerHTML += ' 🌟';
 
-                state.score += 20;
+                state.score += 5; // Maksimal skor adalah 100 (5 pts x 20 kuis)
                 document.getElementById('game-score').innerText = state.score;
 
                 setTimeout(() => {
@@ -1135,17 +1286,12 @@
                 }, 1200);
 
             } else {
-                // INCORRECT CHOICE!
                 playSynthSound('incorrect');
                 buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-rose-500 bg-rose-50 text-rose-500');
-                
-                // Shake CSS animation injection
                 buttonElement.style.animation = "shake 0.4s";
 
-                // Highlight the correct answer block dynamically
                 setTimeout(() => {
-                    const buttonsList = Array.from(buttons);
-                    const correctBtn = buttonsList.find(b => b.innerText.trim().includes(state.currentData.correctAnswer) || b.innerText.trim() === state.currentData.correctAnswer);
+                    const correctBtn = Array.from(buttons).find(b => b.innerText.trim().replace(' ', '').includes(state.currentData.correctAnswer) || b.innerText.trim() === state.currentData.correctAnswer);
                     if (correctBtn) {
                         correctBtn.className = correctBtn.className.replace('border-slate-200', 'border-emerald-500 bg-emerald-50 text-emerald-600');
                     }
@@ -1158,7 +1304,7 @@
             }
         }
 
-        // Inject keyframes dynamic animations directly
+        // Suntik Animasi Shake getar ke dokumen
         const animStyle = document.createElement('style');
         animStyle.innerHTML = `
             @keyframes shake {
@@ -1170,41 +1316,35 @@
         document.head.appendChild(animStyle);
 
         // ==========================================
-        // REWARD WINDOWS CONTROLLER
+        // SELEBRASI SELESAI GAME & RATING BINTANG
         // ==========================================
         function endGameSession() {
             playSynthSound('complete');
             triggerConfetti();
 
             let starsEarned = 1;
-            let congratsPhrase = 'Keren!';
+            let congratsPhrase = 'BAGUS! AYO COBA LAGI! 💪';
             
-            // Adjust stars based on the new 20 questions limit (Max Score = 400)
-            const scorePercentage = (state.score / (state.maxQuestions * 20)) * 100;
-
-            if (scorePercentage >= 85) {
+            if (state.score >= 100) {
                 starsEarned = 3;
-                congratsPhrase = 'SANGAT PINTAR! 🌟';
-            } else if (scorePercentage >= 50) {
+                congratsPhrase = 'LUAR BIASA! 👑';
+            } else if (state.score >= 60) {
                 starsEarned = 2;
                 congratsPhrase = 'HEBAT SEKALI! 👍';
             } else {
                 starsEarned = 1;
-                congratsPhrase = 'BAGUS! AYO COBA LAGI! 💪';
+                congratsPhrase = 'KEREN! COBA LAGI YUK! 🌟';
             }
 
-            // Save high stars record
             const currentRecord = state.stars[state.activeGame] || 0;
             if (starsEarned > currentRecord) {
                 state.stars[state.activeGame] = starsEarned;
             }
 
-            // Show Reward Modal
             document.getElementById('reward-congrats').innerText = congratsPhrase;
             document.getElementById('reward-score').innerText = state.score;
             document.getElementById('reward-stars-earned').innerText = `+${starsEarned}`;
 
-            // Build Modal Stars UI View
             const starsContainer = document.getElementById('reward-stars-container');
             starsContainer.innerHTML = '';
             for (let s = 1; s <= 3; s++) {
@@ -1229,10 +1369,9 @@
             }
         }
 
-        // Initialize App on Window Loaded
+        // Inisialisasi Pertama Kali Web Dimuat
         window.onload = function() {
             renderMenuGrid();
-            // Try to warm up speech synthesis
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.getVoices();
             }
