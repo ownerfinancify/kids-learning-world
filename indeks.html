@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Learning World 🌟 Taman Belajar & Bermain Anak</title>
+    <!-- Tailwind CSS untuk Desain Responsif & Modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts untuk Tipografi Ramah Anak -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@400..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fef9c3 0%, #ecfeff 100%);
+            overflow-x: hidden;
+            user-select: none;
+        }
+        
+        /* Animasi Gelembung Melayang */
+        .bubble-bg {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            animation: floatUp 8s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+        }
+
+        /* Animasi Bounce untuk Tombol Interaktif */
+        .bounce-hover:hover {
+            transform: scale(1.05) rotate(2deg);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bounce-hover:active {
+            transform: scale(0.95);
+        }
+
+        /* Transisi Flip untuk Memory Card */
+        .card-perspective {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .pop-effect {
+            animation: pop 0.4s ease-out;
+        }
+
+        /* Scrollbar Halus */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ecfeff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a5f3fc;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-hidden text-slate-700">
+
+    <!-- Canvas Selebrasi Kembang Api / Confetti -->
+    <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <!-- Background Gelembung Melayang -->
+    <div id="bubble-container" class="absolute inset-0 pointer-events-none z-0"></div>
+
+    <!-- CONTAINER UTAMA APLIKASI -->
+    <main class="w-full max-w-4xl mx-auto px-4 py-6 z-10 flex-grow flex flex-col justify-center">
+        
+        <!-- KEPALA HALAMAN (HEADER) -->
+        <header class="flex justify-between items-center mb-6 bg-white/70 backdrop-blur-md p-4 rounded-3xl shadow-md border-4 border-cyan-100">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="goToScreen('home')">
+                <div class="bg-gradient-to-tr from-amber-400 to-pink-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-amber-300/50 transform rotate-6 hover:rotate-12 transition-transform">
+                    🌈
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-400 bg-clip-text text-transparent">
+                        Kids Learning World
+                    </h1>
+                    <p class="text-xs text-slate-500 font-semibold tracking-wide">TAMAN BELAJAR & BERMAIN</p>
+                </div>
+            </div>
+
+            <!-- Panel Status Global (Bintang & Suara) -->
+            <div class="flex items-center gap-2">
+                <!-- Total Bintang -->
+                <div class="bg-amber-100 text-amber-600 font-bold px-3 py-2 rounded-2xl border-2 border-amber-300 flex items-center gap-1 shadow-sm">
+                    <span class="text-xl">⭐</span>
+                    <span id="global-stars" class="text-sm md:text-base">0</span>
+                </div>
+                <!-- Tombol On/Off Suara -->
+                <button id="btn-sound" onclick="toggleSound()" class="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-lg bounce-hover shadow-sm">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+                <!-- Tombol Ucapkan Ulang (Text to Speech) -->
+                <button id="btn-tts" onclick="speakCurrentQuestion()" class="bg-purple-100 text-purple-600 w-10 h-10 rounded-2xl border-2 border-purple-300 flex items-center justify-center text-lg bounce-hover shadow-sm hidden">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- LAYAR 1: BERANDA / MENU UTAMA -->
+        <section id="screen-home" class="space-y-6">
+            <div class="text-center space-y-2 mb-8 pop-effect">
+                <span class="bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-sm font-bold tracking-wider inline-block transform -rotate-2">HALO TEMAN-TEMAN! 👋</span>
+                <h2 class="text-2xl md:text-4xl font-extrabold text-cyan-600 drop-shadow-sm">Mau Belajar & Bermain Apa Hari Ini?</h2>
+                <p class="text-slate-500 text-sm md:text-base">Pilih salah satu dunia permainan seru di bawah ini ya!</p>
+            </div>
+
+            <!-- Kotak Pilihan Game -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5" id="menu-grid">
+                <!-- Daftar game akan dimuat secara dinamis oleh JavaScript -->
+            </div>
+        </section>
+
+        <!-- LAYAR 2: ARENA PERMAINAN -->
+        <section id="screen-game" class="hidden flex-col items-center justify-center space-y-6">
+            <!-- Informasi Bar Game -->
+            <div class="w-full bg-white/80 backdrop-blur-md p-4 rounded-3xl border-4 border-cyan-100 shadow-md flex justify-between items-center">
+                <!-- Tombol Kembali -->
+                <button onclick="goToScreen('home')" class="bg-rose-100 text-rose-600 px-4 py-2 rounded-2xl border-2 border-rose-300 font-bold flex items-center gap-2 bounce-hover text-sm">
+                    <i class="fa-solid fa-house"></i> Menu
+                </button>
+                <!-- Judul Game & Progress -->
+                <div class="text-center">
+                    <h3 id="game-title" class="text-lg md:text-xl font-bold text-cyan-600">Nama Game</h3>
+                    <div class="flex items-center gap-1 justify-center mt-1">
+                        <span id="game-progress-text" class="text-xs font-semibold text-slate-400">Soal 1 / 5</span>
+                    </div>
+                </div>
+                <!-- Skor Saat Ini -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-pink-50 text-pink-500 font-bold px-3 py-1.5 rounded-xl border border-pink-200 text-xs md:text-sm">
+                        Skor: <span id="game-score">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progres Bar Visual -->
+            <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden border border-slate-300 p-0.5">
+                <div id="game-progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-300" style="width: 20%;"></div>
+            </div>
+
+            <!-- PAPAN KERJA UTAMA GAME (DIPANTAU JAVASCRIPT) -->
+            <div id="game-viewport" class="w-full bg-white/95 p-6 md:p-8 rounded-3xl border-4 border-cyan-300 shadow-xl min-h-[350px] flex flex-col justify-between items-center relative z-10">
+                <!-- Konten dinamis game akan disisipkan di sini -->
+            </div>
+
+            <!-- Kontrol Mengulang Game -->
+            <div class="flex justify-center gap-3">
+                <button onclick="restartCurrentGame()" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-amber-600 bounce-hover text-base flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> Ulangi Permainan
+                </button>
+            </div>
+        </section>
+
+        <!-- LAYAR 3: MODAL HASIL / REWARD POP-UP -->
+        <div id="reward-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white max-w-md w-full rounded-[2.5rem] border-8 border-amber-400 p-6 md:p-8 text-center space-y-6 shadow-2xl relative pop-effect">
+                
+                <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 text-6xl">
+                    🎉🌟🎉
+                </div>
+
+                <div class="space-y-2 mt-4">
+                    <h4 id="reward-congrats" class="text-3xl font-extrabold text-amber-500 drop-shadow-sm">HEBAT SEKALI!</h4>
+                    <p id="reward-subtitle" class="text-slate-500 text-sm font-semibold">Kamu sudah menyelesaikan tantangan ini!</p>
+                </div>
+
+                <!-- Bintang Animasi -->
+                <div class="flex justify-center items-center gap-3 py-2 text-5xl md:text-6xl" id="reward-stars-container">
+                    <span class="animate-bounce" style="animation-delay: 0.1s;">⭐</span>
+                    <span class="animate-bounce" style="animation-delay: 0.3s;">⭐</span>
+                    <span class="animate-bounce" style="animation-delay: 0.5s;">⭐</span>
+                </div>
+
+                <!-- Kartu Hasil Rincian -->
+                <div class="bg-gradient-to-tr from-cyan-50 to-indigo-50 p-4 rounded-3xl border-2 border-cyan-100 flex justify-around">
+                    <div>
+                        <span class="text-xs text-slate-400 font-bold block">SKOR KAMU</span>
+                        <span id="reward-score" class="text-2xl font-bold text-cyan-600">0</span>
+                    </div>
+                    <div class="border-r-2 border-slate-200"></div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-bold block">BINTANG BARU</span>
+                        <span id="reward-stars-earned" class="text-2xl font-bold text-amber-500">+3</span>
+                    </div>
+                </div>
+
+                <!-- Pemutar Ulang Suara Selebrasi -->
+                <button onclick="speakText(document.getElementById('reward-congrats').innerText + ', skor kamu adalah ' + document.getElementById('reward-score').innerText)" class="bg-purple-100 text-purple-600 w-12 h-12 rounded-full border-2 border-purple-300 flex items-center justify-center text-xl bounce-hover mx-auto shadow-sm">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+
+                <!-- Tombol Navigasi Keluar / Mengulang -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="closeRewardModal('home')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-rose-600 bounce-hover flex-1 text-sm md:text-base">
+                        <i class="fa-solid fa-house"></i> Menu Utama
+                    </button>
+                    <button onclick="closeRewardModal('replay')" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-emerald-600 bounce-hover flex-1 text-sm md:text-base">
+                        <i class="fa-solid fa-play"></i> Main Lagi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER APLIKASI -->
+    <footer class="w-full text-center py-4 bg-white/40 border-t border-cyan-100/50 text-xs font-semibold text-slate-400 z-10">
+        © 2026 Kids Learning World. Dibuat penuh cinta untuk anak-anak cerdas Indonesia 🇮🇩
+    </footer>
+
+    <!-- LOGIKA UTAMA & GAME ENGINE -->
+    <script>
+        // Konfigurasi & Basis Data Kategori
+        const CATEGORIES = [
+            { id: 'warna', name: 'Belajar Warna', icon: '🎨', color: 'from-pink-400 to-rose-400', border: 'border-pink-300' },
+            { id: 'huruf', name: 'Tebak Huruf', icon: '🅰️', color: 'from-amber-400 to-yellow-400', border: 'border-amber-300' },
+            { id: 'angka', name: 'Tebak Angka', icon: '🔢', color: 'from-emerald-400 to-green-400', border: 'border-emerald-300' },
+            { id: 'hewan', name: 'Tebak Hewan', icon: '🦁', color: 'from-cyan-400 to-blue-400', border: 'border-cyan-300' },
+            { id: 'buah', name: 'Tebak Buah', icon: '🍓', color: 'from-red-400 to-orange-400', border: 'border-red-300' },
+            { id: 'memory', name: 'Memory Card', icon: '🃏', color: 'from-purple-400 to-indigo-400', border: 'border-purple-300' },
+            { id: 'matematika', name: 'Matematika Dasar', icon: '➕', color: 'from-sky-400 to-teal-400', border: 'border-sky-300' }
+        ];
+
+        // Database Warna (Belajar Warna)
+        const COLORS_DB = [
+            { name: 'Merah', hex: '#ef4444', text: 'text-red-500', bg: 'bg-red-500' },
+            { name: 'Biru', hex: '#3b82f6', text: 'text-blue-500', bg: 'bg-blue-500' },
+            { name: 'Hijau', hex: '#22c55e', text: 'text-green-500', bg: 'bg-green-500' },
+            { name: 'Kuning', hex: '#eab308', text: 'text-yellow-500', bg: 'bg-yellow-500' },
+            { name: 'Jingga', hex: '#f97316', text: 'text-orange-500', bg: 'bg-orange-500' },
+            { name: 'Ungu', hex: '#a855f7', text: 'text-purple-500', bg: 'bg-purple-500' },
+            { name: 'Merah Muda', hex: '#ec4899', text: 'text-pink-500', bg: 'bg-pink-500' },
+            { name: 'Cokelat', hex: '#78350f', text: 'text-amber-900', bg: 'bg-[#78350f]' }
+        ];
+
+        // Database Huruf & Objek (Tebak Huruf)
+        const LETTER_OBJECTS = [
+            { word: 'Apel', letter: 'A', emoji: '🍎' },
+            { word: 'Buku', letter: 'B', emoji: '📘' },
+            { word: 'Ceri', letter: 'C', emoji: '🍒' },
+            { word: 'Domba', letter: 'D', emoji: '🐑' },
+            { word: 'Ember', letter: 'E', emoji: '🪣' },
+            { word: 'Fosil', letter: 'F', emoji: '🦖' },
+            { word: 'Gajah', letter: 'G', emoji: '🐘' },
+            { word: 'Harimau', letter: 'H', emoji: '🐯' },
+            { word: 'Ikan', letter: 'I', emoji: '🐟' },
+            { word: 'Jeruk', letter: 'J', emoji: '🍊' },
+            { word: 'Kucing', letter: 'K', emoji: '🐱' },
+            { word: 'Lemon', letter: 'L', emoji: '🍋' },
+            { word: 'Monyet', letter: 'M', emoji: '🐒' },
+            { word: 'Nanas', letter: 'N', emoji: '🍍' },
+            { word: 'Obor', letter: 'O', emoji: '🔥' },
+            { word: 'Pisang', letter: 'P', emoji: '🍌' },
+            { word: 'Ratu', letter: 'R', emoji: '👸' },
+            { word: 'Sapi', letter: 'S', emoji: '🐄' },
+            { word: 'Topi', letter: 'T', emoji: '🎩' },
+            { word: 'Ular', letter: 'U', emoji: '🐍' },
+            { word: 'Wortel', letter: 'W', emoji: '🥕' }
+        ];
+
+        // Database Hewan (Tebak Hewan)
+        const ANIMALS_DB = [
+            { name: 'Gajah', emoji: '🐘' },
+            { name: 'Singa', emoji: '🦁' },
+            { name: 'Monyet', emoji: '🐒' },
+            { name: 'Kelinci', emoji: '🐰' },
+            { name: 'Kura-kura', emoji: '🐢' },
+            { name: 'Sapi', emoji: '🐄' },
+            { name: 'Ayam', emoji: '🐔' },
+            { name: 'Kucing', emoji: '🐱' },
+            { name: 'Anjing', emoji: '🐶' },
+            { name: 'Panda', emoji: '🐼' },
+            { name: 'Harimau', emoji: '🐯' },
+            { name: 'Ular', emoji: '🐍' }
+        ];
+
+        // Database Buah (Tebak Buah)
+        const FRUITS_DB = [
+            { name: 'Apel', emoji: '🍎' },
+            { name: 'Pisang', emoji: '🍌' },
+            { name: 'Stroberi', emoji: '🍓' },
+            { name: 'Anggur', emoji: '🍇' },
+            { name: 'Semangka', emoji: '🍉' },
+            { name: 'Jeruk', emoji: '🍊' },
+            { name: 'Nanas', emoji: '🍍' },
+            { name: 'Ceri', emoji: '🍒' },
+            { name: 'Alpukat', emoji: '🥑' },
+            { name: 'Lemon', emoji: '🍋' }
+        ];
+
+        // Kumpulan Emoji untuk Memory Game
+        const MEMORY_EMOJIS = ['🦁', '🐙', '🍓', '🚗', '🚁', '🍔', '🦊', '🚀', '🥑', '🎈', '🍰', '🐼'];
+
+        // State Utama Aplikasi
+        let state = {
+            stars: {}, // Berisi bintang per kategori, contoh: { warna: 3, huruf: 2 }
+            soundEnabled: true,
+            activeScreen: 'home',
+            activeGame: null,
+            score: 0,
+            questionIndex: 0,
+            maxQuestions: 5,
+            currentData: null, 
+            memoryCards: [],
+            selectedCards: []
+        };
+
+        // Inisialisasi Audio Synth (Membuat suara tanpa butuh file lagu tambahan)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthSound(type) {
+            if (!state.soundEnabled) return;
+            
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // Nada C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // Nada E5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.setValueAtTime(0.2, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'incorrect') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.25);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'complete') {
+                const notes = [261.63, 329.63, 392.00, 523.25]; // Akor Mayor C
+                notes.forEach((freq, idx) => {
+                    const oscNode = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    oscNode.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    oscNode.type = 'sine';
+                    oscNode.frequency.setValueAtTime(freq, now + idx * 0.1);
+                    gainNode.gain.setValueAtTime(0.15, now + idx * 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
+                    
+                    oscNode.start(now + idx * 0.1);
+                    oscNode.stop(now + idx * 0.1 + 0.4);
+                });
+            }
+        }
+
+        // TEXT TO SPEECH (Pembaca Suara Asisten Bahasa Indonesia)
+        function speakText(text) {
+            if (!state.soundEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID'; 
+                utterance.rate = 1.0;     
+                utterance.pitch = 1.25;   
+                
+                const voices = window.speechSynthesis.getVoices();
+                const idVoice = voices.find(v => v.lang.includes('id') || v.name.toLowerCase().includes('indonesia'));
+                if (idVoice) utterance.voice = idVoice;
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {};
+        }
+
+        // ENGINE CELEBRATION CONFETTI (Canvas HTML5)
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let confettiActive = false;
+        let confettiArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 8 + 6;
+                this.color = `hsl(${Math.random() * 360}, 100%, 65%)`;
+                this.speedY = Math.random() * 4 + 3;
+                this.speedX = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 4 - 2;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfetti() {
+            confettiArray = [];
+            for (let i = 0; i < 100; i++) {
+                confettiArray.push(new ConfettiParticle());
+            }
+            confettiActive = true;
+            animateConfetti();
+            setTimeout(() => {
+                confettiActive = false;
+            }, 4000); 
+        }
+
+        function animateConfetti() {
+            if (!confettiActive && confettiArray.every(p => p.y > canvas.height)) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+
+        // MEMBUAT GELEMBUNG FLOAT DI BACKGROUND
+        const bubbleContainer = document.getElementById('bubble-container');
+        function createBubbles() {
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble-bg';
+                const size = Math.random() * 80 + 30;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}vw`;
+                bubble.style.animationDelay = `${Math.random() * 8}s`;
+                bubble.style.animationDuration = `${Math.random() * 6 + 6}s`;
+                bubbleContainer.appendChild(bubble);
+            }
+        }
+        createBubbles();
+
+        // MERENDER PILIHAN KARTU MENU UTAMA
+        function renderMenuGrid() {
+            const menuGrid = document.getElementById('menu-grid');
+            menuGrid.innerHTML = '';
+
+            CATEGORIES.forEach(cat => {
+                const starsEarned = state.stars[cat.id] || 0;
+                
+                let starsHTML = '';
+                for (let s = 1; s <= 3; s++) {
+                    if (s <= starsEarned) {
+                        starsHTML += '<span class="text-amber-400">★</span>';
+                    } else {
+                        starsHTML += '<span class="text-slate-300">★</span>';
+                    }
+                }
+
+                const card = document.createElement('button');
+                card.onclick = () => selectGame(cat.id);
+                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-5 rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[190px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
+                card.innerHTML = `
+                    <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl font-bold select-none pointer-events-none">
+                        ${cat.icon}
+                    </div>
+                    <div class="text-5xl my-2">${cat.icon}</div>
+                    <div class="font-bold text-lg leading-tight">${cat.name}</div>
+                    <div class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-slate-600 font-bold text-xs flex items-center gap-1 border border-white/50 shadow-inner mt-2">
+                        ${starsHTML} <span class="ml-1">${starsEarned}/3</span>
+                    </div>
+                `;
+                menuGrid.appendChild(card);
+            });
+
+            const totalStars = Object.values(state.stars).reduce((a, b) => a + b, 0);
+            document.getElementById('global-stars').innerText = totalStars;
+        }
+
+        // PENGATUR SUARA & NAVIGASI LAYAR
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const btn = document.getElementById('btn-sound');
+            
+            if (state.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                btn.className = 'bg-emerald-100 text-emerald-600 w-10 h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-lg bounce-hover shadow-sm';
+                playSynthSound('click');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+                btn.className = 'bg-rose-100 text-rose-600 w-10 h-10 rounded-2xl border-2 border-rose-300 flex items-center justify-center text-lg bounce-hover shadow-sm';
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+            }
+        }
+
+        function goToScreen(screen) {
+            playSynthSound('click');
+            
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('btn-tts').classList.add('hidden');
+
+            if (screen === 'home') {
+                document.getElementById('screen-home').classList.remove('hidden');
+                renderMenuGrid();
+                state.activeGame = null;
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            } else if (screen === 'game') {
+                document.getElementById('screen-game').classList.remove('hidden');
+            }
+        }
+
+        function selectGame(gameId) {
+            state.activeGame = gameId;
+            goToScreen('game');
+            restartCurrentGame();
+        }
+
+        function restartCurrentGame() {
+            state.score = 0;
+            state.questionIndex = 0;
+            state.selectedCards = [];
+            
+            const cat = CATEGORIES.find(c => c.id === state.activeGame);
+            document.getElementById('game-title').innerText = cat.name;
+            document.getElementById('game-score').innerText = state.score;
+
+            if (state.activeGame === 'memory') {
+                state.maxQuestions = 1; 
+                document.getElementById('game-progress-text').innerText = 'Kumpulkan Semua Pasangan!';
+                document.getElementById('game-progress-bar').style.width = '50%';
+            } else {
+                state.maxQuestions = 5;
+                updateProgressBar();
+            }
+
+            nextQuestion();
+        }
+
+        function updateProgressBar() {
+            if (state.activeGame === 'memory') return;
+            const progressPercent = ((state.questionIndex) / state.maxQuestions) * 100;
+            document.getElementById('game-progress-text').innerText = `Pertanyaan ${state.questionIndex + 1} / ${state.maxQuestions}`;
+            document.getElementById('game-progress-bar').style.width = `${progressPercent}%`;
+        }
+
+        function speakCurrentQuestion() {
+            if (!state.currentData || !state.currentData.instruction) return;
+            speakText(state.currentData.instruction);
+        }
+
+        // ROUTER PENAMPIL SOAL UTAMA
+        function nextQuestion() {
+            if (state.questionIndex >= state.maxQuestions && state.activeGame !== 'memory') {
+                endGameSession();
+                return;
+            }
+
+            updateProgressBar();
+            const viewport = document.getElementById('game-viewport');
+            viewport.innerHTML = '';
+
+            document.getElementById('btn-tts').classList.remove('hidden');
+
+            switch(state.activeGame) {
+                case 'warna':
+                    buildWarnaGame(viewport);
+                    break;
+                case 'huruf':
+                    buildHurufGame(viewport);
+                    break;
+                case 'angka':
+                    buildAngkaGame(viewport);
+                    break;
+                case 'hewan':
+                    buildHewanGame(viewport);
+                    break;
+                case 'buah':
+                    buildBuahGame(viewport);
+                    break;
+                case 'memory':
+                    buildMemoryGame(viewport);
+                    break;
+                case 'matematika':
+                    buildMatematikaGame(viewport);
+                    break;
+            }
+
+            setTimeout(() => {
+                speakCurrentQuestion();
+            }, 300);
+        }
+
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // ==========================================
+        // 1. GAME: BELAJAR WARNA
+        // ==========================================
+        function buildWarnaGame(container) {
+            const correctColor = COLORS_DB[Math.floor(Math.random() * COLORS_DB.length)];
+            const wrongColors = shuffleArray(COLORS_DB.filter(c => c.name !== correctColor.name)).slice(0, 3);
+            const choices = shuffleArray([correctColor, ...wrongColors]);
+
+            state.currentData = {
+                correctAnswer: correctColor.name,
+                instruction: `Manakah warna ${correctColor.name}?`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Pilih warna di bawah ini yang bernama:</h4>
+                    <div class="text-4xl md:text-5xl font-extrabold tracking-wide drop-shadow-sm transition-all transform hover:scale-105" style="color: ${correctColor.hex}">
+                        ${correctColor.name.toUpperCase()}
+                    </div>
+                    
+                    <div class="w-32 h-32 rounded-full mx-auto shadow-lg border-4 border-slate-100 flex items-center justify-center text-4xl animate-pulse" style="background-color: ${correctColor.hex}">
+                        🎈
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full">
+                        ${choices.map(c => `
+                            <button onclick="checkAnswer('${c.name}', this)" class="bg-white hover:bg-slate-50 border-4 border-slate-200 hover:border-cyan-400 p-4 rounded-2xl text-lg font-bold text-slate-700 shadow-md bounce-hover flex items-center gap-2 justify-center transition-all">
+                                <span class="w-5 h-5 rounded-full inline-block border border-slate-300" style="background-color: ${c.hex}"></span>
+                                ${c.name}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 2. GAME: TEBAK HURUF AWAL
+        // ==========================================
+        function buildHurufGame(container) {
+            const currentItem = LETTER_OBJECTS[Math.floor(Math.random() * LETTER_OBJECTS.length)];
+            const wrongLetters = shuffleArray(
+                [...new Set(LETTER_OBJECTS.map(item => item.letter).filter(l => l !== currentItem.letter))]
+            ).slice(0, 3);
+
+            const choices = shuffleArray([currentItem.letter, ...wrongLetters]);
+
+            state.currentData = {
+                correctAnswer: currentItem.letter,
+                instruction: `Huruf depan dari gambar ${currentItem.word} adalah apa?`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Tebak Huruf Awal Gambar Ini:</h4>
+                    
+                    <div class="bg-gradient-to-tr from-cyan-50 to-amber-50 rounded-3xl p-6 border-4 border-dashed border-cyan-200 inline-block">
+                        <div class="text-7xl md:text-8xl animate-bounce">${currentItem.emoji}</div>
+                        <div class="mt-2 text-xl md:text-2xl font-bold text-cyan-600">${currentItem.word.toUpperCase()}</div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full mt-4">
+                        ${choices.map(letter => `
+                            <button onclick="checkAnswer('${letter}', this)" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 p-4 rounded-2xl text-2xl font-black text-amber-500 shadow-md bounce-hover transition-all">
+                                ${letter}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 3. GAME: TEBAK ANGKA (MENGHITUNG)
+        // ==========================================
+        function buildAngkaGame(container) {
+            const count = Math.floor(Math.random() * 9) + 1; 
+            const emojis = ['🎈', '🍓', '🍌', '🚗', '🐱', '🐣', '🍄', '🥕', '🍩', '🐼'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+            let displayHTML = '';
+            for (let i = 0; i < count; i++) {
+                displayHTML += `<span class="text-4xl md:text-5xl drop-shadow">${randomEmoji}</span>`;
+            }
+
+            const choiceSet = new Set([count]);
+            while (choiceSet.size < 4) {
+                const wrongValue = Math.floor(Math.random() * 9) + 1;
+                choiceSet.add(wrongValue);
+            }
+            const choices = shuffleArray([...choiceSet]);
+
+            state.currentData = {
+                correctAnswer: count.toString(),
+                instruction: `Ayo hitung, ada berapa benda di dalam kotak?`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Hitung Jumlah Benda Di Bawah Ini:</h4>
+                    
+                    <div class="bg-emerald-50/50 p-6 rounded-3xl border-4 border-emerald-200 max-w-lg mx-auto flex flex-wrap gap-3 justify-center items-center shadow-inner min-h-[120px]">
+                        ${displayHTML}
+                    </div>
+
+                    <p class="text-sm text-slate-400 font-semibold">Ada berapa, ya? Sentuh jawabannya!</p>
+
+                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full">
+                        ${choices.map(num => `
+                            <button onclick="checkAnswer('${num}', this)" class="bg-white hover:bg-emerald-50 border-4 border-slate-200 hover:border-emerald-400 p-4 rounded-2xl text-2xl font-bold text-emerald-600 shadow-md bounce-hover transition-all">
+                                ${num}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 4. GAME: TEBAK NAMA HEWAN
+        // ==========================================
+        function buildHewanGame(container) {
+            const correctAnimal = ANIMALS_DB[Math.floor(Math.random() * ANIMALS_DB.length)];
+            const wrongAnimals = shuffleArray(ANIMALS_DB.filter(a => a.name !== correctAnimal.name)).slice(0, 3);
+            const choices = shuffleArray([correctAnimal.name, ...wrongAnimals]);
+
+            state.currentData = {
+                correctAnswer: correctAnimal.name,
+                instruction: `Hewan apakah ini?`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Tebak Nama Hewan Ini:</h4>
+                    
+                    <div class="w-36 h-36 rounded-[2rem] bg-indigo-50 border-4 border-indigo-200 shadow-md flex items-center justify-center text-7xl mx-auto transform rotate-2 animate-pulse">
+                        ${correctAnimal.emoji}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full mt-4">
+                        ${choices.map(animalName => `
+                            <button onclick="checkAnswer('${animalName}', this)" class="bg-white hover:bg-indigo-50 border-4 border-slate-200 hover:border-indigo-400 p-4 rounded-2xl text-lg font-bold text-indigo-600 shadow-md bounce-hover transition-all">
+                                ${animalName}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 5. GAME: TEBAK NAMA BUAH
+        // ==========================================
+        function buildBuahGame(container) {
+            const correctFruit = FRUITS_DB[Math.floor(Math.random() * FRUITS_DB.length)];
+            const wrongFruits = shuffleArray(FRUITS_DB.filter(f => f.name !== correctFruit.name)).slice(0, 3);
+            const choices = shuffleArray([correctFruit.name, ...wrongFruits]);
+
+            state.currentData = {
+                correctAnswer: correctFruit.name,
+                instruction: `Buah apakah ini?`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Tebak Nama Buah Ini:</h4>
+                    
+                    <div class="w-36 h-36 rounded-[2rem] bg-rose-50 border-4 border-rose-200 shadow-md flex items-center justify-center text-7xl mx-auto transform -rotate-2 animate-bounce">
+                        ${correctFruit.emoji}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full mt-4">
+                        ${choices.map(fruitName => `
+                            <button onclick="checkAnswer('${fruitName}', this)" class="bg-white hover:bg-rose-50 border-4 border-slate-200 hover:border-rose-400 p-4 rounded-2xl text-lg font-bold text-rose-500 shadow-md bounce-hover transition-all">
+                                ${fruitName}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 6. GAME: MEMORY MATCHING CARDS
+        // ==========================================
+        function buildMemoryGame(container) {
+            const selectedEmojis = shuffleArray(MEMORY_EMOJIS).slice(0, 6); 
+            const doubleArray = [...selectedEmojis, ...selectedEmojis];
+            const shuffledCards = shuffleArray(doubleArray).map((emoji, index) => ({
+                id: index,
+                emoji: emoji,
+                matched: false
+            }));
+
+            state.memoryCards = shuffledCards;
+            state.selectedCards = [];
+
+            state.currentData = {
+                instruction: 'Temukan semua pasangan kartu bergambar sama!'
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-4 w-full pop-effect">
+                    <h4 class="text-xl md:text-2xl font-bold text-slate-700">Buka 2 Kartu Berwarna Sama Dan Cari Pasangannya!</h4>
+                    
+                    <div class="grid grid-cols-4 gap-3 max-w-md mx-auto w-full mt-4" id="memory-board">
+                        ${shuffledCards.map(card => `
+                            <div onclick="flipMemoryCard(${card.id}, this)" class="card-perspective cursor-pointer h-20 md:h-24 w-full select-none" data-card-id="${card.id}">
+                                <div class="card-inner w-full h-full relative rounded-2xl shadow-md border-2 border-purple-200" style="transform-style: preserve-3d;">
+                                    
+                                    <!-- COVER KARTU (TAMPILAN DEPAN) -->
+                                    <div class="card-front absolute inset-0 bg-gradient-to-tr from-purple-400 to-indigo-500 rounded-2xl flex items-center justify-center text-3xl text-white font-extrabold" style="backface-visibility: hidden;">
+                                        ❓
+                                    </div>
+
+                                    <!-- ISI KARTU (GAMBAR SETELAH DIBUKA) -->
+                                    <div class="card-back absolute inset-0 bg-white rounded-2xl flex items-center justify-center text-4xl border-2 border-emerald-400" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                                        ${card.emoji}
+                                    </div>
+
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function flipMemoryCard(id, element) {
+            if (state.selectedCards.length >= 2) return;
+            const cardObj = state.memoryCards.find(c => c.id === id);
+            if (cardObj.matched) return;
+            if (state.selectedCards.some(c => c.id === id)) return;
+
+            playSynthSound('click');
+            const innerCard = element.querySelector('.card-inner');
+            innerCard.classList.add('card-flipped');
+
+            state.selectedCards.push({ id, emoji: cardObj.emoji, element });
+
+            if (state.selectedCards.length === 2) {
+                const card1 = state.selectedCards[0];
+                const card2 = state.selectedCards[1];
+
+                if (card1.emoji === card2.emoji) {
+                    setTimeout(() => {
+                        playSynthSound('correct');
+                        
+                        state.memoryCards.find(c => c.id === card1.id).matched = true;
+                        state.memoryCards.find(c => c.id === card2.id).matched = true;
+
+                        card1.element.querySelector('.card-back').classList.add('bg-emerald-50');
+                        card2.element.querySelector('.card-back').classList.add('bg-emerald-50');
+
+                        state.score += 20;
+                        document.getElementById('game-score').innerText = state.score;
+
+                        state.selectedCards = [];
+
+                        if (state.memoryCards.every(c => c.matched)) {
+                            triggerConfetti();
+                            setTimeout(() => {
+                                endGameSession();
+                            }, 800);
+                        }
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        playSynthSound('incorrect');
+                        card1.element.querySelector('.card-inner').classList.remove('card-flipped');
+                        card2.element.querySelector('.card-inner').classList.remove('card-flipped');
+                        state.selectedCards = [];
+                    }, 1200);
+                }
+            }
+        }
+
+        // ==========================================
+        // 7. GAME: MATEMATIKA BERHITUNG
+        // ==========================================
+        function buildMatematikaGame(container) {
+            const num1 = Math.floor(Math.random() * 5) + 1; 
+            const num2 = Math.floor(Math.random() * 4) + 1; 
+            
+            const isAdd = Math.random() > 0.4;
+            let equationText = '';
+            let valResult = 0;
+            let mathSymbol = '';
+
+            const mathEmoji = ['🍎', '🍕', '🍰', '🍪', '🎈'][Math.floor(Math.random() * 5)];
+            let operand1Emoji = '';
+            let operand2Emoji = '';
+
+            for (let i = 0; i < num1; i++) operand1Emoji += mathEmoji;
+
+            if (isAdd) {
+                valResult = num1 + num2;
+                mathSymbol = '＋';
+                equationText = `${num1} tambah ${num2}`;
+                for (let i = 0; i < num2; i++) operand2Emoji += mathEmoji;
+            } else {
+                const high = Math.max(num1, num2);
+                const low = Math.min(num1, num2);
+                valResult = high - low;
+                mathSymbol = '－';
+                equationText = `${high} kurang ${low}`;
+                
+                operand1Emoji = '';
+                for (let i = 0; i < high; i++) operand1Emoji += mathEmoji;
+                for (let i = 0; i < low; i++) operand2Emoji += mathEmoji;
+            }
+
+            const optionsSet = new Set([valResult]);
+            while (optionsSet.size < 4) {
+                const randomOffset = Math.floor(Math.random() * 8);
+                optionsSet.add(randomOffset);
+            }
+            const choices = shuffleArray([...optionsSet]);
+
+            state.currentData = {
+                correctAnswer: valResult.toString(),
+                instruction: `Berapakah hasil dari ${equationText}? Ayo dihitung!`
+            };
+
+            container.innerHTML = `
+                <div class="text-center space-y-6 w-full pop-effect">
+                    <h4 class="text-2xl font-bold text-slate-700">Tantangan Berhitung:</h4>
+                    
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 bg-amber-50/50 p-6 rounded-3xl border-4 border-amber-200 inline-block max-w-full mx-auto">
+                        <div class="flex flex-col items-center">
+                            <span class="text-2xl font-black bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num1 : Math.max(num1, num2)}</span>
+                            <span class="text-xs text-slate-400 font-bold mt-1 max-w-[120px] truncate">${operand1Emoji}</span>
+                        </div>
+                        
+                        <div class="text-3xl font-black text-amber-500">${mathSymbol}</div>
+                        
+                        <div class="flex flex-col items-center">
+                            <span class="text-2xl font-black bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num2 : Math.min(num1, num2)}</span>
+                            <span class="text-xs text-slate-400 font-bold mt-1 max-w-[120px] truncate">${operand2Emoji}</span>
+                        </div>
+
+                        <div class="text-3xl font-black text-slate-400">＝</div>
+
+                        <div class="bg-cyan-100 text-cyan-600 w-16 h-14 rounded-2xl border-4 border-dashed border-cyan-300 flex items-center justify-center text-3xl font-black animate-pulse">
+                            ?
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full mt-4">
+                        ${choices.map(choice => `
+                            <button onclick="checkAnswer('${choice}', this)" class="bg-white hover:bg-cyan-50 border-4 border-slate-200 hover:border-cyan-400 p-4 rounded-2xl text-2xl font-bold text-cyan-600 shadow-md bounce-hover transition-all">
+                                ${choice}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // PROSES PEMERIKSAAN JAWABAN ANAK
+        // ==========================================
+        function checkAnswer(answerSelected, buttonElement) {
+            const parent = buttonElement.parentElement;
+            const buttons = parent.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (answerSelected === state.currentData.correctAnswer) {
+                playSynthSound('correct');
+                buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-emerald-500 bg-emerald-50 text-emerald-600');
+                buttonElement.innerHTML += ' 🌟';
+
+                state.score += 20;
+                document.getElementById('game-score').innerText = state.score;
+
+                setTimeout(() => {
+                    state.questionIndex++;
+                    nextQuestion();
+                }, 1200);
+
+            } else {
+                playSynthSound('incorrect');
+                buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-rose-500 bg-rose-50 text-rose-500 animate-shake');
+                buttonElement.style.animation = "shake 0.4s";
+
+                setTimeout(() => {
+                    const buttonsList = Array.from(buttons);
+                    const correctBtn = buttonsList.find(b => b.innerText.trim().includes(state.currentData.correctAnswer) || b.innerText.trim() === state.currentData.correctAnswer);
+                    if (correctBtn) {
+                        correctBtn.className = correctBtn.className.replace('border-slate-200', 'border-emerald-500 bg-emerald-50 text-emerald-600');
+                    }
+                }, 400);
+
+                setTimeout(() => {
+                    state.questionIndex++;
+                    nextQuestion();
+                }, 1800);
+            }
+        }
+
+        const animStyle = document.createElement('style');
+        animStyle.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-8px); }
+                75% { transform: translateX(8px); }
+            }
+        `;
+        document.head.appendChild(animStyle);
+
+        // ==========================================
+        // SELEBRASI SELESAI / AKHIR TINGKATAN
+        // ==========================================
+        function endGameSession() {
+            playSynthSound('complete');
+            triggerConfetti();
+
+            let starsEarned = 1;
+            let congratsPhrase = 'Keren!';
+            
+            if (state.score >= 100) {
+                starsEarned = 3;
+                congratsPhrase = 'SANGAT PINTAR! 🌟';
+            } else if (state.score >= 60) {
+                starsEarned = 2;
+                congratsPhrase = 'HEBAT SEKALI! 👍';
+            } else {
+                starsEarned = 1;
+                congratsPhrase = 'BAGUS! AYO COBA LAGI! 💪';
+            }
+
+            const currentRecord = state.stars[state.activeGame] || 0;
+            if (starsEarned > currentRecord) {
+                state.stars[state.activeGame] = starsEarned;
+            }
+
+            document.getElementById('reward-congrats').innerText = congratsPhrase;
+            document.getElementById('reward-score').innerText = state.score;
+            document.getElementById('reward-stars-earned').innerText = `+${starsEarned}`;
+
+            const starsContainer = document.getElementById('reward-stars-container');
+            starsContainer.innerHTML = '';
+            for (let s = 1; s <= 3; s++) {
+                if (s <= starsEarned) {
+                    starsContainer.innerHTML += `<span class="animate-bounce" style="animation-delay: ${s * 0.15}s; filter: drop-shadow(0 4px 6px rgba(251,191,36,0.4))">⭐</span>`;
+                } else {
+                    starsContainer.innerHTML += `<span class="opacity-30" style="filter: grayscale(1)">⭐</span>`;
+                }
+            }
+
+            document.getElementById('reward-modal').classList.remove('hidden');
+        }
+
+        function closeRewardModal(action) {
+            playSynthSound('click');
+            document.getElementById('reward-modal').classList.add('hidden');
+            
+            if (action === 'home') {
+                goToScreen('home');
+            } else if (action === 'replay') {
+                restartCurrentGame();
+            }
+        }
+
+        window.onload = function() {
+            renderMenuGrid();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+        };
+    </script>
+</body>
+</html>
