@@ -268,7 +268,7 @@
             { word: 'Obor', letter: 'O', emoji: '🔥' }, { word: 'Pisang', letter: 'P', emoji: '🍌' },
             { word: 'Ratu', letter: 'R', emoji: '👸' }, { word: 'Sapi', letter: 'S', emoji: '🐄' },
             { word: 'Topi', letter: 'T', emoji: '🎩' }, { word: 'Ular', letter: 'U', emoji: '🐍' },
-            { word: 'Wortel', letter: 'W', emoji: '🥕' }, { word: 'Yoyo', letter: 'Y', emoji: '🪀' }
+            { word: 'Wortel', letter: 'W', emoji: '🥕' }, { word: 'Yoyo', letter: 'Y', emoji: 'ad' }
         ];
 
         const ANIMALS_DB = [
@@ -433,13 +433,13 @@
                 this.x += this.speedX;
                 this.rotation += this.rotationSpeed;
                 
-                // PERBAIKAN: Jika confettiActive sudah false, jangan lakukan daur ulang partikel ke atas layar!
+                // Jika selebrasi sudah dihentikan, biarkan partikel jatuh habis tanpa respawn ke atas
                 if (this.y > canvas.height) {
                     if (confettiActive) {
                         this.y = -20;
                         this.x = Math.random() * canvas.width;
                     } else {
-                        this.y = canvas.height + 500; // Letakkan di luar jangkauan agar tidak digambar lagi
+                        this.y = canvas.height + 500; // di luar jangkauan gambar
                     }
                 }
             }
@@ -460,14 +460,12 @@
             }
             confettiActive = true;
             animateConfetti();
-            // Durasi semburan aktif dihentikan setelah 4 detik (partikel tersisa akan jatuh habis secara natural)
             setTimeout(() => {
                 confettiActive = false;
             }, 4000);
         }
 
         function animateConfetti() {
-            // Periksa jika seluruh partikel sudah jatuh di luar layar, maka hentikan requestAnimationFrame loop
             const allOut = confettiArray.every(p => p.y > canvas.height);
             if (!confettiActive && allOut) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -982,7 +980,7 @@
         }
 
         // ==========================================
-        // 8. GAME: PETUALANGAN HERO (MARIO STYLE - UP TO STAGE 30)
+        // 8. GAME: PETUALANGAN HERO (SCROLLING CAMERA & STAGE 30)
         // ==========================================
         function buildPetualanganGame(container) {
             container.innerHTML = `
@@ -1000,7 +998,7 @@
                             <button id="btn-jump" class="bg-indigo-500 active:bg-indigo-400 text-white w-11 h-11 rounded-2xl text-xl flex items-center justify-center select-none active:scale-95 shadow-md border-b-4 border-indigo-700"><i class="fa-solid fa-arrow-up"></i></button>
                         </div>
                     </div>
-                    <p class="text-[9px] text-slate-400 font-bold mt-2 hidden sm:block">PC: Tombol Arrow (Kiri/Kanan/Atas) & F (Tembak). Sentuh Tiang Bendera Merah untuk Next Stage!</p>
+                    <p class="text-[9px] text-slate-400 font-bold mt-2 hidden sm:block">PC: Tombol Arrow (Kiri/Kanan/Atas) & F (Tembak). Sentuh Tiang Bendera untuk melaju ke Stage berikutnya!</p>
                 </div>
             `;
 
@@ -1008,10 +1006,6 @@
         }
 
         function initPlatformerEngine() {
-            const canvasEl = document.getElementById('platformer-canvas');
-            if (!canvasEl) return;
-            const pCtx = canvasEl.getContext('2d');
-
             // Setup State Fisika Platformer dengan Stage Awal
             state.platformer = {
                 stage: 1,
@@ -1028,11 +1022,14 @@
                 enemies: [],
                 stars: [],
                 platforms: [],
-                goal: { x: 360, y: 140, w: 20, h: 50 }, // Portal / Tiang Bendera Goal
+                goal: { x: 940, y: 140, w: 20, h: 50 }, // Portal / Tiang Bendera diletakkan di koordinat jauh 940
                 keys: { left: false, right: false, jump: false, shoot: false },
                 gravity: 0.35,
                 friction: 0.8,
                 scoreLocal: 0,
+                cameraX: 0,
+                virtualWidth: 1000, // Lebar virtual arena diperpanjang menjadi 1000px
+                warningTimer: 0,
                 animationFrameId: null
             };
 
@@ -1095,11 +1092,127 @@
                 });
             }
 
-            // CORE PHYSICS LOOP PLATFORMER
-            function gameLoop() {
-                if (!state.platformer) return;
+            // Jalankan loop renderer
+            restartPlatformerLoop();
+        }
 
-                // 1. Arah hadap pahlawan
+        function generateStageLayout(stage) {
+            if (!state.platformer) return;
+            const p = state.platformer;
+            p.bullets = [];
+            p.cameraX = 0;
+            p.hero.x = 30;
+            p.hero.y = 150;
+            p.hero.vx = 0;
+            p.hero.vy = 0;
+
+            // Lebar panjang Virtual Level
+            p.virtualWidth = 1000;
+            p.goal.x = 940;
+
+            // Platform tanah dasar dengan celah lubang/pits seru
+            p.platforms = [
+                { x: 0, y: 190, w: 320, h: 30 },
+                { x: 380, y: 190, w: 300, h: 30 },
+                { x: 740, y: 190, w: 260, h: 30 }
+            ];
+
+            // Platform melayang berdasarkan stage modulo 3
+            const layoutType = stage % 3;
+            const speedMultiplier = 0.5 + (stage * 0.05); // kecepatan monster naik bertahap
+
+            if (layoutType === 1) {
+                p.platforms.push(
+                    { x: 100, y: 140, w: 100, h: 12 },
+                    { x: 240, y: 100, w: 100, h: 12 },
+                    { x: 420, y: 140, w: 120, h: 12 },
+                    { x: 580, y: 100, w: 100, h: 12 },
+                    { x: 780, y: 140, w: 100, h: 12 }
+                );
+
+                p.stars = [
+                    { x: 140, y: 110, w: 16, h: 16, collected: false },
+                    { x: 280, y: 70,  w: 16, h: 16, collected: false },
+                    { x: 470, y: 110, w: 16, h: 16, collected: false },
+                    { x: 620, y: 70,  w: 16, h: 16, collected: false },
+                    { x: 820, y: 110, w: 16, h: 16, collected: false }
+                ];
+
+                p.enemies = [
+                    { x: 120, y: 116, w: 20, h: 20, vx: speedMultiplier, xMin: 100, xMax: 180, active: true },
+                    { x: 440, y: 116, w: 20, h: 20, vx: -speedMultiplier, xMin: 420, xMax: 520, active: true },
+                    { x: 800, y: 116, w: 20, h: 20, vx: speedMultiplier, xMin: 780, xMax: 860, active: true }
+                ];
+            } else if (layoutType === 2) {
+                p.platforms.push(
+                    { x: 80, y: 130, w: 120, h: 12 },
+                    { x: 260, y: 140, w: 80, h: 12 },
+                    { x: 380, y: 100, w: 140, h: 12 },
+                    { x: 560, y: 140, w: 100, h: 12 },
+                    { x: 720, y: 110, w: 120, h: 12 },
+                    { x: 860, y: 140, w: 80, h: 12 }
+                );
+
+                p.stars = [
+                    { x: 130, y: 100, w: 16, h: 16, collected: false },
+                    { x: 290, y: 110, w: 16, h: 16, collected: false },
+                    { x: 440, y: 70,  w: 16, h: 16, collected: false },
+                    { x: 600, y: 110, w: 16, h: 16, collected: false },
+                    { x: 770, y: 80,  w: 16, h: 16, collected: false }
+                ];
+
+                p.enemies = [
+                    { x: 90,  y: 106, w: 20, h: 20, vx: speedMultiplier, xMin: 80, xMax: 180, active: true },
+                    { x: 400, y: 76,  w: 20, h: 20, vx: -speedMultiplier, xMin: 380, xMax: 500, active: true },
+                    { x: 740, y: 86,  w: 20, h: 20, vx: speedMultiplier, xMin: 720, xMax: 820, active: true }
+                ];
+            } else { // layoutType === 0
+                p.platforms.push(
+                    { x: 120, y: 110, w: 140, h: 12 },
+                    { x: 300, y: 140, w: 100, h: 12 },
+                    { x: 480, y: 110, w: 140, h: 12 },
+                    { x: 680, y: 140, w: 100, h: 12 },
+                    { x: 820, y: 110, w: 100, h: 12 }
+                );
+
+                p.stars = [
+                    { x: 180, y: 80,  w: 16, h: 16, collected: false },
+                    { x: 340, y: 110, w: 16, h: 16, collected: false },
+                    { x: 540, y: 80,  w: 16, h: 16, collected: false },
+                    { x: 720, y: 110, w: 16, h: 16, collected: false },
+                    { x: 860, y: 80,  w: 16, h: 16, collected: false }
+                ];
+
+                p.enemies = [
+                    { x: 140, y: 86,  w: 20, h: 20, vx: speedMultiplier, xMin: 120, xMax: 240, active: true },
+                    { x: 500, y: 86,  w: 20, h: 20, vx: -speedMultiplier, xMin: 480, xMax: 600, active: true },
+                    { x: 830, y: 86,  w: 20, h: 20, vx: speedMultiplier, xMin: 820, xMax: 900, active: true }
+                ];
+            }
+
+            // Tambahkan monster ekstra berjalan di tanah bawah jika level sudah tinggi (> 10)
+            if (stage > 10) {
+                p.enemies.push({ x: 480, y: 166, w: 20, h: 20, vx: 1.1 + speedMultiplier, xMin: 390, xMax: 650, active: true });
+            }
+            if (stage > 20) {
+                p.enemies.push({ x: 780, y: 166, w: 20, h: 20, vx: -(1.3 + speedMultiplier), xMin: 750, xMax: 950, active: true });
+            }
+        }
+
+        function restartPlatformerLoop() {
+            const canvasEl = document.getElementById('platformer-canvas');
+            if (!canvasEl) return;
+            const pCtx = canvasEl.getContext('2d');
+
+            if (state.platformer.animationFrameId) {
+                cancelAnimationFrame(state.platformer.animationFrameId);
+            }
+
+            function loop() {
+                if (!state.platformer) return;
+                const p = state.platformer;
+
+                // 1. Pergerakan Arah Hadap Pahlawan
                 if (p.hero.vx > 0.1) p.hero.facing = 'right';
                 if (p.hero.vx < -0.1) p.hero.facing = 'left';
 
@@ -1111,12 +1224,10 @@
                     p.hero.vx *= p.friction;
                 }
 
-                // 2. Efek Gravitasi
                 p.hero.vy += p.gravity;
                 p.hero.x += p.hero.vx;
                 p.hero.y += p.hero.vy;
 
-                // Lompat
                 if (p.keys.jump && p.hero.grounded) {
                     playSynthSound('jump');
                     p.hero.vy = -p.hero.jumpForce;
@@ -1125,7 +1236,7 @@
 
                 p.hero.grounded = false;
 
-                // 3. Tabrakan Platform
+                // 2. Tabrakan Platformer (Ground / Floating Platform)
                 p.platforms.forEach(plat => {
                     if (p.hero.x + p.hero.w > plat.x && p.hero.x < plat.x + plat.w) {
                         if (p.hero.y + p.hero.h >= plat.y && p.hero.y + p.hero.h - p.hero.vy <= plat.y + 6) {
@@ -1136,33 +1247,32 @@
                     }
                 });
 
-                // Pembatasan Layar
+                // Pembatasan Batas Kiri / Kanan Arena Virtual (1000px)
                 if (p.hero.x < 0) p.hero.x = 0;
-                if (p.hero.x + p.hero.w > canvasEl.width) p.hero.x = canvasEl.width - p.hero.w;
+                if (p.hero.x + p.hero.w > p.virtualWidth) p.hero.x = p.virtualWidth - p.hero.w;
 
-                // Jatuh Jurang
+                // Jaring Pengaman Jatuh Jurang
                 if (p.hero.y > canvasEl.height) {
                     playSynthSound('incorrect');
                     respawnHero();
                 }
 
-                // 4. Update Peluru
+                // 3. Update Posisi Peluru Bintang
                 p.bullets.forEach((b, bIdx) => {
                     b.x += b.vx;
-                    if (b.x < 0 || b.x > canvasEl.width) {
+                    if (b.x < p.cameraX || b.x > p.cameraX + 400) {
                         p.bullets.splice(bIdx, 1);
                     }
                 });
 
-                // 5. Pergerakan Slime Monster (👾)
+                // 4. Pergerakan Monster Musuh (👾 Slime)
                 p.enemies.forEach((enemy) => {
                     if (!enemy.active) return;
                     enemy.x += enemy.vx;
                     if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
-                        enemy.vx *= -1; 
+                        enemy.vx *= -1;
                     }
 
-                    // Menabrak Pahlawan 🐱
                     if (p.hero.x < enemy.x + enemy.w && p.hero.x + p.hero.w > enemy.x &&
                         p.hero.y < enemy.y + enemy.h && p.hero.y + p.hero.h > enemy.y) {
                         playSynthSound('incorrect');
@@ -1170,7 +1280,7 @@
                     }
                 });
 
-                // 6. Tembak Musuh
+                // 5. Deteksi Peluru Menabrak Musuh
                 p.bullets.forEach((b, bIdx) => {
                     p.enemies.forEach((enemy) => {
                         if (!enemy.active) return;
@@ -1179,161 +1289,118 @@
                             playSynthSound('correct');
                             enemy.active = false;
                             p.bullets.splice(bIdx, 1);
-                            addGamePoints(10); 
+                            p.scoreLocal += 20;
+                            document.getElementById('game-score').innerText = p.scoreLocal;
                         }
                     });
                 });
 
-                // 7. Ambil Bintang Emas (⭐)
+                // 6. Ambil Bintang Emas (⭐)
                 p.stars.forEach((star) => {
                     if (star.collected) return;
                     if (p.hero.x < star.x + star.w && p.hero.x + p.hero.w > star.x &&
                         p.hero.y < star.y + star.h && p.hero.y + p.hero.h > star.y) {
                         playSynthSound('correct');
                         star.collected = true;
-                        addGamePoints(15);
+                        p.scoreLocal += 20;
+                        document.getElementById('game-score').innerText = p.scoreLocal;
                     }
                 });
 
-                // 8. Cek Menyentuh Tiang Bendera Goal (Maju Stage!)
+                // 7. Deteksi Bendera Goal (Wajib Kalahkan Semua Musuh)
                 if (p.hero.x < p.goal.x + p.goal.w && p.hero.x + p.hero.w > p.goal.x &&
                     p.hero.y < p.goal.y + p.goal.h && p.hero.y + p.hero.h > p.goal.y) {
-                    advanceStage();
-                    return; // Hentikan loop frame saat transisi layout
+                    
+                    const anyEnemiesLeft = p.enemies.some(e => e.active);
+                    if (anyEnemiesLeft) {
+                        p.warningTimer = 90; // tampilkan warning selama 90 frame (1.5 detik)
+                    } else {
+                        advanceStage();
+                        return; // keluar dari loop
+                    }
                 }
 
-                // RENDER GAMBAR CANVAS
-                pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+                // 8. Sistem Kamera Scrolling Mario
+                p.cameraX = p.hero.x - 180;
+                if (p.cameraX < 0) p.cameraX = 0;
+                if (p.cameraX > p.virtualWidth - 400) p.cameraX = p.virtualWidth - 400;
 
-                // Menggambar Platform
+                // --- RENDERING CANVAS ---
+                pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+                
+                pCtx.save();
+                pCtx.translate(-p.cameraX, 0);
+
+                // Draw Platforms
                 p.platforms.forEach(plat => {
-                    pCtx.fillStyle = '#22c55e'; 
+                    pCtx.fillStyle = '#22c55e';
                     pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
-                    pCtx.fillStyle = '#15803d'; 
+                    pCtx.fillStyle = '#15803d';
                     pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
                 });
 
-                // Menggambar Tiang Bendera Goal (Flagpole)
-                pCtx.fillStyle = '#a16207'; // Tiang kayu coklat
+                // Draw Goal (Tiang Bendera Kayu & Kain Merah)
+                pCtx.fillStyle = '#a16207';
                 pCtx.fillRect(p.goal.x + 8, p.goal.y, 4, p.goal.h);
-                pCtx.fillStyle = '#ef4444'; // Bendera merah
+                pCtx.fillStyle = '#ef4444';
                 pCtx.beginPath();
                 pCtx.moveTo(p.goal.x + 12, p.goal.y);
                 pCtx.lineTo(p.goal.x + 28, p.goal.y + 10);
                 pCtx.lineTo(p.goal.x + 12, p.goal.y + 20);
                 pCtx.fill();
 
-                // Menggambar Bintang (⭐)
+                // Draw Stars
                 p.stars.forEach(star => {
                     if (star.collected) return;
                     pCtx.font = '14px Arial';
                     pCtx.fillText('⭐', star.x, star.y + 12);
                 });
 
-                // Menggambar Musuh Monster (👾)
+                // Draw Enemies
                 p.enemies.forEach(enemy => {
                     if (!enemy.active) return;
                     pCtx.font = '16px Arial';
                     pCtx.fillText('👾', enemy.x, enemy.y + 16);
                 });
 
-                // Menggambar Peluru (✨)
+                // Draw Bullets
                 p.bullets.forEach(b => {
                     pCtx.font = '10px Arial';
                     pCtx.fillText('✨', b.x, b.y + 8);
                 });
 
-                // Menggambar Karakter Pahlawan Kucing (🐱)
+                // Draw Hero Kucing
                 pCtx.font = '20px Arial';
                 pCtx.fillText('🐱', p.hero.x, p.hero.y + 18);
 
-                // Jalankan loop berikutnya
-                p.animationFrameId = requestAnimationFrame(gameLoop);
+                // Draw Lock / Unlock Status di Atas Bendera
+                const anyActive = p.enemies.some(e => e.active);
+                pCtx.font = '14px Arial';
+                pCtx.fillText(anyActive ? '🔒' : '🔓', p.goal.x + 2, p.goal.y - 10);
+
+                pCtx.restore();
+
+                // Draw HUD (Teks Melayang di Atas Kamera)
+                if (p.warningTimer > 0) {
+                    p.warningTimer--;
+                    pCtx.fillStyle = 'rgba(244, 63, 94, 0.95)';
+                    pCtx.font = 'bold 12px Arial';
+                    pCtx.textAlign = 'center';
+                    pCtx.fillText('⚠️ Kalahkan semua monster dulu!', 200, 30);
+                }
+
+                p.animationFrameId = requestAnimationFrame(loop);
             }
 
             function respawnHero() {
+                const p = state.platformer;
                 p.hero.x = 30;
                 p.hero.y = 150;
                 p.hero.vx = 0;
                 p.hero.vy = 0;
             }
 
-            function addGamePoints(pts) {
-                p.scoreLocal += pts;
-                document.getElementById('game-score').innerText = p.scoreLocal;
-            }
-
-            p.animationFrameId = requestAnimationFrame(gameLoop);
-        }
-
-        function generateStageLayout(stage) {
-            if (!state.platformer) return;
-            const p = state.platformer;
-            p.bullets = [];
-            p.hero.x = 30;
-            p.hero.y = 150;
-            p.hero.vx = 0;
-            p.hero.vy = 0;
-
-            // Platform Tanah Utama
-            p.platforms = [{ x: 0, y: 190, w: 400, h: 30 }];
-
-            // Sistem layout dinamis berulang berdasarkan pola Stage modulo 3
-            const layoutType = stage % 3;
-            const extraSpeed = stage * 0.04; // Kecepatan musuh meningkat perlahan per stage
-
-            if (layoutType === 1) {
-                p.platforms.push({ x: 80, y: 140, w: 100, h: 12 });
-                p.platforms.push({ x: 220, y: 100, w: 100, h: 12 });
-                
-                p.stars = [
-                    { x: 130, y: 110, w: 16, h: 16, collected: false },
-                    { x: 270, y: 70, w: 16, h: 16, collected: false },
-                    { x: 180, y: 160, w: 16, h: 16, collected: false }
-                ];
-                
-                p.enemies = [
-                    { x: 100, y: 116, w: 20, h: 20, vx: 0.6 + extraSpeed, xMin: 80, xMax: 170, active: true },
-                    { x: 240, y: 76, w: 20, h: 20, vx: -(0.6 + extraSpeed), xMin: 220, xMax: 310, active: true }
-                ];
-            } else if (layoutType === 2) {
-                p.platforms.push({ x: 50, y: 150, w: 80, h: 12 });
-                p.platforms.push({ x: 160, y: 110, w: 80, h: 12 });
-                p.platforms.push({ x: 270, y: 140, w: 80, h: 12 });
-                
-                p.stars = [
-                    { x: 90, y: 120, w: 16, h: 16, collected: false },
-                    { x: 200, y: 80, w: 16, h: 16, collected: false },
-                    { x: 310, y: 110, w: 16, h: 16, collected: false }
-                ];
-                
-                p.enemies = [
-                    { x: 60, y: 126, w: 20, h: 20, vx: 0.7 + extraSpeed, xMin: 50, xMax: 120, active: true },
-                    { x: 280, y: 116, w: 20, h: 20, vx: -(0.7 + extraSpeed), xMin: 270, xMax: 340, active: true }
-                ];
-            } else { // layoutType === 0
-                p.platforms.push({ x: 60, y: 130, w: 120, h: 12 });
-                p.platforms.push({ x: 220, y: 140, w: 120, h: 12 });
-                
-                p.stars = [
-                    { x: 120, y: 100, w: 16, h: 16, collected: false },
-                    { x: 280, y: 110, w: 16, h: 16, collected: false },
-                    { x: 350, y: 160, w: 16, h: 16, collected: false }
-                ];
-                
-                p.enemies = [
-                    { x: 80, y: 106, w: 20, h: 20, vx: 0.8 + extraSpeed, xMin: 60, xMax: 170, active: true },
-                    { x: 240, y: 116, w: 20, h: 20, vx: -(0.8 + extraSpeed), xMin: 220, xMax: 330, active: true }
-                ];
-            }
-
-            // Tambahkan monster ekstra berjalan di tanah bawah jika level sudah tinggi (> 10)
-            if (stage > 10) {
-                p.enemies.push({ x: 180, y: 166, w: 20, h: 20, vx: 1.1 + extraSpeed, xMin: 140, xMax: 240, active: true });
-            }
-            if (stage > 20) {
-                p.enemies.push({ x: 120, y: 166, w: 20, h: 20, vx: -(1.3 + extraSpeed), xMin: 80, xMax: 280, active: true });
-            }
+            p.animationFrameId = requestAnimationFrame(loop);
         }
 
         function advanceStage() {
@@ -1346,7 +1413,7 @@
             }
 
             playSynthSound('complete');
-            triggerConfetti(); // Efek kembang api menyala sementara (sekarang akan berhenti habis otomatis)
+            triggerConfetti();
 
             if (p.stage < 30) {
                 p.stage++;
@@ -1362,18 +1429,7 @@
                 generateStageLayout(p.stage);
                 
                 // Nyalakan kembali loop game
-                p.animationFrameId = requestAnimationFrame(pCtx.canvas.id === 'platformer-canvas' ? () => {
-                    const canvasEl = document.getElementById('platformer-canvas');
-                    if (canvasEl) {
-                        const newLoop = state.platformer;
-                        // Trigger loop fisika baru
-                        initPlatformerEngineLoop();
-                    }
-                } : () => {});
-                
-                // Re-init manual loop
-                restartEngineFrame();
-
+                restartPlatformerLoop();
             } else {
                 // Berhasil menamatkan Stage 30! Kemenangan mutlak!
                 state.score = p.scoreLocal + 150; // Bonus besar tamat kuis petualangan
@@ -1381,150 +1437,6 @@
                 endGameSession();
                 state.platformer = null;
             }
-        }
-
-        function restartEngineFrame() {
-            const canvasEl = document.getElementById('platformer-canvas');
-            if (!canvasEl) return;
-            const pCtx = canvasEl.getContext('2d');
-            
-            function loop() {
-                if (!state.platformer) return;
-                // Jalankan loop fisika seperti biasa
-                state.platformer.hero.vy += state.platformer.gravity;
-                state.platformer.hero.x += state.platformer.hero.vx;
-                state.platformer.hero.y += state.platformer.hero.vy;
-
-                if (state.platformer.keys.left) {
-                    state.platformer.hero.vx = -state.platformer.hero.speed;
-                } else if (state.platformer.keys.right) {
-                    state.platformer.hero.vx = state.platformer.hero.speed;
-                } else {
-                    state.platformer.hero.vx *= state.platformer.friction;
-                }
-
-                if (state.platformer.keys.jump && state.platformer.hero.grounded) {
-                    playSynthSound('jump');
-                    state.platformer.hero.vy = -state.platformer.hero.jumpForce;
-                    state.platformer.hero.grounded = false;
-                }
-
-                state.platformer.hero.grounded = false;
-
-                state.platformer.platforms.forEach(plat => {
-                    if (state.platformer.hero.x + state.platformer.hero.w > plat.x && state.platformer.hero.x < plat.x + plat.w) {
-                        if (state.platformer.hero.y + state.platformer.hero.h >= plat.y && state.platformer.hero.y + state.platformer.hero.h - state.platformer.hero.vy <= plat.y + 6) {
-                            state.platformer.hero.y = plat.y - state.platformer.hero.h;
-                            state.platformer.hero.vy = 0;
-                            state.platformer.hero.grounded = true;
-                        }
-                    }
-                });
-
-                if (state.platformer.hero.x < 0) state.platformer.hero.x = 0;
-                if (state.platformer.hero.x + state.platformer.hero.w > canvasEl.width) state.platformer.hero.x = canvasEl.width - state.platformer.hero.w;
-
-                if (state.platformer.hero.y > canvasEl.height) {
-                    playSynthSound('incorrect');
-                    state.platformer.hero.x = 30;
-                    state.platformer.hero.y = 150;
-                }
-
-                state.platformer.bullets.forEach((b, bIdx) => {
-                    b.x += b.vx;
-                    if (b.x < 0 || b.x > canvasEl.width) {
-                        state.platformer.bullets.splice(bIdx, 1);
-                    }
-                });
-
-                state.platformer.enemies.forEach((enemy) => {
-                    if (!enemy.active) return;
-                    enemy.x += enemy.vx;
-                    if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
-                        enemy.vx *= -1;
-                    }
-
-                    if (state.platformer.hero.x < enemy.x + enemy.w && state.platformer.hero.x + state.platformer.hero.w > enemy.x &&
-                        state.platformer.hero.y < enemy.y + enemy.h && state.platformer.hero.y + state.platformer.hero.h > enemy.y) {
-                        playSynthSound('incorrect');
-                        state.platformer.hero.x = 30;
-                        state.platformer.hero.y = 150;
-                    }
-                });
-
-                state.platformer.bullets.forEach((b, bIdx) => {
-                    state.platformer.enemies.forEach((enemy) => {
-                        if (!enemy.active) return;
-                        if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
-                            b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
-                            playSynthSound('correct');
-                            enemy.active = false;
-                            state.platformer.bullets.splice(bIdx, 1);
-                            state.platformer.scoreLocal += 10;
-                            document.getElementById('game-score').innerText = state.platformer.scoreLocal;
-                        }
-                    });
-                });
-
-                state.platformer.stars.forEach((star) => {
-                    if (star.collected) return;
-                    if (state.platformer.hero.x < star.x + star.w && state.platformer.hero.x + state.platformer.hero.w > star.x &&
-                        state.platformer.hero.y < star.y + star.h && state.platformer.hero.y + state.platformer.hero.h > star.y) {
-                        playSynthSound('correct');
-                        star.collected = true;
-                        state.platformer.scoreLocal += 15;
-                        document.getElementById('game-score').innerText = state.platformer.scoreLocal;
-                    }
-                });
-
-                if (state.platformer.hero.x < state.platformer.goal.x + state.platformer.goal.w && state.platformer.hero.x + state.platformer.hero.w > state.platformer.goal.x &&
-                    state.platformer.hero.y < state.platformer.goal.y + state.platformer.goal.h && state.platformer.hero.y + state.platformer.hero.h > state.platformer.goal.y) {
-                    advanceStage();
-                    return;
-                }
-
-                pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-
-                state.platformer.platforms.forEach(plat => {
-                    pCtx.fillStyle = '#22c55e';
-                    pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
-                    pCtx.fillStyle = '#15803d';
-                    pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
-                });
-
-                pCtx.fillStyle = '#a16207';
-                pCtx.fillRect(state.platformer.goal.x + 8, state.platformer.goal.y, 4, state.platformer.goal.h);
-                pCtx.fillStyle = '#ef4444';
-                pCtx.beginPath();
-                pCtx.moveTo(state.platformer.goal.x + 12, state.platformer.goal.y);
-                pCtx.lineTo(state.platformer.goal.x + 28, state.platformer.goal.y + 10);
-                pCtx.lineTo(state.platformer.goal.x + 12, state.platformer.goal.y + 20);
-                pCtx.fill();
-
-                state.platformer.stars.forEach(star => {
-                    if (star.collected) return;
-                    pCtx.font = '14px Arial';
-                    pCtx.fillText('⭐', star.x, star.y + 12);
-                });
-
-                state.platformer.enemies.forEach(enemy => {
-                    if (!enemy.active) return;
-                    pCtx.font = '16px Arial';
-                    pCtx.fillText('👾', enemy.x, enemy.y + 16);
-                });
-
-                state.platformer.bullets.forEach(b => {
-                    pCtx.font = '10px Arial';
-                    pCtx.fillText('✨', b.x, b.y + 8);
-                });
-
-                pCtx.font = '20px Arial';
-                pCtx.fillText('🐱', state.platformer.hero.x, state.platformer.hero.y + 18);
-
-                state.platformer.animationFrameId = requestAnimationFrame(loop);
-            }
-            
-            state.platformer.animationFrameId = requestAnimationFrame(loop);
         }
 
         // ==========================================
