@@ -76,7 +76,7 @@
 
         /* Custom Scrollbar for clean aesthetics */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #ecfeff;
@@ -96,91 +96,91 @@
     <div id="bubble-container" class="absolute inset-0 pointer-events-none z-0"></div>
 
     <!-- MAIN APP CONTAINER -->
-    <main class="w-full max-w-4xl mx-auto px-4 py-6 z-10 flex-grow flex flex-col justify-center">
+    <main class="w-full max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-6 z-10 flex-grow flex flex-col justify-center">
         
         <!-- HEADER APP -->
-        <header class="flex justify-between items-center mb-6 bg-white/70 backdrop-blur-md p-4 rounded-3xl shadow-md border-4 border-cyan-100">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="goToScreen('home')">
-                <div class="bg-gradient-to-tr from-amber-400 to-pink-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-amber-300/50 transform rotate-6 hover:rotate-12 transition-transform">
+        <header class="flex justify-between items-center mb-4 sm:mb-6 bg-white/70 backdrop-blur-md p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-md border-2 sm:border-4 border-cyan-100">
+            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer" onclick="goToScreen('home')">
+                <div class="bg-gradient-to-tr from-amber-400 to-pink-500 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-lg shadow-amber-300/50 transform rotate-6 hover:rotate-12 transition-transform">
                     🌈
                 </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-400 bg-clip-text text-transparent">
+                    <h1 class="text-base sm:text-xl md:text-2xl font-extrabold bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-400 bg-clip-text text-transparent leading-tight">
                         Kids Learning World
                     </h1>
-                    <p class="text-xs text-slate-500 font-semibold tracking-wide">TAMAN BELAJAR & BERMAIN</p>
+                    <p class="text-[8px] sm:text-xs text-slate-500 font-semibold tracking-wide">TAMAN BELAJAR & BERMAIN</p>
                 </div>
             </div>
 
             <!-- Global Status Buttons (Sound & Total Star) -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
                 <!-- Total Star Badge -->
-                <div class="bg-amber-100 text-amber-600 font-bold px-3 py-2 rounded-2xl border-2 border-amber-300 flex items-center gap-1 shadow-sm">
-                    <span class="text-xl">⭐</span>
-                    <span id="global-stars" class="text-sm md:text-base">0</span>
+                <div class="bg-amber-100 text-amber-600 font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border border-amber-300 flex items-center gap-1 shadow-sm">
+                    <span class="text-base sm:text-xl">⭐</span>
+                    <span id="global-stars" class="text-xs sm:text-sm md:text-base">0</span>
                 </div>
                 <!-- Sound Toggle Button -->
-                <button id="btn-sound" onclick="toggleSound()" class="bg-emerald-100 text-emerald-600 w-10 h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-lg bounce-hover shadow-sm">
+                <button id="btn-sound" onclick="toggleSound()" class="bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm">
                     <i id="sound-icon" class="fa-solid fa-volume-high"></i>
                 </button>
                 <!-- Text To Speech Playback Repeat -->
-                <button id="btn-tts" onclick="speakCurrentQuestion()" class="bg-purple-100 text-purple-600 w-10 h-10 rounded-2xl border-2 border-purple-300 flex items-center justify-center text-lg bounce-hover shadow-sm hidden">
+                <button id="btn-tts" onclick="speakCurrentQuestion()" class="bg-purple-100 text-purple-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border border-purple-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm hidden">
                     <i class="fa-solid fa-microphone-lines"></i>
                 </button>
             </div>
         </header>
 
         <!-- SCREEN 1: HOME/MENU -->
-        <section id="screen-home" class="space-y-6">
-            <div class="text-center space-y-2 mb-8 pop-effect">
-                <span class="bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-sm font-bold tracking-wider inline-block transform -rotate-2">HALO TEMAN-TEMAN! 👋</span>
-                <h2 class="text-2xl md:text-4xl font-extrabold text-cyan-600 drop-shadow-sm">Mau Belajar & Bermain Apa Hari Ini?</h2>
-                <p class="text-slate-500 text-sm md:text-base">Pilih salah satu dunia permainan seru di bawah ini ya!</p>
+        <section id="screen-home" class="space-y-4 sm:space-y-6">
+            <div class="text-center space-y-2 mb-4 sm:mb-8 pop-effect">
+                <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider inline-block transform -rotate-2">HALO TEMAN-TEMAN! 👋</span>
+                <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-cyan-600 drop-shadow-sm">Mau Belajar & Bermain Apa Hari Ini?</h2>
+                <p class="text-slate-500 text-xs sm:text-sm md:text-base">Pilih salah satu dunia permainan seru di bawah ini ya!</p>
             </div>
 
             <!-- Game Categories Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5" id="menu-grid">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5" id="menu-grid">
                 <!-- Cards will be dynamically injected here to maintain local stats -->
             </div>
         </section>
 
         <!-- SCREEN 2: GAMEPLAY WORKSPACE -->
-        <section id="screen-game" class="hidden flex-col items-center justify-center space-y-6">
+        <section id="screen-game" class="hidden flex-col items-center justify-center space-y-4 sm:space-y-6">
             <!-- Game Info Bar -->
-            <div class="w-full bg-white/80 backdrop-blur-md p-4 rounded-3xl border-4 border-cyan-100 shadow-md flex justify-between items-center">
+            <div class="w-full bg-white/80 backdrop-blur-md p-3 sm:p-4 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-cyan-100 shadow-md flex justify-between items-center gap-2">
                 <!-- Back Button -->
-                <button onclick="goToScreen('home')" class="bg-rose-100 text-rose-600 px-4 py-2 rounded-2xl border-2 border-rose-300 font-bold flex items-center gap-2 bounce-hover text-sm">
+                <button onclick="goToScreen('home')" class="bg-rose-100 text-rose-600 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-rose-300 font-bold flex items-center gap-1.5 bounce-hover text-xs sm:text-sm">
                     <i class="fa-solid fa-house"></i> Menu
                 </button>
                 <!-- Game Title Inside Header -->
-                <div class="text-center">
-                    <h3 id="game-title" class="text-lg md:text-xl font-bold text-cyan-600">Nama Game</h3>
+                <div class="text-center flex-1 min-w-0">
+                    <h3 id="game-title" class="text-sm sm:text-lg md:text-xl font-bold text-cyan-600 truncate">Nama Game</h3>
                     <!-- Progress Dots/Bar -->
-                    <div class="flex items-center gap-1 justify-center mt-1">
-                        <span id="game-progress-text" class="text-xs font-semibold text-slate-400">Soal 1 / 20</span>
+                    <div class="flex items-center gap-1 justify-center mt-0.5">
+                        <span id="game-progress-text" class="text-[10px] sm:text-xs font-semibold text-slate-400">Soal 1 / 20</span>
                     </div>
                 </div>
                 <!-- Game Score & Local Stars -->
-                <div class="flex items-center gap-2">
-                    <div class="bg-pink-50 text-pink-500 font-bold px-3 py-1.5 rounded-xl border border-pink-200 text-xs md:text-sm">
+                <div class="flex items-center gap-1 sm:gap-2">
+                    <div class="bg-pink-50 text-pink-500 font-bold px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border border-pink-200 text-[10px] sm:text-xs md:text-sm">
                         Skor: <span id="game-score">0</span>
                     </div>
                 </div>
             </div>
 
             <!-- Progress Bar Indicator -->
-            <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden border border-slate-300 p-0.5">
+            <div class="w-full bg-slate-200 h-3 sm:h-4 rounded-full overflow-hidden border border-slate-300 p-0.5">
                 <div id="game-progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
             </div>
 
             <!-- MAIN GAMEBOARD VIEWPORT -->
-            <div id="game-viewport" class="w-full bg-white/95 p-6 md:p-8 rounded-3xl border-4 border-cyan-300 shadow-xl min-h-[350px] flex flex-col justify-between items-center relative z-10">
+            <div id="game-viewport" class="w-full bg-white/95 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-cyan-300 shadow-xl min-h-[300px] sm:min-h-[350px] flex flex-col justify-between items-center relative z-10">
                 <!-- Content injected dynamically via JS based on selected game -->
             </div>
 
             <!-- Restart Control Bar -->
-            <div class="flex justify-center gap-3">
-                <button onclick="restartCurrentGame()" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-amber-600 bounce-hover text-base flex items-center gap-2">
+            <div class="flex justify-center gap-3 w-full">
+                <button onclick="restartCurrentGame()" class="bg-amber-400 hover:bg-amber-500 text-white font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-amber-600 bounce-hover text-sm sm:text-base flex items-center gap-2">
                     <i class="fa-solid fa-arrow-rotate-right"></i> Ulangi Permainan
                 </button>
             </div>
@@ -188,49 +188,49 @@
 
         <!-- SCREEN 3: SCOREBOARD POPUP / MODAL (REWARD DIALOG) -->
         <div id="reward-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-white max-w-md w-full rounded-[2.5rem] border-8 border-amber-400 p-6 md:p-8 text-center space-y-6 shadow-2xl relative pop-effect">
+            <div class="bg-white max-w-sm sm:max-w-md w-full rounded-[2rem] sm:rounded-[2.5rem] border-4 sm:border-8 border-amber-400 p-5 sm:p-8 text-center space-y-4 sm:space-y-6 shadow-2xl relative pop-effect max-h-[95vh] overflow-y-auto">
                 
                 <!-- Ribbon & Characters -->
-                <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 text-6xl">
+                <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 text-5xl">
                     🎉🌟🎉
                 </div>
 
-                <div class="space-y-2 mt-4">
-                    <h4 id="reward-congrats" class="text-3xl font-extrabold text-amber-500 drop-shadow-sm">HEBAT SEKALI!</h4>
-                    <p id="reward-subtitle" class="text-slate-500 text-sm font-semibold">Kamu sudah menyelesaikan tantangan ini!</p>
+                <div class="space-y-1 sm:space-y-2 mt-2">
+                    <h4 id="reward-congrats" class="text-2xl sm:text-3xl font-extrabold text-amber-500 drop-shadow-sm">HEBAT SEKALI!</h4>
+                    <p id="reward-subtitle" class="text-slate-500 text-xs sm:text-sm font-semibold">Kamu sudah menyelesaikan tantangan ini!</p>
                 </div>
 
                 <!-- Animated Big Stars -->
-                <div class="flex justify-center items-center gap-3 py-2 text-5xl md:text-6xl" id="reward-stars-container">
+                <div class="flex justify-center items-center gap-2 sm:gap-3 py-1 text-4xl sm:text-5xl md:text-6xl" id="reward-stars-container">
                     <span class="animate-bounce" style="animation-delay: 0.1s;">⭐</span>
                     <span class="animate-bounce" style="animation-delay: 0.3s;">⭐</span>
                     <span class="animate-bounce" style="animation-delay: 0.5s;">⭐</span>
                 </div>
 
                 <!-- Score Board Details -->
-                <div class="bg-gradient-to-tr from-cyan-50 to-indigo-50 p-4 rounded-3xl border-2 border-cyan-100 flex justify-around">
+                <div class="bg-gradient-to-tr from-cyan-50 to-indigo-50 p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-cyan-100 flex justify-around">
                     <div>
-                        <span class="text-xs text-slate-400 font-bold block">SKOR KAMU</span>
-                        <span id="reward-score" class="text-2xl font-bold text-cyan-600">0</span>
+                        <span class="text-[10px] text-slate-400 font-bold block">SKOR KAMU</span>
+                        <span id="reward-score" class="text-xl sm:text-2xl font-bold text-cyan-600">0</span>
                     </div>
-                    <div class="border-r-2 border-slate-200"></div>
+                    <div class="border-r border-slate-200"></div>
                     <div>
-                        <span class="text-xs text-slate-400 font-bold block">BINTANG BARU</span>
-                        <span id="reward-stars-earned" class="text-2xl font-bold text-amber-500">+3</span>
+                        <span class="text-[10px] text-slate-400 font-bold block">BINTANG BARU</span>
+                        <span id="reward-stars-earned" class="text-xl sm:text-2xl font-bold text-amber-500">+3</span>
                     </div>
                 </div>
 
                 <!-- Play Voice Congratulation Button -->
-                <button onclick="speakText(document.getElementById('reward-congrats').innerText + ', skor kamu adalah ' + document.getElementById('reward-score').innerText)" class="bg-purple-100 text-purple-600 w-12 h-12 rounded-full border-2 border-purple-300 flex items-center justify-center text-xl bounce-hover mx-auto shadow-sm">
+                <button onclick="speakText(document.getElementById('reward-congrats').innerText + ', skor kamu adalah ' + document.getElementById('reward-score').innerText)" class="bg-purple-100 text-purple-600 w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-purple-300 flex items-center justify-center text-lg sm:text-xl bounce-hover mx-auto shadow-sm">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
 
                 <!-- Footer Buttons -->
-                <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <button onclick="closeRewardModal('home')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-rose-600 bounce-hover flex-1 text-sm md:text-base">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
+                    <button onclick="closeRewardModal('home')" class="bg-rose-400 hover:bg-rose-500 text-white font-bold px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-rose-600 bounce-hover flex-1 text-xs sm:text-sm">
                         <i class="fa-solid fa-house"></i> Menu Utama
                     </button>
-                    <button onclick="closeRewardModal('replay')" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-2xl shadow-md border-b-4 border-emerald-600 bounce-hover flex-1 text-sm md:text-base">
+                    <button onclick="closeRewardModal('replay')" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl shadow-md border-b-4 border-emerald-600 bounce-hover flex-1 text-xs sm:text-sm">
                         <i class="fa-solid fa-play"></i> Main Lagi
                     </button>
                 </div>
@@ -240,7 +240,7 @@
     </main>
 
     <!-- FOOTER DESIGN -->
-    <footer class="w-full text-center py-4 bg-white/40 border-t border-cyan-100/50 text-xs font-semibold text-slate-400 z-10">
+    <footer class="w-full text-center py-4 bg-white/40 border-t border-cyan-100/50 text-[10px] sm:text-xs font-semibold text-slate-400 z-10">
         © 2026 Kids Learning World. Dibuat penuh cinta untuk anak-anak cerdas Indonesia 🇮🇩
     </footer>
 
@@ -568,15 +568,15 @@
 
                 const card = document.createElement('button');
                 card.onclick = () => selectGame(cat.id);
-                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-5 rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[190px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
+                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-3 sm:p-5 rounded-[1.5rem] sm:rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[140px] sm:min-h-[190px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
                 card.innerHTML = `
-                    <div class="absolute -right-4 -bottom-4 text-white/10 text-7xl font-bold select-none pointer-events-none">
+                    <div class="absolute -right-4 -bottom-4 text-white/10 text-5xl sm:text-7xl font-bold select-none pointer-events-none">
                         ${cat.icon}
                     </div>
-                    <div class="text-5xl my-2">${cat.icon}</div>
-                    <div class="font-bold text-lg leading-tight">${cat.name}</div>
-                    <div class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-slate-600 font-bold text-xs flex items-center gap-1 border border-white/50 shadow-inner mt-2">
-                        ${starsHTML} <span class="ml-1">${starsEarned}/3</span>
+                    <div class="text-3xl sm:text-5xl my-1.5 sm:my-2">${cat.icon}</div>
+                    <div class="font-bold text-xs sm:text-base md:text-lg leading-tight">${cat.name}</div>
+                    <div class="bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-slate-600 font-bold text-[10px] sm:text-xs flex items-center gap-0.5 border border-white/50 shadow-inner mt-1.5 sm:mt-2">
+                        ${starsHTML} <span class="ml-0.5">${starsEarned}/3</span>
                     </div>
                 `;
                 menuGrid.appendChild(card);
@@ -595,11 +595,11 @@
             
             if (state.soundEnabled) {
                 icon.className = 'fa-solid fa-volume-high';
-                btn.className = 'bg-emerald-100 text-emerald-600 w-10 h-10 rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-lg bounce-hover shadow-sm';
+                btn.className = 'bg-emerald-100 text-emerald-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border-2 border-emerald-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
                 playSynthSound('click');
             } else {
                 icon.className = 'fa-solid fa-volume-xmark';
-                btn.className = 'bg-rose-100 text-rose-600 w-10 h-10 rounded-2xl border-2 border-rose-300 flex items-center justify-center text-lg bounce-hover shadow-sm';
+                btn.className = 'bg-rose-100 text-rose-600 w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border-2 border-rose-300 flex items-center justify-center text-sm sm:text-lg bounce-hover shadow-sm';
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                 }
@@ -729,22 +729,22 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Pilih warna di bawah ini yang bernama:</h4>
-                    <div class="text-4xl md:text-5xl font-extrabold tracking-wide drop-shadow-sm transition-all transform hover:scale-105" style="color: ${correctColor.hex}">
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Pilih warna di bawah ini yang bernama:</h4>
+                    <div class="text-3xl sm:text-5xl font-extrabold tracking-wide drop-shadow-sm transition-all transform hover:scale-105" style="color: ${correctColor.hex}">
                         ${correctColor.name.toUpperCase()}
                     </div>
                     
                     <!-- Huge Colored Target Balloon -->
-                    <div class="w-32 h-32 rounded-full mx-auto shadow-lg border-4 border-slate-100 flex items-center justify-center text-4xl animate-pulse animate-bounce" style="background-color: ${correctColor.hex}">
+                    <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto shadow-lg border-2 sm:border-4 border-slate-100 flex items-center justify-center text-3xl sm:text-4xl animate-bounce" style="background-color: ${correctColor.hex}">
                         🎈
                     </div>
 
                     <!-- Choices Option Grid -->
-                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full">
+                    <div class="grid grid-cols-2 gap-2 sm:gap-4 max-w-md mx-auto w-full">
                         ${choices.map(c => `
-                            <button onclick="checkAnswer('${c.name}', this)" class="bg-white hover:bg-slate-50 border-4 border-slate-200 hover:border-cyan-400 p-4 rounded-2xl text-lg font-bold text-slate-700 shadow-md bounce-hover flex items-center gap-2 justify-center transition-all">
-                                <span class="w-5 h-5 rounded-full inline-block border border-slate-300" style="background-color: ${c.hex}"></span>
+                            <button onclick="checkAnswer('${c.name}', this)" class="bg-white hover:bg-slate-50 border-2 sm:border-4 border-slate-200 hover:border-cyan-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-slate-700 shadow-md bounce-hover flex items-center gap-1.5 sm:gap-2 justify-center transition-all">
+                                <span class="w-4.5 h-4.5 rounded-full inline-block border border-slate-300" style="background-color: ${c.hex}"></span>
                                 ${c.name}
                             </button>
                         `).join('')}
@@ -772,19 +772,19 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Tebak Huruf Awal Gambar Ini:</h4>
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Huruf Awal Gambar Ini:</h4>
                     
                     <!-- Giant interactive illustration box -->
-                    <div class="bg-gradient-to-tr from-cyan-50 to-amber-50 rounded-3xl p-6 border-4 border-dashed border-cyan-200 inline-block">
-                        <div class="text-7xl md:text-8xl animate-bounce">${currentItem.emoji}</div>
-                        <div class="mt-2 text-xl md:text-2xl font-bold text-cyan-600">${currentItem.word.toUpperCase()}</div>
+                    <div class="bg-gradient-to-tr from-cyan-50 to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 sm:border-4 border-dashed border-cyan-200 inline-block mx-auto">
+                        <div class="text-6xl sm:text-8xl animate-bounce">${currentItem.emoji}</div>
+                        <div class="mt-1 sm:mt-2 text-lg sm:text-2xl font-bold text-cyan-600">${currentItem.word.toUpperCase()}</div>
                     </div>
 
                     <!-- Options Grid -->
-                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full mt-4">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full mt-2 sm:mt-4">
                         ${choices.map(letter => `
-                            <button onclick="checkAnswer('${letter}', this)" class="bg-white hover:bg-amber-50 border-4 border-slate-200 hover:border-amber-400 p-4 rounded-2xl text-2xl font-black text-amber-500 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${letter}', this)" class="bg-white hover:bg-amber-50 border-2 sm:border-4 border-slate-200 hover:border-amber-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-black text-amber-500 shadow-md bounce-hover transition-all">
                                 ${letter}
                             </button>
                         `).join('')}
@@ -804,7 +804,7 @@
             // Create array representing emojis to repeat
             let displayHTML = '';
             for (let i = 0; i < count; i++) {
-                displayHTML += `<span class="text-4xl md:text-5xl drop-shadow">${randomEmoji}</span>`;
+                displayHTML += `<span class="text-3xl sm:text-5xl drop-shadow">${randomEmoji}</span>`;
             }
 
             // Create randomized numeric choices
@@ -821,20 +821,20 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Hitung Jumlah Benda Di Bawah Ini:</h4>
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Hitung Jumlah Benda Di Bawah Ini:</h4>
                     
                     <!-- Counting Box container -->
-                    <div class="bg-emerald-50/50 p-6 rounded-3xl border-4 border-emerald-200 max-w-lg mx-auto flex flex-wrap gap-3 justify-center items-center shadow-inner min-h-[120px]">
+                    <div class="bg-emerald-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-emerald-200 max-w-lg mx-auto flex flex-wrap gap-2 sm:gap-3 justify-center items-center shadow-inner min-h-[100px] sm:min-h-[120px]">
                         ${displayHTML}
                     </div>
 
-                    <p class="text-sm text-slate-400 font-semibold">Ada berapa, ya? Sentuh jawabannya!</p>
+                    <p class="text-xs sm:text-sm text-slate-400 font-semibold">Ada berapa, ya? Sentuh jawabannya!</p>
 
                     <!-- Answer Options -->
-                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full">
                         ${choices.map(num => `
-                            <button onclick="checkAnswer('${num}', this)" class="bg-white hover:bg-emerald-50 border-4 border-slate-200 hover:border-emerald-400 p-4 rounded-2xl text-2xl font-bold text-emerald-600 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${num}', this)" class="bg-white hover:bg-emerald-50 border-2 sm:border-4 border-slate-200 hover:border-emerald-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-bold text-emerald-600 shadow-md bounce-hover transition-all">
                                 ${num}
                             </button>
                         `).join('')}
@@ -844,15 +844,13 @@
         }
 
         // ==========================================
-        // 4. GAME: TEBAK HEWAN (ANIMAL GUESSER) - FIXED [object Object] BUG
+        // 4. GAME: TEBAK HEWAN (ANIMAL GUESSER)
         // ==========================================
         function buildHewanGame(container) {
             const correctAnimal = ANIMALS_DB[Math.floor(Math.random() * ANIMALS_DB.length)];
             
             // Fetch wrong animals
             const wrongAnimals = shuffleArray(ANIMALS_DB.filter(a => a.name !== correctAnimal.name)).slice(0, 3);
-            
-            // FIXED BUG: Map wrongAnimals objects to pure name strings so they don't render as [object Object]
             const choices = shuffleArray([correctAnimal.name, ...wrongAnimals.map(a => a.name)]);
 
             state.currentData = {
@@ -861,18 +859,18 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Tebak Nama Hewan Ini:</h4>
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Nama Hewan Ini:</h4>
                     
                     <!-- Display Box -->
-                    <div class="w-36 h-36 rounded-[2rem] bg-indigo-50 border-4 border-indigo-200 shadow-md flex items-center justify-center text-7xl mx-auto transform rotate-2 animate-pulse">
+                    <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-50 border-2 sm:border-4 border-indigo-200 shadow-md flex items-center justify-center text-6xl sm:text-7xl mx-auto transform rotate-2 animate-pulse">
                         ${correctAnimal.emoji}
                     </div>
 
-                    <!-- Grid choices (Strings rendered 100% correctly) -->
-                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full mt-4">
+                    <!-- Grid choices -->
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto w-full mt-2 sm:mt-4">
                         ${choices.map(animalName => `
-                            <button onclick="checkAnswer('${animalName}', this)" class="bg-white hover:bg-indigo-50 border-4 border-slate-200 hover:border-indigo-400 p-4 rounded-2xl text-lg font-bold text-indigo-600 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${animalName}', this)" class="bg-white hover:bg-indigo-50 border-2 sm:border-4 border-slate-200 hover:border-indigo-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-indigo-600 shadow-md bounce-hover transition-all">
                                 ${animalName}
                             </button>
                         `).join('')}
@@ -882,15 +880,13 @@
         }
 
         // ==========================================
-        // 5. GAME: TEBAK BUAH (FRUIT GUESSER) - FIXED [object Object] BUG
+        // 5. GAME: TEBAK BUAH (FRUIT GUESSER)
         // ==========================================
         function buildBuahGame(container) {
             const correctFruit = FRUITS_DB[Math.floor(Math.random() * FRUITS_DB.length)];
             
             // Fetch wrong choices
             const wrongFruits = shuffleArray(FRUITS_DB.filter(f => f.name !== correctFruit.name)).slice(0, 3);
-            
-            // FIXED BUG: Map wrongFruits objects to pure name strings so they don't render as [object Object]
             const choices = shuffleArray([correctFruit.name, ...wrongFruits.map(f => f.name)]);
 
             state.currentData = {
@@ -899,18 +895,18 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Tebak Nama Buah Ini:</h4>
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tebak Nama Buah Ini:</h4>
                     
                     <!-- Display Box -->
-                    <div class="w-36 h-36 rounded-[2rem] bg-rose-50 border-4 border-rose-200 shadow-md flex items-center justify-center text-7xl mx-auto transform -rotate-2 animate-bounce">
+                    <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-[1.5rem] sm:rounded-[2rem] bg-rose-50 border-2 sm:border-4 border-rose-200 shadow-md flex items-center justify-center text-6xl sm:text-7xl mx-auto transform -rotate-2 animate-bounce">
                         ${correctFruit.emoji}
                     </div>
 
-                    <!-- Choices Grid (Strings rendered 100% correctly) -->
-                    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full mt-4">
+                    <!-- Choices Grid -->
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto w-full mt-2 sm:mt-4">
                         ${choices.map(fruitName => `
-                            <button onclick="checkAnswer('${fruitName}', this)" class="bg-white hover:bg-rose-50 border-4 border-slate-200 hover:border-rose-400 p-4 rounded-2xl text-lg font-bold text-rose-500 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${fruitName}', this)" class="bg-white hover:bg-rose-50 border-2 sm:border-4 border-slate-200 hover:border-rose-400 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-sm sm:text-lg font-bold text-rose-500 shadow-md bounce-hover transition-all">
                                 ${fruitName}
                             </button>
                         `).join('')}
@@ -939,24 +935,24 @@
                 instruction: 'Temukan semua pasangan kartu bergambar sama!'
             };
 
-            // Custom design container for layout matching card grids
+            // Custom design container for layout matching card grids (Scales down h-16 dynamically on mobile)
             container.innerHTML = `
-                <div class="text-center space-y-4 w-full pop-effect">
-                    <h4 class="text-xl md:text-2xl font-bold text-slate-700">Buka 2 Kartu Berwarna Sama Dan Cari Pasangannya!</h4>
+                <div class="text-center space-y-3 sm:space-y-4 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-base sm:text-2xl font-bold text-slate-700">Buka 2 Kartu Berwarna Sama Dan Cari Pasangannya!</h4>
                     
                     <!-- Grid container 4 cols x 3 rows -->
-                    <div class="grid grid-cols-4 gap-3 max-w-md mx-auto w-full mt-4" id="memory-board">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-md mx-auto w-full mt-2 sm:mt-4 animate-pop" id="memory-board">
                         ${shuffledCards.map(card => `
-                            <div onclick="flipMemoryCard(${card.id}, this)" class="card-perspective cursor-pointer h-20 md:h-24 w-full select-none" data-card-id="${card.id}">
-                                <div class="card-inner w-full h-full relative rounded-2xl shadow-md border-2 border-purple-200" style="transform-style: preserve-3d;">
+                            <div onclick="flipMemoryCard(${card.id}, this)" class="card-perspective cursor-pointer h-16 sm:h-20 md:h-24 w-full select-none animate-pop" data-card-id="${card.id}">
+                                <div class="card-inner w-full h-full relative rounded-xl sm:rounded-2xl shadow-md border-2 border-purple-200" style="transform-style: preserve-3d;">
                                     
                                     <!-- FRONT OF CARD (Back Cover Visual) -->
-                                    <div class="card-front absolute inset-0 bg-gradient-to-tr from-purple-400 to-indigo-500 rounded-2xl flex items-center justify-center text-3xl text-white font-extrabold" style="backface-visibility: hidden;">
+                                    <div class="card-front absolute inset-0 bg-gradient-to-tr from-purple-400 to-indigo-500 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl text-white font-extrabold" style="backface-visibility: hidden;">
                                         ❓
                                     </div>
 
                                     <!-- BACK OF CARD (Item Revealed) -->
-                                    <div class="card-back absolute inset-0 bg-white rounded-2xl flex items-center justify-center text-4xl border-2 border-emerald-400" style="backface-visibility: hidden; transform: rotateY(180deg);">
+                                    <div class="card-back absolute inset-0 bg-white rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-4xl border-2 border-emerald-400" style="backface-visibility: hidden; transform: rotateY(180deg);">
                                         ${card.emoji}
                                     </div>
 
@@ -1077,34 +1073,34 @@
             };
 
             container.innerHTML = `
-                <div class="text-center space-y-6 w-full pop-effect">
-                    <h4 class="text-2xl font-bold text-slate-700">Tantangan Berhitung:</h4>
+                <div class="text-center space-y-4 sm:space-y-6 w-full pop-effect flex flex-col justify-between flex-grow">
+                    <h4 class="text-lg sm:text-2xl font-bold text-slate-700">Tantangan Berhitung:</h4>
                     
-                    <!-- Illustrated Equations Visual aids -->
-                    <div class="flex flex-col md:flex-row justify-center items-center gap-4 bg-amber-50/50 p-6 rounded-3xl border-4 border-amber-200 inline-block max-w-full mx-auto">
+                    <!-- Illustrated Equations Visual aids (Fully responsive flex-wrap layout) -->
+                    <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-4 bg-amber-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-amber-200 inline-block max-w-full mx-auto">
                         <div class="flex flex-col items-center">
-                            <span class="text-2xl font-black bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num1 : Math.max(num1, num2)}</span>
-                            <span class="text-xs text-slate-400 font-bold mt-1 max-w-[120px] truncate">${operand1Emoji}</span>
+                            <span class="text-xl sm:text-2xl font-black bg-white px-3 py-1 sm:px-4 sm:py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num1 : Math.max(num1, num2)}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-400 font-bold mt-1 max-w-[100px] truncate">${operand1Emoji}</span>
                         </div>
                         
-                        <div class="text-3xl font-black text-amber-500">${mathSymbol}</div>
+                        <div class="text-2xl sm:text-3xl font-black text-amber-500">${mathSymbol}</div>
                         
                         <div class="flex flex-col items-center">
-                            <span class="text-2xl font-black bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num2 : Math.min(num1, num2)}</span>
-                            <span class="text-xs text-slate-400 font-bold mt-1 max-w-[120px] truncate">${operand2Emoji}</span>
+                            <span class="text-xl sm:text-2xl font-black bg-white px-3 py-1 sm:px-4 sm:py-2 rounded-xl shadow-sm border border-slate-100">${isAdd ? num2 : Math.min(num1, num2)}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-400 font-bold mt-1 max-w-[100px] truncate">${operand2Emoji}</span>
                         </div>
 
-                        <div class="text-3xl font-black text-slate-400">＝</div>
+                        <div class="text-2xl sm:text-3xl font-black text-slate-400">＝</div>
 
-                        <div class="bg-cyan-100 text-cyan-600 w-16 h-14 rounded-2xl border-4 border-dashed border-cyan-300 flex items-center justify-center text-3xl font-black animate-pulse">
+                        <div class="bg-cyan-100 text-cyan-600 w-12 h-10 sm:w-16 sm:h-14 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-dashed border-cyan-300 flex items-center justify-center text-xl sm:text-3xl font-black animate-pulse">
                             ?
                         </div>
                     </div>
 
                     <!-- Choices Option Grid -->
-                    <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto w-full mt-4">
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3 max-w-sm mx-auto w-full mt-2 sm:mt-4">
                         ${choices.map(choice => `
-                            <button onclick="checkAnswer('${choice}', this)" class="bg-white hover:bg-cyan-50 border-4 border-slate-200 hover:border-cyan-400 p-4 rounded-2xl text-2xl font-bold text-cyan-600 shadow-md bounce-hover transition-all">
+                            <button onclick="checkAnswer('${choice}', this)" class="bg-white hover:bg-cyan-50 border-2 sm:border-4 border-slate-200 hover:border-cyan-400 p-2 sm:p-4 rounded-xl sm:rounded-2xl text-lg sm:text-2xl font-bold text-cyan-600 shadow-md bounce-hover transition-all">
                                 ${choice}
                             </button>
                         `).join('')}
@@ -1141,7 +1137,7 @@
             } else {
                 // INCORRECT CHOICE!
                 playSynthSound('incorrect');
-                buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-rose-500 bg-rose-50 text-rose-500 animate-shake');
+                buttonElement.className = buttonElement.className.replace('border-slate-200', 'border-rose-500 bg-rose-50 text-rose-500');
                 
                 // Shake CSS animation injection
                 buttonElement.style.animation = "shake 0.4s";
