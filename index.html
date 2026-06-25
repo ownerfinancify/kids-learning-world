@@ -96,7 +96,6 @@
     <!-- Gelembung Latar Belakang -->
     <div id="bubble-container" class="absolute inset-0 pointer-events-none z-0"></div>
 
-    <!-- UTAMA CONTAINER -->
     <main class="w-full max-w-4xl mx-auto px-2 sm:px-4 py-2 sm:py-4 z-10 flex-grow flex flex-col justify-center overflow-x-hidden">
         
         <!-- HEADER APP UTAMA DENGAN KREDIT PRIMA AMIRUL F -->
@@ -432,6 +431,11 @@
         function speakCurrentQuestion() {
             if (!state.currentData || !state.currentData.instruction) return;
             speakText(state.currentData.instruction);
+        }
+
+        // Fungsi Pembantu Pengacak Array (shuffleArray) - CRITICAL FIX AGAR TIDAK BLANK KOSONG
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
         }
 
         // Canvas Selebrasi Kembang Api (Confetti)
@@ -883,49 +887,6 @@
             `;
         }
 
-        function flipMemoryCard(id, element) {
-            if (state.selectedCards.length >= 2) return;
-            const cardObj = state.memoryCards.find(c => c.id === id);
-            if (cardObj.matched) return;
-            if (state.selectedCards.some(c => c.id === id)) return;
-
-            playSynthSound('click');
-            element.querySelector('.card-inner').classList.add('card-flipped');
-            state.selectedCards.push({ id, emoji: cardObj.emoji, element });
-
-            if (state.selectedCards.length === 2) {
-                const card1 = state.selectedCards[0];
-                const card2 = state.selectedCards[1];
-
-                if (card1.emoji === card2.emoji) {
-                    setTimeout(() => {
-                        playSynthSound('correct');
-                        state.memoryCards.find(c => c.id === card1.id).matched = true;
-                        state.memoryCards.find(c => c.id === card2.id).matched = true;
-
-                        card1.element.querySelector('.card-back').classList.add('bg-emerald-50');
-                        card2.element.querySelector('.card-back').classList.add('bg-emerald-50');
-
-                        state.score += 20;
-                        document.getElementById('game-score').innerText = state.score;
-                        state.selectedCards = [];
-
-                        if (state.memoryCards.every(c => c.matched)) {
-                            triggerConfetti();
-                            setTimeout(() => endGameSession(), 1000);
-                        }
-                    }, 500);
-                } else {
-                    setTimeout(() => {
-                        playSynthSound('incorrect');
-                        card1.element.querySelector('.card-inner').classList.remove('card-flipped');
-                        card2.element.querySelector('.card-inner').classList.remove('card-flipped');
-                        state.selectedCards = [];
-                    }, 1000);
-                }
-            }
-        }
-
         // ==========================================
         // 7. GAME: MATEMATIKA DASAR
         // ==========================================
@@ -1008,7 +969,6 @@
         // 8. GAME: PETUALANGAN HERO (SCROLLING CAMERA & ADVANCED TANTANGAN & SKILL POWER-UPS)
         // ==========================================
         function buildPetualanganGame(container) {
-            // Container Layout Canvas Widescreen HD Responsif & Kontrol Virtual Mobile Kompak
             container.innerHTML = `
                 <div class="flex flex-col items-center w-full pop-effect">
                     <!-- Canvas widescreen responsif -->
@@ -1022,7 +982,7 @@
                         </div>
                     </div>
                     
-                    <!-- Kontrol Virtual Responsif & Elegan khusus untuk HP Portrait / Landscape -->
+                    <!-- Kontrol Virtual Responsif & Elegan -->
                     <div class="flex justify-between items-center w-full max-w-xl mt-3 sm:mt-4 gap-2 px-1 select-none">
                         <div class="flex gap-2">
                             <button id="btn-left" class="bg-slate-800 active:bg-slate-700 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-lg sm:text-2xl flex items-center justify-center active:scale-90 shadow-lg border-b-4 border-slate-950 transition-all">
