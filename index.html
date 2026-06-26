@@ -96,6 +96,7 @@
     <!-- Gelembung Latar Belakang -->
     <div id="bubble-container" class="absolute inset-0 pointer-events-none z-0"></div>
 
+    <!-- UTAMA CONTAINER -->
     <main class="w-full max-w-4xl mx-auto px-2 sm:px-4 py-2 sm:py-4 z-10 flex-grow flex flex-col justify-center overflow-x-hidden">
         
         <!-- HEADER APP UTAMA DENGAN KREDIT PRIMA AMIRUL F -->
@@ -263,7 +264,6 @@
 
     <!-- ENGINE UTAMA PERMAINAN (JAVASCRIPT) -->
     <script>
-        // Konfigurasi Database Kategori Permainan
         const CATEGORIES = [
             { id: 'warna', name: 'Belajar Warna', icon: '🎨', color: 'from-pink-400 to-rose-400', border: 'border-pink-300' },
             { id: 'huruf', name: 'Tebak Huruf', icon: '🅰️', color: 'from-amber-400 to-yellow-400', border: 'border-amber-300' },
@@ -275,7 +275,6 @@
             { id: 'petualangan', name: 'Petualangan Hero', icon: '🏃‍♂️', color: 'from-orange-400 to-amber-500', border: 'border-orange-300' }
         ];
 
-        // Database Kuis Lengkap (Masing-masing berisi 20+ data untuk variasi game dinamis)
         const COLORS_DB = [
             { name: 'Merah', hex: '#ef4444' }, { name: 'Biru', hex: '#3b82f6' }, { name: 'Hijau', hex: '#22c55e' },
             { name: 'Kuning', hex: '#eab308' }, { name: 'Jingga', hex: '#f97316' }, { name: 'Ungu', hex: '#a855f7' },
@@ -410,7 +409,6 @@
             }
         }
 
-        // Asisten Suara Bahasa Indonesia (Text-To-Speech)
         function speakText(text) {
             if (!state.soundEnabled) return;
             if ('speechSynthesis' in window) {
@@ -433,7 +431,6 @@
             speakText(state.currentData.instruction);
         }
 
-        // Fungsi Pembantu Pengacak Array (shuffleArray) - CRITICAL FIX AGAR TIDAK BLANK KOSONG
         function shuffleArray(array) {
             return array.sort(() => Math.random() - 0.5);
         }
@@ -512,7 +509,6 @@
             requestAnimationFrame(animateConfetti);
         }
 
-        // Generator Balon/Gelembung Melayang Latar Belakang
         const bubbleContainer = document.getElementById('bubble-container');
         function createBubbles() {
             bubbleContainer.innerHTML = '';
@@ -530,7 +526,6 @@
         }
         createBubbles();
 
-        // Menggambar Grid Menu Kategori
         function renderMenuGrid() {
             const menuGrid = document.getElementById('menu-grid');
             menuGrid.innerHTML = '';
@@ -544,7 +539,7 @@
 
                 const card = document.createElement('button');
                 card.onclick = () => selectGame(cat.id);
-                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-3.5 sm:p-4 rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[140px] sm:min-h-[170px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
+                card.className = `bg-gradient-to-br ${cat.color} ${cat.border} border-4 p-2.5 sm:p-4 rounded-[2rem] shadow-lg text-white flex flex-col items-center justify-between min-h-[140px] sm:min-h-[170px] bounce-hover transition-all text-center pop-effect relative overflow-hidden`;
                 card.innerHTML = `
                     <div class="absolute -right-4 -bottom-4 text-white/10 text-5xl sm:text-6xl font-bold select-none pointer-events-none">${cat.icon}</div>
                     <div class="text-3xl sm:text-4xl my-1 sm:my-1.5">${cat.icon}</div>
@@ -560,7 +555,6 @@
             document.getElementById('global-stars').innerText = totalStars;
         }
 
-        // Pengontrol Audio & Layar
         function toggleSound() {
             state.soundEnabled = !state.soundEnabled;
             const icon = document.getElementById('sound-icon');
@@ -583,7 +577,6 @@
             document.getElementById('screen-game').classList.add('hidden');
             document.getElementById('btn-tts').classList.add('hidden');
 
-            // Membersihkan game loop platformer jika berganti layar
             if (state.platformer && state.platformer.animationFrameId) {
                 cancelAnimationFrame(state.platformer.animationFrameId);
                 state.platformer = null;
@@ -610,7 +603,6 @@
             state.questionIndex = 0;
             state.selectedCards = [];
             
-            // Bersihkan game loop platformer
             if (state.platformer && state.platformer.animationFrameId) {
                 cancelAnimationFrame(state.platformer.animationFrameId);
                 state.platformer = null;
@@ -629,7 +621,7 @@
                 document.getElementById('game-progress-text').innerText = 'Stage 1 / 30';
                 document.getElementById('game-progress-bar').style.width = '3.33%';
             } else {
-                state.maxQuestions = 20; // 20 Ronde Kuis
+                state.maxQuestions = 20; 
                 updateProgressBar();
             }
 
@@ -672,9 +664,6 @@
             }
         }
 
-        // ==========================================
-        // 1. GAME: BELAJAR WARNA
-        // ==========================================
         function buildWarnaGame(container) {
             const correctColor = COLORS_DB[Math.floor(Math.random() * COLORS_DB.length)];
             const wrongColors = shuffleArray(COLORS_DB.filter(c => c.name !== correctColor.name)).slice(0, 3);
@@ -708,9 +697,6 @@
             `;
         }
 
-        // ==========================================
-        // 2. GAME: TEBAK HURUF
-        // ==========================================
         function buildHurufGame(container) {
             const currentItem = LETTER_OBJECTS[Math.floor(Math.random() * LETTER_OBJECTS.length)];
             const wrongLetters = shuffleArray(
@@ -743,9 +729,6 @@
             `;
         }
 
-        // ==========================================
-        // 3. GAME: TEBAK ANGKA (MENGHITUNG)
-        // ==========================================
         function buildAngkaGame(container) {
             const count = Math.floor(Math.random() * 9) + 1; 
             const emojis = ['🎈', '🍓', '🍌', '🚗', '🐱', '🐣', '🍄', '🥕', '🍩', '🐼'];
@@ -786,9 +769,6 @@
             `;
         }
 
-        // ==========================================
-        // 4. GAME: TEBAK HEWAN
-        // ==========================================
         function buildHewanGame(container) {
             const correctAnimal = ANIMALS_DB[Math.floor(Math.random() * ANIMALS_DB.length)];
             const wrongAnimals = shuffleArray(ANIMALS_DB.filter(a => a.name !== correctAnimal.name)).slice(0, 3);
@@ -818,9 +798,6 @@
             `;
         }
 
-        // ==========================================
-        // 5. GAME: TEBAK BUAH
-        // ==========================================
         function buildBuahGame(container) {
             const correctFruit = FRUITS_DB[Math.floor(Math.random() * FRUITS_DB.length)];
             const wrongFruits = shuffleArray(FRUITS_DB.filter(f => f.name !== correctFruit.name)).slice(0, 3);
@@ -850,9 +827,6 @@
             `;
         }
 
-        // ==========================================
-        // 6. GAME: MEMORY MATCHING CARD
-        // ==========================================
         function buildMemoryGame(container) {
             const selectedEmojis = shuffleArray(MEMORY_EMOJIS).slice(0, 6); 
             const doubleArray = [...selectedEmojis, ...selectedEmojis];
@@ -887,9 +861,6 @@
             `;
         }
 
-        // ==========================================
-        // 7. GAME: MATEMATIKA DASAR
-        // ==========================================
         function buildMatematikaGame(container) {
             const num1 = Math.floor(Math.random() * 5) + 1; 
             const num2 = Math.floor(Math.random() * 4) + 1; 
@@ -965,9 +936,6 @@
             `;
         }
 
-        // ==========================================
-        // 8. GAME: PETUALANGAN HERO (SCROLLING CAMERA & ADVANCED TANTANGAN & SKILL POWER-UPS)
-        // ==========================================
         function buildPetualanganGame(container) {
             container.innerHTML = `
                 <div class="flex flex-col items-center w-full pop-effect">
@@ -1048,7 +1016,6 @@
 
             const p = state.platformer;
 
-            // Bangun stage layout 1
             generateStageLayout(1);
 
             // Integrasi Input Keyboard Desktop
@@ -1105,6 +1072,7 @@
                 p.bullets.push({
                     x: p.hero.facing === 'right' ? p.hero.x + p.hero.w : p.hero.x - (isLaser ? 24 : 8),
                     y: p.hero.y + p.hero.h / 2 - (isLaser ? 3 : 4),
+                    spawnX: p.hero.x, // Menyimpan titik awal tembakan untuk hitungan jangkauan peluru
                     w: isLaser ? 24 : 8,
                     h: isLaser ? 6 : 8,
                     vx: p.hero.facing === 'right' ? (isLaser ? 12 : 6) : (isLaser ? -12 : -6),
@@ -1112,11 +1080,9 @@
                 });
             }
 
-            // Jalankan loop renderer
             restartPlatformerLoop();
         }
 
-        // Generator Layout Stage (1 - 30)
         function generateStageLayout(stage) {
             if (!state.platformer) return;
             const p = state.platformer;
@@ -1165,11 +1131,10 @@
             );
 
             // Letakkan Item Kekuatan (Power-ups)
-            // 🍄 Jamur Raksasa & 🧪 Ramuan Laser
             p.powerups = [
                 { x: 300, y: 110, w: 18, h: 18, type: 'giant', collected: false, emoji: '🍄' },
                 { x: 780, y: 100, w: 18, h: 18, type: 'laser', collected: false, emoji: '🧪' },
-                { x: 1380, y: 90, w: 18, h: 18, type: 'giant', collected: false, emoji: '🍄' }
+                { x: 1380, y: 90,  w: 18, h: 18, type: 'giant', collected: false, emoji: '🍄' }
             ];
 
             // Bintang Emas Koleksi
@@ -1190,7 +1155,7 @@
             // Inisialisasi daftar musuh dengan tipe bervariasi
             p.enemies = [];
 
-            // Stage 1: Hanya monster Slime biasa
+            // Musuh Kecil Standar di Jalur Tengah
             p.enemies.push(
                 { x: 160, y: 176, w: 20, h: 20, type: 'slime', vx: speedMultiplier, xMin: 150, xMax: 240, active: true },
                 { x: 580, y: 166, w: 20, h: 20, type: 'slime', vx: -speedMultiplier, xMin: 560, xMax: 670, active: true }
@@ -1217,18 +1182,41 @@
                 );
             }
 
-            // Stage 5 - 30: Semakin tinggi stage, semakin rapat penempatan musuh elit
+            // Stage 5+: Tambahkan Monster Tambahan
             if (stage >= 5) {
                 p.enemies.push(
                     { x: 900, y: 176, w: 20, h: 20, type: 'slime', vx: speedMultiplier, xMin: 880, xMax: 950, active: true },
-                    { x: 1360, y: 106, w: 20, h: 20, type: 'flyer', base_y: 100, vx: -speedMultiplier, xMin: 1330, xMax: 1440, active: true, sinTime: 1.5 },
-                    { x: 1680, y: 166, w: 22, h: 22, type: 'sword', vx: speedMultiplier * 1.2, xMin: 1650, xMax: 1760, active: true, hp: 2 },
-                    { x: 1800, y: 116, w: 22, h: 22, type: 'shooter', shootCooldown: 100, active: true, dir: -1 }
+                    { x: 1360, y: 106, w: 20, h: 20, type: 'flyer', base_y: 100, vx: -speedMultiplier, xMin: 1330, xMax: 1440, active: true, sinTime: 1.5 }
                 );
+            }
+
+            // ==========================================
+            // AKSI BOS RAKSASA (FINAL BOSS) - HADIR SEJAK STAGE 1!
+            // ==========================================
+            // Semakin tinggi stage, Boss akan semakin banyak (maksimal 3 Bos) dan memiliki darah tebal (HP)!
+            const numBosses = Math.min(3, 1 + Math.floor((stage - 1) / 5)); // Stage 1-5: 1 Bos, Stage 6-10: 2 Bos, Stage 11+: 3 Bos sekaligus!
+            for (let i = 0; i < numBosses; i++) {
+                p.enemies.push({
+                    x: 1800 + (i * 45), // Jarak antar bos agar berkumpul menjaga bendera
+                    y: 220,
+                    w: 32,
+                    h: 32,
+                    vy: 0,
+                    grounded: false,
+                    type: 'boss',
+                    vx: (0.7 + (stage * 0.04)) * (i % 2 === 0 ? 1 : -1),
+                    xMin: 1700,
+                    xMax: 1910,
+                    active: true,
+                    hp: 6 + (stage * 3), // Stage 1: 9 HP, Stage 2: 12 HP, dst. Sangat tangguh!
+                    maxHp: 6 + (stage * 3),
+                    jumpTimer: 40 + Math.random() * 50,
+                    swingTimer: 0,
+                    emoji: ['👹', '👾', '🧌', '🐉'][i % 4]
+                });
             }
         }
 
-        // Core Animation Loop Engine
         function restartPlatformerLoop() {
             const canvasEl = document.getElementById('platformer-canvas');
             if (!canvasEl) return;
@@ -1259,7 +1247,6 @@
                         timerEl.innerText = `${Math.ceil(p.hero.powerupTimer / 60)}s`;
                     }
                     
-                    // Update dimensi fisik Hero berdasarkan mode Raksasa
                     if (p.hero.powerup === 'giant') {
                         p.hero.w = 34;
                         p.hero.h = 34;
@@ -1275,12 +1262,10 @@
                     if (hud) hud.classList.add('hidden');
                 }
 
-                // Update Imunitas Hero
                 if (p.hero.invulnerable > 0) {
                     p.hero.invulnerable--;
                 }
 
-                // Pergerakan Arah Hadap Pahlawan
                 if (p.hero.vx > 0.1) p.hero.facing = 'right';
                 if (p.hero.vx < -0.1) p.hero.facing = 'left';
 
@@ -1316,7 +1301,6 @@
                     }
                 });
 
-                // Pembatasan Batas Kiri / Kanan Arena Virtual (2000px)
                 if (p.hero.x < 0) p.hero.x = 0;
                 if (p.hero.x + p.hero.w > p.virtualWidth) p.hero.x = p.virtualWidth - p.hero.w;
 
@@ -1329,7 +1313,6 @@
                     }
                 });
 
-                // Jaring Pengaman Jatuh Jurang
                 if (p.hero.y > canvasEl.height) {
                     playSynthSound('incorrect');
                     respawnHero();
@@ -1343,16 +1326,19 @@
                         playSynthSound('correct');
                         item.collected = true;
                         p.hero.powerup = item.type;
-                        p.hero.powerupTimer = 600; // Aktif selama 10 detik (60fps * 10)
+                        p.hero.powerupTimer = 600; 
                         p.scoreLocal += 10;
                         document.getElementById('game-score').innerText = p.scoreLocal;
                     }
                 });
 
-                // --- UPDATE PELURU JAGOAN ---
+                // --- UPDATE PELURU JAGOAN (BATAS JANGKAUAN 220px MAKSIMAL) ---
                 p.bullets.forEach((b, bIdx) => {
                     b.x += b.vx;
-                    if (b.x < p.cameraX || b.x > p.cameraX + 600) {
+                    
+                    // Jangkauan tembakan maksimum: Bintang biasa 220px, Laser 400px agar tak menyerang di luar batas penglihatan
+                    const maxTravel = b.type === 'laser' ? 400 : 220; 
+                    if (b.x < p.cameraX || b.x > p.cameraX + 600 || Math.abs(b.x - b.spawnX) > maxTravel) {
                         p.bullets.splice(bIdx, 1);
                     }
                 });
@@ -1364,7 +1350,6 @@
                         p.enemyProjectiles.splice(fbIdx, 1);
                     }
 
-                    // Tabrak Hero
                     if (fb.x < p.hero.x + p.hero.w && fb.x + fb.w > p.hero.x &&
                         fb.y < p.hero.y + p.hero.h && fb.y + fb.h > p.hero.y) {
                         p.enemyProjectiles.splice(fbIdx, 1);
@@ -1372,11 +1357,11 @@
                     }
                 });
 
-                // --- PERGERAKAN & AKSI MONSTER MUSUH ---
+                // --- PERGERAKAN & AKSI MONSTER MUSUH (TERMASUK FINAL BOSS) ---
                 p.enemies.forEach((enemy) => {
                     if (!enemy.active) return;
 
-                    // Slime biasa & Monster Pedang patroli horizontal
+                    // Gerakan dasar Slime & Monster Pedang
                     if (enemy.type === 'slime' || enemy.type === 'sword') {
                         enemy.x += enemy.vx;
                         if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
@@ -1384,17 +1369,17 @@
                         }
                     }
 
-                    // Kelelawar Terbang 🦇 bergerak secara Sinusoidal
+                    // Kelelawar Terbang sinus
                     if (enemy.type === 'flyer') {
                         enemy.x += enemy.vx;
                         enemy.sinTime += 0.05;
-                        enemy.y = enemy.base_y + Math.sin(enemy.sinTime) * 35; // mengayun naik turun 35px
+                        enemy.y = enemy.base_y + Math.sin(enemy.sinTime) * 35;
                         if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
                             enemy.vx *= -1;
                         }
                     }
 
-                    // Monster Penembak Api 🌵 diam & menembak
+                    // Penembak api
                     if (enemy.type === 'shooter') {
                         enemy.shootCooldown--;
                         if (enemy.shootCooldown <= 0) {
@@ -1404,7 +1389,47 @@
                                 w: 10, h: 10,
                                 vx: enemy.dir * 3
                             });
-                            enemy.shootCooldown = 120 + Math.random() * 40; // jeda tembak acak
+                            enemy.shootCooldown = 120 + Math.random() * 40;
+                        }
+                    }
+
+                    // Pemrosesan Fisika & Lompatan Khusus Bos Raksasa
+                    if (enemy.type === 'boss') {
+                        // Pergerakan Horizontal
+                        enemy.x += enemy.vx;
+                        if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
+                            enemy.vx *= -1;
+                        }
+
+                        // Gravitasi & Lompatan Ringan / Terbang Bos
+                        if (enemy.vy === undefined) enemy.vy = 0;
+                        enemy.vy += 0.22; // Gravitasi lebih enteng agar terasa terbang melayang
+                        enemy.y += enemy.vy;
+                        enemy.grounded = false;
+
+                        p.platforms.forEach(plat => {
+                            if (enemy.x + enemy.w > plat.x && enemy.x < plat.x + plat.w) {
+                                if (enemy.y + enemy.h >= plat.y && enemy.y + enemy.h - enemy.vy <= plat.y + 8) {
+                                    enemy.y = plat.y - enemy.h;
+                                    enemy.vy = 0;
+                                    enemy.grounded = true;
+                                }
+                            }
+                        });
+
+                        enemy.jumpTimer--;
+                        if (enemy.jumpTimer <= 0 && enemy.grounded) {
+                            enemy.vy = -6.8; // Bos melompat tinggi!
+                            enemy.grounded = false;
+                            enemy.jumpTimer = 60 + Math.random() * 80;
+                        }
+
+                        // Deteksi Mengayun Palu Raksasa Jarak Dekat (Melee)
+                        const distToHero = Math.abs(p.hero.x - enemy.x);
+                        if (distToHero < 90) {
+                            enemy.swingTimer = (enemy.swingTimer + 1) % 40;
+                        } else {
+                            enemy.swingTimer = 0;
                         }
                     }
 
@@ -1415,15 +1440,24 @@
                     }
                 });
 
-                // --- DETEKSI PELURU JAGOAN MENABRAK MUSUH ---
                 p.bullets.forEach((b, bIdx) => {
                     p.enemies.forEach((enemy) => {
                         if (!enemy.active) return;
                         if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
                             b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
                             
-                            // Efek serang bergantung hp/tipe
-                            if (enemy.type === 'sword' && enemy.hp > 1) {
+                            // Deteksi Tipe Serangan Bos
+                            if (enemy.type === 'boss') {
+                                playSynthSound('click');
+                                enemy.hp -= (b.type === 'laser' ? 2 : 1); // Laser memberikan double damage!
+                                p.bullets.splice(bIdx, 1);
+                                if (enemy.hp <= 0) {
+                                    playSynthSound('correct');
+                                    enemy.active = false;
+                                    p.scoreLocal += 100; // Bonus besar kalahkan Bos
+                                    document.getElementById('game-score').innerText = p.scoreLocal;
+                                }
+                            } else if (enemy.type === 'sword' && enemy.hp > 1) {
                                 playSynthSound('click');
                                 enemy.hp--;
                                 p.bullets.splice(bIdx, 1);
@@ -1438,7 +1472,7 @@
                     });
                 });
 
-                // --- AMBIL BINTANG EMAS (⭐) ---
+                // Ambil Bintang Emas
                 p.stars.forEach((star) => {
                     if (star.collected) return;
                     if (p.hero.x < star.x + star.w && p.hero.x + p.hero.w > star.x &&
@@ -1450,7 +1484,7 @@
                     }
                 });
 
-                // --- DETEKSI TIANG BENDERA GOAL (🔒 / 🔓) ---
+                // Deteksi Bendera Goal (Wajib Kalahkan Semua Musuh & Bos)
                 if (p.hero.x < p.goal.x + p.goal.w && p.hero.x + p.hero.w > p.goal.x &&
                     p.hero.y < p.goal.y + p.goal.h && p.hero.y + p.hero.h > p.goal.y) {
                     
@@ -1463,18 +1497,18 @@
                     }
                 }
 
-                // --- SISTEM KAMERA SCROLLING PLATFORMER ---
+                // Kamera Scrolling Mario (Scrolling mulus horizontal)
                 p.cameraX = p.hero.x - 180;
                 if (p.cameraX < 0) p.cameraX = 0;
                 if (p.cameraX > p.virtualWidth - 600) p.cameraX = p.virtualWidth - 600;
 
-                // --- PROSES RENDER GRAFIS KE CANVAS ---
+                // --- RENDERING CANVAS ---
                 pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
                 
                 pCtx.save();
                 pCtx.translate(-p.cameraX, 0);
 
-                // 1. Gambar Tanah Dasar & Platform Melayang
+                // Draw Platforms
                 p.platforms.forEach(plat => {
                     pCtx.fillStyle = '#22c55e';
                     pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
@@ -1482,13 +1516,13 @@
                     pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
                 });
 
-                // 2. Gambar Jebakan Duri Tajam 🔺
+                // Draw traps
                 p.traps.forEach(trap => {
                     pCtx.font = '16px Arial';
                     pCtx.fillText('🔺', trap.x, trap.y + 16);
                 });
 
-                // 3. Gambar Goal (Tiang Bendera Kayu & Kain Merah)
+                // Draw Goal (Tiang Bendera)
                 pCtx.fillStyle = '#a16207';
                 pCtx.fillRect(p.goal.x + 8, p.goal.y, 4, p.goal.h);
                 pCtx.fillStyle = '#ef4444';
@@ -1498,33 +1532,54 @@
                 pCtx.lineTo(p.goal.x + 12, p.goal.y + 24);
                 pCtx.fill();
 
-                // 4. Gambar Bintang Emas ⭐
+                // Draw Stars
                 p.stars.forEach(star => {
                     if (star.collected) return;
                     pCtx.font = '14px Arial';
                     pCtx.fillText('⭐', star.x, star.y + 12);
                 });
 
-                // 5. Gambar Item Power-ups 🍄 / 🧪
+                // Draw Power-ups
                 p.powerups.forEach(item => {
                     if (item.collected) return;
                     pCtx.font = '16px Arial';
                     pCtx.fillText(item.emoji, item.x, item.y + 16);
                 });
 
-                // 6. Gambar Monster Musuh (Slime, Flyer 🦇, Sword 👹, Shooter 🌵)
+                // Draw Enemies & Bosses
                 p.enemies.forEach(enemy => {
                     if (!enemy.active) return;
                     let emoji = '👾';
                     if (enemy.type === 'flyer') emoji = '🦇';
                     if (enemy.type === 'sword') emoji = '👹';
                     if (enemy.type === 'shooter') emoji = '🌵';
+                    if (enemy.type === 'boss') emoji = enemy.emoji || '👹';
                     
-                    pCtx.font = '18px Arial';
-                    pCtx.fillText(emoji, enemy.x, enemy.y + 18);
+                    const size = enemy.type === 'boss' ? 30 : 18;
+                    pCtx.font = `${size}px Arial`;
+                    pCtx.fillText(emoji, enemy.x, enemy.y + (enemy.type === 'boss' ? 28 : 18));
 
-                    // Gambar indikator HP monster pedang
-                    if (enemy.type === 'sword' && enemy.hp > 1) {
+                    // HP Bar khusus untuk Bos
+                    if (enemy.type === 'boss') {
+                        const hpPercent = enemy.hp / enemy.maxHp;
+                        pCtx.fillStyle = '#ef4444';
+                        pCtx.fillRect(enemy.x - 4, enemy.y - 12, 40, 4);
+                        pCtx.fillStyle = '#22c55e';
+                        pCtx.fillRect(enemy.x - 4, enemy.y - 12, 40 * hpPercent, 4);
+                        pCtx.strokeStyle = '#000';
+                        pCtx.strokeRect(enemy.x - 4, enemy.y - 12, 40, 4);
+
+                        // Gambar Senjata Palu Raksasa yang diayunkan
+                        if (enemy.swingTimer > 10) {
+                            pCtx.save();
+                            pCtx.translate(enemy.x + 16, enemy.y + 16);
+                            const angle = Math.sin(enemy.swingTimer * 0.15) * 1.2;
+                            pCtx.rotate(angle);
+                            pCtx.font = '20px Arial';
+                            pCtx.fillText('🔨', -10, -15);
+                            pCtx.restore();
+                        }
+                    } else if (enemy.type === 'sword' && enemy.hp > 1) {
                         pCtx.fillStyle = '#ef4444';
                         pCtx.fillRect(enemy.x, enemy.y - 6, 20, 3);
                         pCtx.fillStyle = '#22c55e';
@@ -1532,10 +1587,10 @@
                     }
                 });
 
-                // 7. Gambar Peluru Jagoan (Bintang biasa / Laser ⚡)
+                // Draw Bullets (Bintang & Laser)
                 p.bullets.forEach(b => {
                     if (b.type === 'laser') {
-                        pCtx.fillStyle = '#38bdf8'; // Sinar Biru Laser
+                        pCtx.fillStyle = '#38bdf8'; 
                         pCtx.fillRect(b.x, b.y, b.w, b.h);
                         pCtx.shadowBlur = 8;
                         pCtx.shadowColor = '#06b6d4';
@@ -1543,38 +1598,37 @@
                         pCtx.font = '10px Arial';
                         pCtx.fillText('✨', b.x, b.y + 8);
                     }
-                    pCtx.shadowBlur = 0; // reset shadow
+                    pCtx.shadowBlur = 0; 
                 });
 
-                // 8. Gambar Peluru Bola Api Musuh 🔥
+                // Draw enemy fireballs
                 p.enemyProjectiles.forEach(fb => {
                     pCtx.font = '12px Arial';
                     pCtx.fillText('🔥', fb.x, fb.y + 10);
                 });
 
-                // 9. Gambar Jagoan Kucing 🐱
+                // Draw Hero Kucing
                 if (p.hero.invulnerable > 0 && Math.floor(p.time * 5) % 2 === 0) {
-                    // Berkedip transparansi saat invulnerable
+                    // Blink effect
                 } else {
                     const heroSize = p.hero.powerup === 'giant' ? 30 : 20;
                     pCtx.font = `${heroSize}px Arial`;
                     pCtx.fillText('🐱', p.hero.x, p.hero.y + (heroSize - 2));
                 }
 
-                // Gambar Lock / Unlock Status di Atas Bendera
                 const anyActive = p.enemies.some(e => e.active);
                 pCtx.font = '14px Arial';
                 pCtx.fillText(anyActive ? '🔒' : '🔓', p.goal.x + 2, p.goal.y - 12);
 
                 pCtx.restore();
 
-                // Draw HUD (Teks Melayang di Atas Kamera)
+                // Draw HUD
                 if (p.warningTimer > 0) {
                     p.warningTimer--;
                     pCtx.fillStyle = 'rgba(244, 63, 94, 0.95)';
                     pCtx.font = 'bold 12px Arial';
                     pCtx.textAlign = 'center';
-                    pCtx.fillText('⚠️ Kalahkan semua monster dulu!', 200, 30);
+                    pCtx.fillText('⚠️ Kalahkan semua monster & Bos dulu!', 200, 30);
                 }
 
                 p.animationFrameId = requestAnimationFrame(loop);
@@ -1592,17 +1646,15 @@
                 document.getElementById('game-score').innerText = p.scoreLocal;
             }
 
-            // Fungsi Terkena Serangan Musuh/Peluru
             function hitHero() {
                 const p = state.platformer;
                 if (p.hero.invulnerable > 0) return;
 
-                // Jika memiliki jamur raksasa, ciutkan badan & imun sejenak
                 if (p.hero.powerup === 'giant') {
                     playSynthSound('incorrect');
                     p.hero.powerup = null;
                     p.hero.powerupTimer = 0;
-                    p.hero.invulnerable = 60; // imun 1 detik
+                    p.hero.invulnerable = 60; 
                 } else {
                     playSynthSound('incorrect');
                     respawnHero();
@@ -1624,7 +1676,6 @@
             triggerConfetti();
 
             if (p.stage < 30) {
-                // Tampilkan Modal Transisi Antar Stage dengan Pilihan Otomatis Lanjut
                 const modal = document.getElementById('stage-clear-modal');
                 const nextNumEl = document.getElementById('next-stage-num');
                 if (modal && nextNumEl) {
@@ -1632,7 +1683,6 @@
                     modal.classList.remove('hidden');
                 }
             } else {
-                // Berhasil menamatkan Stage 30! Kemenangan mutlak!
                 state.score = p.scoreLocal + 150; 
                 document.getElementById('game-score').innerText = state.score;
                 endGameSession();
@@ -1652,24 +1702,17 @@
                 const p = state.platformer;
                 p.stage++;
                 
-                // Tambahkan sisa skor local ke global score
                 state.score = p.scoreLocal + 50; 
                 document.getElementById('game-score').innerText = state.score;
 
                 document.getElementById('game-progress-text').innerText = `Stage ${p.stage} / 30`;
                 document.getElementById('game-progress-bar').style.width = `${(p.stage / 30) * 100}%`;
 
-                // Regenerasi platform untuk stage baru
                 generateStageLayout(p.stage);
-                
-                // Nyalakan kembali loop game
                 restartPlatformerLoop();
             }
         }
 
-        // ==========================================
-        // PROSES PENILAIAN JAWABAN KUIS (SELAIN PLATFORMER)
-        // ==========================================
         function checkAnswer(answerSelected, buttonElement) {
             const parent = buttonElement.parentElement;
             const buttons = parent.querySelectorAll('button');
@@ -1707,20 +1750,6 @@
             }
         }
 
-        // Suntik Animasi Shake getar ke dokumen
-        const animStyle = document.createElement('style');
-        animStyle.innerHTML = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-8px); }
-                75% { transform: translateX(8px); }
-            }
-        `;
-        document.head.appendChild(animStyle);
-
-        // ==========================================
-        // SELEBRASI SELESAI GAME & RATING BINTANG
-        // ==========================================
         function endGameSession() {
             playSynthSound('complete');
             triggerConfetti();
@@ -1772,7 +1801,6 @@
             }
         }
 
-        // Inisialisasi Pertama Kali Web Dimuat
         window.onload = function() {
             renderMenuGrid();
             if ('speechSynthesis' in window) {
