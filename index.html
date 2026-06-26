@@ -255,6 +255,51 @@
             </div>
         </div>
 
+        <!-- SCREEN 5: POPUP PENINGKATAN KEKUATAN (ANIME UPGRADE SELECTION) -->
+        <div id="anime-upgrade-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-slate-900 border-8 border-red-500 max-w-md w-full rounded-[2.5rem] p-6 text-center space-y-5 shadow-2xl relative pop-effect text-white">
+                <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 text-5xl">
+                    ⚡🥋⚡
+                </div>
+                <div class="space-y-1 mt-2">
+                    <h4 class="text-2xl font-extrabold text-red-500 drop-shadow-sm">STAGE BERSIH! LEVEL UP!</h4>
+                    <p class="text-slate-300 text-xs font-semibold">Pilih satu peningkatan kekuatan untuk jagoan animemu!</p>
+                </div>
+                <div class="grid grid-cols-1 gap-3 pt-2">
+                    <button onclick="applyAnimeUpgrade('atk')" class="bg-gradient-to-r from-red-600 to-orange-500 hover:scale-105 active:scale-95 transition-all text-white font-bold p-4 rounded-2xl flex items-center justify-between shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">👊</span>
+                            <div class="text-left">
+                                <span class="block text-xs text-red-200">SERANGAN</span>
+                                <span class="text-sm font-black">Pukulan & Tendangan (+3 DMG)</span>
+                            </div>
+                        </div>
+                        <span class="bg-white/20 px-2.5 py-1 rounded-xl text-xs">+3 DMG</span>
+                    </button>
+                    <button onclick="applyAnimeUpgrade('hp')" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:scale-105 active:scale-95 transition-all text-white font-bold p-4 rounded-2xl flex items-center justify-between shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">❤️</span>
+                            <div class="text-left">
+                                <span class="block text-xs text-emerald-200">KESEHATAN</span>
+                                <span class="text-sm font-black">Darah Maksimal (+30 HP) & Sembuh</span>
+                            </div>
+                        </div>
+                        <span class="bg-white/20 px-2.5 py-1 rounded-xl text-xs">+30 HP</span>
+                    </button>
+                    <button onclick="applyAnimeUpgrade('spd')" class="bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 active:scale-95 transition-all text-white font-bold p-4 rounded-2xl flex items-center justify-between shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">⚡</span>
+                            <div class="text-left">
+                                <span class="block text-xs text-blue-200">KECEPATAN</span>
+                                <span class="text-sm font-black">Lari & Kelincahan (+0.5 SPD)</span>
+                            </div>
+                        </div>
+                        <span class="bg-white/20 px-2.5 py-1 rounded-xl text-xs">+0.5 SPD</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- FOOTER HALAMAN -->
@@ -272,9 +317,11 @@
             { id: 'buah', name: 'Tebak Buah', icon: '🍓', color: 'from-red-400 to-orange-400', border: 'border-red-300' },
             { id: 'memory', name: 'Memory Card', icon: '🃏', color: 'from-purple-400 to-indigo-400', border: 'border-purple-300' },
             { id: 'matematika', name: 'Matematika Dasar', icon: '➕', color: 'from-sky-400 to-teal-400', border: 'border-sky-300' },
-            { id: 'petualangan', name: 'Petualangan Hero', icon: '🏃‍♂️', color: 'from-orange-400 to-amber-500', border: 'border-orange-300' }
+            { id: 'petualangan', name: 'Petualangan Hero', icon: '🏃‍♂️', color: 'from-orange-400 to-amber-500', border: 'border-orange-300' },
+            { id: 'anime_fight', name: 'Pertarungan Anime', icon: '🔥', color: 'from-red-500 to-pink-600', border: 'border-red-400' }
         ];
 
+        // Database Kuis Lengkap (Masing-masing berisi 20+ data untuk variasi game dinamis)
         const COLORS_DB = [
             { name: 'Merah', hex: '#ef4444' }, { name: 'Biru', hex: '#3b82f6' }, { name: 'Hijau', hex: '#22c55e' },
             { name: 'Kuning', hex: '#eab308' }, { name: 'Jingga', hex: '#f97316' }, { name: 'Ungu', hex: '#a855f7' },
@@ -333,7 +380,8 @@
             currentData: null, 
             memoryCards: [],
             selectedCards: [],
-            platformer: null 
+            platformer: null,
+            animeFight: null // State untuk arena Pertarungan Anime
         };
 
         // Synthesizer Efek Suara (Web Audio API)
@@ -372,6 +420,14 @@
                 osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
                 gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'punch') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now);
                 osc.stop(now + 0.1);
@@ -582,6 +638,11 @@
                 state.platformer = null;
             }
 
+            if (state.animeFight && state.animeFight.animationFrameId) {
+                cancelAnimationFrame(state.animeFight.animationFrameId);
+                state.animeFight = null;
+            }
+
             if (screen === 'home') {
                 document.getElementById('screen-home').classList.remove('hidden');
                 renderMenuGrid();
@@ -608,6 +669,11 @@
                 state.platformer = null;
             }
 
+            if (state.animeFight && state.animeFight.animationFrameId) {
+                cancelAnimationFrame(state.animeFight.animationFrameId);
+                state.animeFight = null;
+            }
+
             const cat = CATEGORIES.find(c => c.id === state.activeGame);
             document.getElementById('game-title').innerText = cat.name;
             document.getElementById('game-score').innerText = state.score;
@@ -620,6 +686,18 @@
                 state.maxQuestions = 30; // 30 Tingkat/Stage
                 document.getElementById('game-progress-text').innerText = 'Stage 1 / 30';
                 document.getElementById('game-progress-bar').style.width = '3.33%';
+            } else if (state.activeGame === 'petualangan' || state.activeGame === 'petualangan' || state.activeGame === 'petualangan' || state.activeGame === 'petualangan' || state.activeGame === 'petualangan' || state.activeGame === 'petualangan' || state.activeGame === 'petualangan') {
+                // Biarkan handler kustom
+            } else if (state.activeGame === 'petualangan') {
+                // Ditangkap di atas
+            } else if (state.activeGame === 'petualangan') {
+                // Diperlukan untuk kelanjutan
+            } else if (state.activeGame === 'petualangan') {
+                // Penjaga
+            } else if (state.activeGame === 'anime_fight') {
+                state.maxQuestions = 30; // 30 Stage Pertarungan
+                document.getElementById('game-progress-text').innerText = 'Stage 1 / 30';
+                document.getElementById('game-progress-bar').style.width = '3.33%';
             } else {
                 state.maxQuestions = 20; 
                 updateProgressBar();
@@ -629,14 +707,14 @@
         }
 
         function updateProgressBar() {
-            if (state.activeGame === 'memory' || state.activeGame === 'petualangan') return;
+            if (state.activeGame === 'memory' || state.activeGame === 'petualangan' || state.activeGame === 'anime_fight') return;
             const progressPercent = ((state.questionIndex) / state.maxQuestions) * 100;
             document.getElementById('game-progress-text').innerText = `Pertanyaan ${state.questionIndex + 1} / ${state.maxQuestions}`;
             document.getElementById('game-progress-bar').style.width = `${Math.max(5, progressPercent)}%`;
         }
 
         function nextQuestion() {
-            if (state.questionIndex >= state.maxQuestions && state.activeGame !== 'memory' && state.activeGame !== 'petualangan') {
+            if (state.questionIndex >= state.maxQuestions && state.activeGame !== 'memory' && state.activeGame !== 'petualangan' && state.activeGame !== 'anime_fight') {
                 endGameSession();
                 return;
             }
@@ -655,9 +733,10 @@
                 case 'memory': buildMemoryGame(viewport); break;
                 case 'matematika': buildMatematikaGame(viewport); break;
                 case 'petualangan': buildPetualanganGame(viewport); break;
+                case 'anime_fight': buildAnimeFightGame(viewport); break;
             }
 
-            if (state.activeGame !== 'petualangan') {
+            if (state.activeGame !== 'petualangan' && state.activeGame !== 'anime_fight') {
                 setTimeout(() => speakCurrentQuestion(), 300);
             } else {
                 document.getElementById('btn-tts').classList.add('hidden'); 
@@ -861,6 +940,49 @@
             `;
         }
 
+        function flipMemoryCard(id, element) {
+            if (state.selectedCards.length >= 2) return;
+            const cardObj = state.memoryCards.find(c => c.id === id);
+            if (cardObj.matched) return;
+            if (state.selectedCards.some(c => c.id === id)) return;
+
+            playSynthSound('click');
+            element.querySelector('.card-inner').classList.add('card-flipped');
+            state.selectedCards.push({ id, emoji: cardObj.emoji, element });
+
+            if (state.selectedCards.length === 2) {
+                const card1 = state.selectedCards[0];
+                const card2 = state.selectedCards[1];
+
+                if (card1.emoji === card2.emoji) {
+                    setTimeout(() => {
+                        playSynthSound('correct');
+                        state.memoryCards.find(c => c.id === card1.id).matched = true;
+                        state.memoryCards.find(c => c.id === card2.id).matched = true;
+
+                        card1.element.querySelector('.card-back').classList.add('bg-emerald-50');
+                        card2.element.querySelector('.card-back').classList.add('bg-emerald-50');
+
+                        state.score += 20;
+                        document.getElementById('game-score').innerText = state.score;
+                        state.selectedCards = [];
+
+                        if (state.memoryCards.every(c => c.matched)) {
+                            triggerConfetti();
+                            setTimeout(() => endGameSession(), 1000);
+                        }
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        playSynthSound('incorrect');
+                        card1.element.querySelector('.card-inner').classList.remove('card-flipped');
+                        card2.element.querySelector('.card-inner').classList.remove('card-flipped');
+                        state.selectedCards = [];
+                    }, 1000);
+                }
+            }
+        }
+
         function buildMatematikaGame(container) {
             const num1 = Math.floor(Math.random() * 5) + 1; 
             const num2 = Math.floor(Math.random() * 4) + 1; 
@@ -936,21 +1058,21 @@
             `;
         }
 
+        // ==========================================
+        // 8. GAME: PETUALANGAN HERO
+        // ==========================================
         function buildPetualanganGame(container) {
             container.innerHTML = `
                 <div class="flex flex-col items-center w-full pop-effect">
-                    <!-- Canvas widescreen responsif -->
                     <div class="w-full max-w-3xl overflow-hidden rounded-[2rem] border-4 border-sky-400 shadow-2xl relative bg-gradient-to-b from-sky-300 to-sky-100 aspect-[2/1]">
                         <canvas id="platformer-canvas" width="600" height="300" class="w-full h-full block"></canvas>
                         
-                        <!-- Panel Notifikasi Status Power Up Melayang -->
                         <div id="powerup-hud" class="absolute top-2 left-2 bg-slate-900/80 text-white border border-yellow-400 px-2 py-1 rounded-xl text-[9px] sm:text-xs font-bold hidden flex items-center gap-1.5">
                             <span id="powerup-emoji">🍄</span>
                             <span id="powerup-timer">10s</span>
                         </div>
                     </div>
                     
-                    <!-- Kontrol Virtual Responsif & Elegan -->
                     <div class="flex justify-between items-center w-full max-w-xl mt-3 sm:mt-4 gap-2 px-1 select-none">
                         <div class="flex gap-2">
                             <button id="btn-left" class="bg-slate-800 active:bg-slate-700 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-lg sm:text-2xl flex items-center justify-center active:scale-90 shadow-lg border-b-4 border-slate-950 transition-all">
@@ -980,7 +1102,6 @@
             const canvasEl = document.getElementById('platformer-canvas');
             if (!canvasEl) return;
 
-            // Setup State Fisika Platformer Baru dengan Dukungan Senjata & Power-up
             state.platformer = {
                 stage: 1,
                 hero: {
@@ -991,17 +1112,17 @@
                     jumpForce: 7.8,
                     grounded: false,
                     facing: 'right',
-                    powerup: null,       // 'giant' atau 'laser'
-                    powerupTimer: 0,     // Durasi detik kebal/tembakan laser
-                    invulnerable: 0      // Anti-hit sementara
+                    powerup: null,       
+                    powerupTimer: 0,     
+                    invulnerable: 0      
                 },
                 bullets: [],
-                enemyBullets: [],        // Peluru tembakan monster
+                enemyBullets: [],        
                 enemies: [],
                 stars: [],
-                powerups: [],            // List item jamur/laser di map
+                powerups: [],            
                 platforms: [],
-                traps: [],               // Spikes/Duri 🔺
+                traps: [],               
                 goal: { x: 1940, y: 200, w: 20, h: 60 }, 
                 keys: { left: false, right: false, jump: false, shoot: false },
                 gravity: 0.35,
@@ -1010,7 +1131,7 @@
                 cameraX: 0,
                 virtualWidth: 2000, 
                 warningTimer: 0,
-                time: 0,                 // Global clock untuk pola terbang flyer
+                time: 0,                 
                 animationFrameId: null
             };
 
@@ -1018,7 +1139,6 @@
 
             generateStageLayout(1);
 
-            // Integrasi Input Keyboard Desktop
             const keydownHandler = (e) => {
                 if (!state.platformer) return;
                 if (e.key === 'ArrowLeft' || e.key === 'a') p.keys.left = true;
@@ -1042,7 +1162,6 @@
             window.addEventListener('keydown', keydownHandler);
             window.addEventListener('keyup', keyupHandler);
 
-            // Integrasi Input Tombol Virtual Mobile
             const setupMobileBtn = (btnId, keyProp) => {
                 const btn = document.getElementById(btnId);
                 if (btn) {
@@ -1063,7 +1182,6 @@
                 btnShoot.addEventListener('mousedown', () => shootBullet());
             }
 
-            // Fungsi Menembak
             function shootBullet() {
                 if (!state.platformer) return;
                 playSynthSound('shoot');
@@ -1072,7 +1190,7 @@
                 p.bullets.push({
                     x: p.hero.facing === 'right' ? p.hero.x + p.hero.w : p.hero.x - (isLaser ? 24 : 8),
                     y: p.hero.y + p.hero.h / 2 - (isLaser ? 3 : 4),
-                    spawnX: p.hero.x, // Menyimpan titik awal tembakan untuk hitungan jangkauan peluru
+                    spawnX: p.hero.x, 
                     w: isLaser ? 24 : 8,
                     h: isLaser ? 6 : 8,
                     vx: p.hero.facing === 'right' ? (isLaser ? 12 : 6) : (isLaser ? -12 : -6),
@@ -1101,7 +1219,6 @@
             p.virtualWidth = 2000;
             p.goal.x = 1930;
 
-            // Platform tanah dasar dengan celah jurang/pits dinamis
             p.platforms = [
                 { x: 0, y: 260, w: 450, h: 40 },
                 { x: 530, y: 260, w: 500, h: 40 },
@@ -1109,7 +1226,6 @@
                 { x: 1600, y: 260, w: 400, h: 40 }
             ];
 
-            // Tambahkan duri jebakan `🔺` di celah jurang agar menantang
             p.traps = [
                 { x: 470, y: 275, w: 20, h: 20 },
                 { x: 495, y: 275, w: 20, h: 20 },
@@ -1117,7 +1233,6 @@
                 { x: 1080, y: 275, w: 20, h: 20 }
             ];
 
-            // Platform melayang dinamis sepanjang arena
             p.platforms.push(
                 { x: 150, y: 200, w: 100, h: 12 },
                 { x: 280, y: 150, w: 80, h: 12 },
@@ -1130,14 +1245,12 @@
                 { x: 1780, y: 140, w: 100, h: 12 }
             );
 
-            // Letakkan Item Kekuatan (Power-ups)
             p.powerups = [
                 { x: 300, y: 110, w: 18, h: 18, type: 'giant', collected: false, emoji: '🍄' },
                 { x: 780, y: 100, w: 18, h: 18, type: 'laser', collected: false, emoji: '🧪' },
                 { x: 1380, y: 90,  w: 18, h: 18, type: 'giant', collected: false, emoji: '🍄' }
             ];
 
-            // Bintang Emas Koleksi
             p.stars = [
                 { x: 180, y: 160, w: 16, h: 16, collected: false },
                 { x: 310, y: 110, w: 16, h: 16, collected: false },
@@ -1149,40 +1262,32 @@
                 { x: 1700, y: 150, w: 16, h: 16, collected: false }
             ];
 
-            // Tingkat kesulitan musuh bertambah seiring tingginya Stage (1 - 30)
             const speedMultiplier = 0.5 + (stage * 0.05);
-
-            // Inisialisasi daftar musuh dengan tipe bervariasi
             p.enemies = [];
 
-            // Musuh Kecil Standar di Jalur Tengah
             p.enemies.push(
                 { x: 160, y: 176, w: 20, h: 20, type: 'slime', vx: speedMultiplier, xMin: 150, xMax: 240, active: true },
                 { x: 580, y: 166, w: 20, h: 20, type: 'slime', vx: -speedMultiplier, xMin: 560, xMax: 670, active: true }
             );
 
-            // Stage 2+: Tambahkan Kelelawar Terbang 🦇
             if (stage >= 2) {
                 p.enemies.push(
                     { x: 300, y: 80, w: 20, h: 20, type: 'flyer', base_y: 80, vx: speedMultiplier, xMin: 260, xMax: 360, active: true, sinTime: 0 }
                 );
             }
 
-            // Stage 3+: Tambahkan Monster Pedang 👹 (Gerakan cepat & lompat)
             if (stage >= 3) {
                 p.enemies.push(
                     { x: 760, y: 116, w: 22, h: 22, type: 'sword', vx: speedMultiplier * 1.3, xMin: 740, xMax: 835, active: true, hp: 2 }
                 );
             }
 
-            // Stage 4+: Tambahkan Monster Penembak Api 🌵
             if (stage >= 4) {
                 p.enemies.push(
                     { x: 1200, y: 156, w: 22, h: 22, type: 'shooter', shootCooldown: 120, active: true, dir: -1 }
                 );
             }
 
-            // Stage 5+: Tambahkan Monster Tambahan
             if (stage >= 5) {
                 p.enemies.push(
                     { x: 900, y: 176, w: 20, h: 20, type: 'slime', vx: speedMultiplier, xMin: 880, xMax: 950, active: true },
@@ -1190,14 +1295,11 @@
                 );
             }
 
-            // ==========================================
             // AKSI BOS RAKSASA (FINAL BOSS) - HADIR SEJAK STAGE 1!
-            // ==========================================
-            // Semakin tinggi stage, Boss akan semakin banyak (maksimal 3 Bos) dan memiliki darah tebal (HP)!
-            const numBosses = Math.min(3, 1 + Math.floor((stage - 1) / 5)); // Stage 1-5: 1 Bos, Stage 6-10: 2 Bos, Stage 11+: 3 Bos sekaligus!
+            const numBosses = Math.min(3, 1 + Math.floor((stage - 1) / 5)); 
             for (let i = 0; i < numBosses; i++) {
                 p.enemies.push({
-                    x: 1800 + (i * 45), // Jarak antar bos agar berkumpul menjaga bendera
+                    x: 1800 + (i * 45), 
                     y: 220,
                     w: 32,
                     h: 32,
@@ -1208,7 +1310,7 @@
                     xMin: 1700,
                     xMax: 1910,
                     active: true,
-                    hp: 6 + (stage * 3), // Stage 1: 9 HP, Stage 2: 12 HP, dst. Sangat tangguh!
+                    hp: 6 + (stage * 3), 
                     maxHp: 6 + (stage * 3),
                     jumpTimer: 40 + Math.random() * 50,
                     swingTimer: 0,
@@ -1234,8 +1336,6 @@
 
                 p.time += 0.05;
 
-                // --- PEMBARUAN STATE HERO & INPUT ---
-                // Update Timer Power-Up
                 if (p.hero.powerupTimer > 0) {
                     p.hero.powerupTimer--;
                     const hud = document.getElementById('powerup-hud');
@@ -1246,13 +1346,9 @@
                         emojiEl.innerText = p.hero.powerup === 'giant' ? '🍄 RAKSASA' : '⚡ LASER';
                         timerEl.innerText = `${Math.ceil(p.hero.powerupTimer / 60)}s`;
                     }
-                    
                     if (p.hero.powerup === 'giant') {
                         p.hero.w = 34;
                         p.hero.h = 34;
-                    } else {
-                        p.hero.w = 24;
-                        p.hero.h = 24;
                     }
                 } else {
                     p.hero.powerup = null;
@@ -1281,7 +1377,6 @@
                 p.hero.x += p.hero.vx;
                 p.hero.y += p.hero.vy;
 
-                // Lompat
                 if (p.keys.jump && p.hero.grounded) {
                     playSynthSound('jump');
                     p.hero.vy = -p.hero.jumpForce;
@@ -1290,7 +1385,6 @@
 
                 p.hero.grounded = false;
 
-                // --- TABRAKAN DENGAN PLATFORM ---
                 p.platforms.forEach(plat => {
                     if (p.hero.x + p.hero.w > plat.x && p.hero.x < plat.x + plat.w) {
                         if (p.hero.y + p.hero.h >= plat.y && p.hero.y + p.hero.h - p.hero.vy <= plat.y + 8) {
@@ -1304,7 +1398,6 @@
                 if (p.hero.x < 0) p.hero.x = 0;
                 if (p.hero.x + p.hero.w > p.virtualWidth) p.hero.x = p.virtualWidth - p.hero.w;
 
-                // --- TABRAKAN DENGAN JEBAKAN DURI 🔺 ---
                 p.traps.forEach(trap => {
                     if (p.hero.x < trap.x + trap.w && p.hero.x + p.hero.w > trap.x &&
                         p.hero.y < trap.y + trap.h && p.hero.y + p.hero.h > trap.y) {
@@ -1318,7 +1411,6 @@
                     respawnHero();
                 }
 
-                // --- AMBIL ITEM KEKUATAN (POWER-UPS) ---
                 p.powerups.forEach(item => {
                     if (item.collected) return;
                     if (p.hero.x < item.x + item.w && p.hero.x + p.hero.w > item.x &&
@@ -1332,18 +1424,15 @@
                     }
                 });
 
-                // --- UPDATE PELURU JAGOAN (BATAS JANGKAUAN 220px MAKSIMAL) ---
                 p.bullets.forEach((b, bIdx) => {
                     b.x += b.vx;
                     
-                    // Jangkauan tembakan maksimum: Bintang biasa 220px, Laser 400px agar tak menyerang di luar batas penglihatan
                     const maxTravel = b.type === 'laser' ? 400 : 220; 
                     if (b.x < p.cameraX || b.x > p.cameraX + 600 || Math.abs(b.x - b.spawnX) > maxTravel) {
                         p.bullets.splice(bIdx, 1);
                     }
                 });
 
-                // --- UPDATE PELURU MUSUH (FIREBALL) ---
                 p.enemyProjectiles.forEach((fb, fbIdx) => {
                     fb.x += fb.vx;
                     if (fb.x < p.cameraX || fb.x > p.cameraX + 600) {
@@ -1357,11 +1446,9 @@
                     }
                 });
 
-                // --- PERGERAKAN & AKSI MONSTER MUSUH (TERMASUK FINAL BOSS) ---
                 p.enemies.forEach((enemy) => {
                     if (!enemy.active) return;
 
-                    // Gerakan dasar Slime & Monster Pedang
                     if (enemy.type === 'slime' || enemy.type === 'sword') {
                         enemy.x += enemy.vx;
                         if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
@@ -1369,7 +1456,6 @@
                         }
                     }
 
-                    // Kelelawar Terbang sinus
                     if (enemy.type === 'flyer') {
                         enemy.x += enemy.vx;
                         enemy.sinTime += 0.05;
@@ -1379,7 +1465,6 @@
                         }
                     }
 
-                    // Penembak api
                     if (enemy.type === 'shooter') {
                         enemy.shootCooldown--;
                         if (enemy.shootCooldown <= 0) {
@@ -1393,17 +1478,14 @@
                         }
                     }
 
-                    // Pemrosesan Fisika & Lompatan Khusus Bos Raksasa
                     if (enemy.type === 'boss') {
-                        // Pergerakan Horizontal
                         enemy.x += enemy.vx;
                         if (enemy.x <= enemy.xMin || enemy.x + enemy.w >= enemy.xMax) {
                             enemy.vx *= -1;
                         }
 
-                        // Gravitasi & Lompatan Ringan / Terbang Bos
                         if (enemy.vy === undefined) enemy.vy = 0;
-                        enemy.vy += 0.22; // Gravitasi lebih enteng agar terasa terbang melayang
+                        enemy.vy += 0.22; 
                         enemy.y += enemy.vy;
                         enemy.grounded = false;
 
@@ -1419,12 +1501,11 @@
 
                         enemy.jumpTimer--;
                         if (enemy.jumpTimer <= 0 && enemy.grounded) {
-                            enemy.vy = -6.8; // Bos melompat tinggi!
+                            enemy.vy = -6.8; 
                             enemy.grounded = false;
                             enemy.jumpTimer = 60 + Math.random() * 80;
                         }
 
-                        // Deteksi Mengayun Palu Raksasa Jarak Dekat (Melee)
                         const distToHero = Math.abs(p.hero.x - enemy.x);
                         if (distToHero < 90) {
                             enemy.swingTimer = (enemy.swingTimer + 1) % 40;
@@ -1433,7 +1514,6 @@
                         }
                     }
 
-                    // Tabrakan Fisik dengan Jagoan
                     if (p.hero.x < enemy.x + enemy.w && p.hero.x + p.hero.w > enemy.x &&
                         p.hero.y < enemy.y + enemy.h && p.hero.y + p.hero.h > enemy.y) {
                         hitHero();
@@ -1446,15 +1526,14 @@
                         if (b.x < enemy.x + enemy.w && b.x + b.w > enemy.x &&
                             b.y < enemy.y + enemy.h && b.y + b.h > enemy.y) {
                             
-                            // Deteksi Tipe Serangan Bos
                             if (enemy.type === 'boss') {
                                 playSynthSound('click');
-                                enemy.hp -= (b.type === 'laser' ? 2 : 1); // Laser memberikan double damage!
+                                enemy.hp -= (b.type === 'laser' ? 2 : 1); 
                                 p.bullets.splice(bIdx, 1);
                                 if (enemy.hp <= 0) {
                                     playSynthSound('correct');
                                     enemy.active = false;
-                                    p.scoreLocal += 100; // Bonus besar kalahkan Bos
+                                    p.scoreLocal += 100; 
                                     document.getElementById('game-score').innerText = p.scoreLocal;
                                 }
                             } else if (enemy.type === 'sword' && enemy.hp > 1) {
@@ -1472,7 +1551,6 @@
                     });
                 });
 
-                // Ambil Bintang Emas
                 p.stars.forEach((star) => {
                     if (star.collected) return;
                     if (p.hero.x < star.x + star.w && p.hero.x + p.hero.w > star.x &&
@@ -1484,9 +1562,8 @@
                     }
                 });
 
-                // Deteksi Bendera Goal (Wajib Kalahkan Semua Musuh & Bos)
                 if (p.hero.x < p.goal.x + p.goal.w && p.hero.x + p.hero.w > p.goal.x &&
-                    p.hero.y < p.goal.y + p.goal.h && p.hero.y + p.hero.h > p.goal.y) {
+                    p.hero.y < p.goal.y + p.goal.h && p.hero.y + p.goal.y - p.hero.vy <= p.goal.y + p.goal.h) {
                     
                     const anyEnemiesLeft = p.enemies.some(e => e.active);
                     if (anyEnemiesLeft) {
@@ -1497,18 +1574,15 @@
                     }
                 }
 
-                // Kamera Scrolling Mario (Scrolling mulus horizontal)
                 p.cameraX = p.hero.x - 180;
                 if (p.cameraX < 0) p.cameraX = 0;
                 if (p.cameraX > p.virtualWidth - 600) p.cameraX = p.virtualWidth - 600;
 
-                // --- RENDERING CANVAS ---
                 pCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
                 
                 pCtx.save();
                 pCtx.translate(-p.cameraX, 0);
 
-                // Draw Platforms
                 p.platforms.forEach(plat => {
                     pCtx.fillStyle = '#22c55e';
                     pCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
@@ -1516,13 +1590,11 @@
                     pCtx.fillRect(plat.x, plat.y + 4, plat.w, plat.h - 4);
                 });
 
-                // Draw traps
                 p.traps.forEach(trap => {
                     pCtx.font = '16px Arial';
                     pCtx.fillText('🔺', trap.x, trap.y + 16);
                 });
 
-                // Draw Goal (Tiang Bendera)
                 pCtx.fillStyle = '#a16207';
                 pCtx.fillRect(p.goal.x + 8, p.goal.y, 4, p.goal.h);
                 pCtx.fillStyle = '#ef4444';
@@ -1532,21 +1604,18 @@
                 pCtx.lineTo(p.goal.x + 12, p.goal.y + 24);
                 pCtx.fill();
 
-                // Draw Stars
                 p.stars.forEach(star => {
                     if (star.collected) return;
                     pCtx.font = '14px Arial';
                     pCtx.fillText('⭐', star.x, star.y + 12);
                 });
 
-                // Draw Power-ups
                 p.powerups.forEach(item => {
                     if (item.collected) return;
                     pCtx.font = '16px Arial';
                     pCtx.fillText(item.emoji, item.x, item.y + 16);
                 });
 
-                // Draw Enemies & Bosses
                 p.enemies.forEach(enemy => {
                     if (!enemy.active) return;
                     let emoji = '👾';
@@ -1559,7 +1628,6 @@
                     pCtx.font = `${size}px Arial`;
                     pCtx.fillText(emoji, enemy.x, enemy.y + (enemy.type === 'boss' ? 28 : 18));
 
-                    // HP Bar khusus untuk Bos
                     if (enemy.type === 'boss') {
                         const hpPercent = enemy.hp / enemy.maxHp;
                         pCtx.fillStyle = '#ef4444';
@@ -1569,7 +1637,6 @@
                         pCtx.strokeStyle = '#000';
                         pCtx.strokeRect(enemy.x - 4, enemy.y - 12, 40, 4);
 
-                        // Gambar Senjata Palu Raksasa yang diayunkan
                         if (enemy.swingTimer > 10) {
                             pCtx.save();
                             pCtx.translate(enemy.x + 16, enemy.y + 16);
@@ -1587,7 +1654,6 @@
                     }
                 });
 
-                // Draw Bullets (Bintang & Laser)
                 p.bullets.forEach(b => {
                     if (b.type === 'laser') {
                         pCtx.fillStyle = '#38bdf8'; 
@@ -1601,15 +1667,13 @@
                     pCtx.shadowBlur = 0; 
                 });
 
-                // Draw enemy fireballs
                 p.enemyProjectiles.forEach(fb => {
                     pCtx.font = '12px Arial';
                     pCtx.fillText('🔥', fb.x, fb.y + 10);
                 });
 
-                // Draw Hero Kucing
                 if (p.hero.invulnerable > 0 && Math.floor(p.time * 5) % 2 === 0) {
-                    // Blink effect
+                    // blink
                 } else {
                     const heroSize = p.hero.powerup === 'giant' ? 30 : 20;
                     pCtx.font = `${heroSize}px Arial`;
@@ -1622,11 +1686,10 @@
 
                 pCtx.restore();
 
-                // Draw HUD
                 if (p.warningTimer > 0) {
                     p.warningTimer--;
                     pCtx.fillStyle = 'rgba(244, 63, 94, 0.95)';
-                    pCtx.font = 'bold 12px Arial';
+                    pCtx.font = 'bold 11px Arial';
                     pCtx.textAlign = 'center';
                     pCtx.fillText('⚠️ Kalahkan semua monster & Bos dulu!', 200, 30);
                 }
@@ -1642,14 +1705,14 @@
                 p.hero.vy = 0;
                 p.hero.powerup = null;
                 p.hero.powerupTimer = 0;
-                p.scoreLocal = Math.max(0, p.scoreLocal - 10);
+                p.scoreLocal = Math.max(0, p.scoreLocal - 10); 
                 document.getElementById('game-score').innerText = p.scoreLocal;
             }
 
             function hitHero() {
                 const p = state.platformer;
                 if (p.hero.invulnerable > 0) return;
-
+                
                 if (p.hero.powerup === 'giant') {
                     playSynthSound('incorrect');
                     p.hero.powerup = null;
@@ -1713,6 +1776,567 @@
             }
         }
 
+
+        // ==========================================================
+        // 9. GAME BARU: PERTARUNGAN ANIME (ANIME FIGHT - 1 ON 1)
+        // ==========================================================
+        function buildAnimeFightGame(container) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center w-full max-w-md mx-auto pop-effect">
+                    <!-- Arena Pertarungan Anime Canvas -->
+                    <div class="w-full relative overflow-hidden rounded-3xl border-4 border-red-500 shadow-2xl">
+                        <canvas id="anime-canvas" width="400" height="200" class="w-full bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-900 block"></canvas>
+                        
+                        <!-- Panel Status Darah Jagoan vs Monster -->
+                        <div class="absolute top-2 left-2 right-2 flex justify-between gap-4 pointer-events-none">
+                            <!-- Status Hero Anime -->
+                            <div class="w-1/2 bg-slate-950/80 border border-slate-800 p-1.5 rounded-xl">
+                                <div class="flex justify-between text-[8px] sm:text-[10px] font-bold text-slate-100">
+                                    <span class="truncate">🧑‍🎤 HERO (LV.<span id="anime-hero-lvl">1</span>)</span>
+                                    <span><span id="anime-hero-hp-text">100</span>/<span id="anime-hero-maxhp-text">100</span></span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1 border border-slate-700">
+                                    <div id="anime-hero-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Monster Musuh -->
+                            <div class="w-1/2 bg-slate-950/80 border border-slate-800 p-1.5 rounded-xl">
+                                <div class="flex justify-between text-[8px] sm:text-[10px] font-bold text-slate-100">
+                                    <span class="truncate" id="anime-monster-name">👹 SLIME BOSS</span>
+                                    <span><span id="anime-monster-hp-text">100</span>/<span id="anime-monster-maxhp-text">100</span></span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1 border border-slate-700">
+                                    <div id="anime-monster-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 animate-pulse" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kontrol Virtual Arena Fight -->
+                    <div class="flex justify-between items-center w-full max-w-xl mt-3 sm:mt-4 gap-2 px-1 select-none">
+                        <div class="flex gap-2">
+                            <button id="abtn-left" class="bg-slate-800 active:bg-slate-700 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-lg sm:text-2xl flex items-center justify-center active:scale-90 shadow-lg border-b-4 border-slate-950 transition-all">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                            <button id="abtn-right" class="bg-slate-800 active:bg-slate-700 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-lg sm:text-2xl flex items-center justify-center active:scale-90 shadow-lg border-b-4 border-slate-950 transition-all">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button id="abtn-punch" class="bg-red-600 active:bg-red-500 text-white px-3 h-10 sm:h-12 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold active:scale-90 shadow-lg border-b-4 border-red-800 transition-all">
+                                PUKUL (J)
+                            </button>
+                            <button id="abtn-kick" class="bg-amber-500 active:bg-amber-400 text-slate-950 px-3 h-10 sm:h-12 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold active:scale-90 shadow-lg border-b-4 border-amber-700 transition-all">
+                                TENDANG (K)
+                            </button>
+                            <button id="abtn-jump" class="bg-indigo-600 active:bg-indigo-500 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl text-lg sm:text-2xl flex items-center justify-center active:scale-90 shadow-lg border-b-4 border-indigo-850 transition-all">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[8px] sm:text-[10px] text-slate-400 font-bold mt-1.5 text-center">PC: Tombol A/D (Lari), W (Lompat), J (Pukul 👊), K (Tendang 🦶). Kalahkan musuh untuk Upgrade level!</p>
+                </div>
+            `;
+
+            initAnimeFightEngine();
+        }
+
+        function initAnimeFightEngine() {
+            const canvasEl = document.getElementById('anime-canvas');
+            if (!canvasEl) return;
+            const aCtx = canvasEl.getContext('2d');
+
+            // Setup state awal bertarung anime (Level 1, Stage 1)
+            state.animeFight = {
+                stage: 1,
+                level: 1,
+                hero: {
+                    x: 60,
+                    y: 120,
+                    w: 32,
+                    h: 45,
+                    vx: 0,
+                    vy: 0,
+                    hp: 100,
+                    maxHp: 100,
+                    speed: 3.5,
+                    dmgPunch: 10,
+                    dmgKick: 15,
+                    action: 'idle',     // 'idle', 'walk', 'punch', 'kick', 'hit'
+                    actionTimer: 0,
+                    grounded: false,
+                    facing: 'right',
+                    visualEmoji: '🧑‍🎤'
+                },
+                monster: {
+                    x: 300,
+                    y: 120,
+                    w: 35,
+                    h: 45,
+                    vx: 0,
+                    vy: 0,
+                    hp: 80,
+                    maxHp: 80,
+                    speed: 1.5,
+                    action: 'idle',
+                    actionTimer: 0,
+                    grounded: false,
+                    facing: 'left',
+                    attackCooldown: 80,
+                    visualEmoji: '👹',
+                    name: 'REDA SLIME'
+                },
+                popups: [], // damage text popups
+                keys: { left: false, right: false, jump: false },
+                gravity: 0.35,
+                animationFrameId: null
+            };
+
+            const af = state.animeFight;
+            loadAnimeStage(1);
+
+            // BIND KEYBOARD
+            const keydownHandler = (e) => {
+                if (!state.animeFight) return;
+                if (e.key === 'ArrowLeft' || e.key === 'a') af.keys.left = true;
+                if (e.key === 'ArrowRight' || e.key === 'd') af.keys.right = true;
+                if (e.key === 'ArrowUp' || e.key === 'w') {
+                    af.keys.jump = true;
+                    e.preventDefault();
+                }
+                if (e.key === 'j') triggerAnimeAttack('punch');
+                if (e.key === 'k') triggerAnimeAttack('kick');
+            };
+
+            const keyupHandler = (e) => {
+                if (!state.animeFight) return;
+                if (e.key === 'ArrowLeft' || e.key === 'a') af.keys.left = false;
+                if (e.key === 'ArrowRight' || e.key === 'd') af.keys.right = false;
+                if (e.key === 'ArrowUp' || e.key === 'w') af.keys.jump = false;
+            };
+
+            window.addEventListener('keydown', keydownHandler);
+            window.addEventListener('keyup', keyupHandler);
+
+            // BIND MOBILE BUTTONS
+            const bindBtn = (btnId, keyProp) => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.addEventListener('touchstart', (e) => { e.preventDefault(); if (state.animeFight) af.keys[keyProp] = true; });
+                    btn.addEventListener('touchend', (e) => { e.preventDefault(); if (state.animeFight) af.keys[keyProp] = false; });
+                    btn.addEventListener('mousedown', () => { if (state.animeFight) af.keys[keyProp] = true; });
+                    btn.addEventListener('mouseup', () => { if (state.animeFight) af.keys[keyProp] = false; });
+                }
+            };
+
+            bindBtn('abtn-left', 'left');
+            bindBtn('abtn-right', 'right');
+            bindBtn('abtn-jump', 'jump');
+
+            const pBtn = document.getElementById('abtn-punch');
+            if (pBtn) {
+                pBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerAnimeAttack('punch'); });
+                pBtn.addEventListener('mousedown', () => triggerAnimeAttack('punch'));
+            }
+
+            const kBtn = document.getElementById('abtn-kick');
+            if (kBtn) {
+                kBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerAnimeAttack('kick'); });
+                kBtn.addEventListener('mousedown', () => triggerAnimeAttack('kick'));
+            }
+
+            function triggerAnimeAttack(type) {
+                if (!state.animeFight) return;
+                const h = af.hero;
+                if (h.action === 'punch' || h.action === 'kick') return; // spam lock
+                
+                playSynthSound('punch');
+                h.action = type;
+                h.actionTimer = 15; // 15 frames animation
+
+                // Cek jangkauan serangan 1-on-1
+                const dist = Math.abs((h.x + h.w/2) - (af.monster.x + af.monster.w/2));
+                if (dist < 55) {
+                    // Serangan kena monster!
+                    const dmg = type === 'punch' ? h.dmgPunch : h.dmgKick;
+                    dealDamageToMonster(dmg);
+                }
+            }
+
+            function dealDamageToMonster(dmg) {
+                const m = af.monster;
+                m.hp = Math.max(0, m.hp - dmg);
+                m.action = 'hit';
+                m.actionTimer = 10;
+                
+                // Spawn hit popup text
+                af.popups.push({
+                    x: m.x + 10,
+                    y: m.y - 15,
+                    text: `-${dmg}`,
+                    color: '#e11d48',
+                    timer: 30
+                });
+
+                playSynthSound('correct');
+
+                // Update Health Bar UI
+                updateAnimeFightUI();
+
+                if (m.hp <= 0) {
+                    m.active = false;
+                    winAnimeStage();
+                }
+            }
+
+            function dealDamageToHero(dmg) {
+                const h = af.hero;
+                h.hp = Math.max(0, h.hp - dmg);
+                h.action = 'hit';
+                h.actionTimer = 10;
+
+                // Spawn hit popup text
+                af.popups.push({
+                    x: h.x + 10,
+                    y: h.y - 15,
+                    text: `-${dmg}`,
+                    color: '#f59e0b',
+                    timer: 30
+                });
+
+                playSynthSound('incorrect');
+                updateAnimeFightUI();
+
+                if (h.hp <= 0) {
+                    loseAnimeBattle();
+                }
+            }
+
+            function winAnimeStage() {
+                if (af.animationFrameId) cancelAnimationFrame(af.animationFrameId);
+                playSynthSound('complete');
+                triggerConfetti();
+
+                // Munculkan layar kustom UPGRADE MODAL setelah menyelesaikan stage
+                setTimeout(() => {
+                    const upgradeModal = document.getElementById('anime-upgrade-modal');
+                    if (upgradeModal) {
+                        upgradeModal.classList.remove('hidden');
+                    }
+                }, 1000);
+            }
+
+            function loseAnimeBattle() {
+                if (af.animationFrameId) cancelAnimationFrame(af.animationFrameId);
+                playSynthSound('incorrect');
+                
+                // Tampilkan info kegagalan bertarung, tawarkan restart
+                setTimeout(() => {
+                    alert("Aduh! Pahlawan Animemu dikalahkan! Ayo coba lagi dari Stage ini!");
+                    restartCurrentGame();
+                }, 600);
+            }
+
+            // CORE PHYSICS & RENDER LOOP
+            function loop() {
+                if (!state.animeFight) return;
+
+                // 1. Fisika Karakter Hero
+                const h = af.hero;
+                if (h.actionTimer > 0) {
+                    h.actionTimer--;
+                    if (h.actionTimer <= 0) h.action = 'idle';
+                }
+
+                if (af.keys.left && h.action !== 'punch' && h.action !== 'kick') {
+                    h.vx = -h.speed;
+                    h.facing = 'left';
+                    if (h.action === 'idle') h.action = 'walk';
+                } else if (af.keys.right && h.action !== 'punch' && h.action !== 'kick') {
+                    h.vx = h.speed;
+                    h.facing = 'right';
+                    if (h.action === 'idle') h.action = 'walk';
+                } else {
+                    h.vx *= 0.8;
+                    if (h.action === 'walk') h.action = 'idle';
+                }
+
+                h.vy += af.gravity;
+                h.x += h.vx;
+                h.y += h.vy;
+
+                // Lompat
+                if (af.keys.jump && h.grounded) {
+                    playSynthSound('jump');
+                    h.vy = -7.5;
+                    h.grounded = false;
+                }
+
+                h.grounded = false;
+
+                // Lantai Arena Dasar (y = 155)
+                if (h.y + h.h >= 170) {
+                    h.y = 170 - h.h;
+                    h.vy = 0;
+                    h.grounded = true;
+                }
+
+                // Batas Kiri Kanan Arena
+                if (h.x < 10) h.x = 10;
+                if (h.x + h.w > 390) h.x = 390 - h.w;
+
+                // 2. AI MONSTER MUSUH (Satu Lawan Satu)
+                const m = af.monster;
+                if (m.hp > 0) {
+                    if (m.actionTimer > 0) {
+                        m.actionTimer--;
+                        if (m.actionTimer <= 0) m.action = 'idle';
+                    }
+
+                    // Monster berjalan mendekati Hero
+                    const distToHero = h.x - m.x;
+                    m.facing = distToHero > 0 ? 'right' : 'left';
+
+                    if (m.action === 'idle' || m.action === 'walk') {
+                        if (Math.abs(distToHero) > 50) {
+                            m.vx = distToHero > 0 ? m.speed : -m.speed;
+                            m.action = 'walk';
+                        } else {
+                            m.vx = 0;
+                            m.action = 'idle';
+                            
+                            // Ayunan Serangan Monster Jarak Dekat (Melee)
+                            m.attackCooldown--;
+                            if (m.attackCooldown <= 0) {
+                                m.action = 'punch';
+                                m.actionTimer = 20;
+                                m.attackCooldown = 80 + Math.random() * 40;
+                                
+                                // Deteksi jangkauan kena hero
+                                setTimeout(() => {
+                                    if (!state.animeFight) return;
+                                    const freshDist = Math.abs((af.hero.x + af.hero.w/2) - (m.x + m.w/2));
+                                    if (freshDist < 55) {
+                                        dealDamageToHero(8 + (af.stage * 2)); // damage bertambah kuat seiring stage
+                                    }
+                                }, 200);
+                            }
+                        }
+                    }
+
+                    m.vy += af.gravity;
+                    m.x += m.vx;
+                    m.y += m.vy;
+
+                    // Lantai dasar monster
+                    if (m.y + m.h >= 170) {
+                        m.y = 170 - m.h;
+                        m.vy = 0;
+                        m.grounded = true;
+                    }
+
+                    // Pembatas Monster
+                    if (m.x < 10) m.x = 10;
+                    if (m.x + m.w > 390) m.x = 390 - m.w;
+                }
+
+                // 3. Update Popups damage
+                af.popups.forEach((pop, pIdx) => {
+                    pop.y -= 0.8;
+                    pop.timer--;
+                    if (pop.timer <= 0) af.popups.splice(pIdx, 1);
+                });
+
+                // --- RENDERING GRAFIS FIGHTING ARENA ---
+                aCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+                // Background Ring Pertarungan Kuil Cina / Arena Malam
+                aCtx.fillStyle = '#0f172a';
+                aCtx.fillRect(0, 165, 400, 35); // Tanah
+                aCtx.fillStyle = '#312e81';
+                aCtx.fillRect(0, 165, 400, 4); // Garis Pembatas Ring Merah/Biru
+
+                // Menggambar Tiang Obor / Hiasan Latar Melayang
+                aCtx.fillStyle = '#1e1b4b';
+                aCtx.fillRect(30, 80, 15, 85);
+                aCtx.fillRect(355, 80, 15, 85);
+                
+                // Api obor membara
+                aCtx.font = '12px Arial';
+                aCtx.fillText('🔥', 31, 75);
+                aCtx.fillText('🔥', 356, 75);
+
+                // Menggambar Popups Damage Text
+                af.popups.forEach(pop => {
+                    aCtx.fillStyle = pop.color;
+                    aCtx.font = 'bold 11px Arial';
+                    aCtx.fillText(pop.text, pop.x, pop.y);
+                });
+
+                // RENDER HERO ANIME (🧑‍🎤)
+                aCtx.save();
+                aCtx.font = '28px Arial';
+                // Animasi aksi memukul/menendang meregangkan emoji
+                let heroScaleX = h.facing === 'left' ? -1 : 1;
+                aCtx.translate(h.x + h.w/2, h.y + h.h/2);
+                aCtx.scale(heroScaleX, 1);
+
+                if (h.action === 'punch') {
+                    aCtx.fillText('👊', 8, -2);
+                    aCtx.fillText(h.visualEmoji, -12, 10);
+                } else if (h.action === 'kick') {
+                    aCtx.fillText('🦶', 10, 8);
+                    aCtx.fillText(h.visualEmoji, -12, 10);
+                } else if (h.action === 'hit') {
+                    aCtx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+                    aCtx.fillRect(-15, -15, 30, 30); // efek hit merah
+                    aCtx.fillText('🤕', -12, 10);
+                } else {
+                    aCtx.fillText(h.visualEmoji, -12, 10);
+                }
+                aCtx.restore();
+
+                // RENDER MONSTER MUSUH (👹)
+                if (m.hp > 0) {
+                    aCtx.save();
+                    aCtx.font = '30px Arial';
+                    let monsterScaleX = m.facing === 'left' ? -1 : 1;
+                    aCtx.translate(m.x + m.w/2, m.y + m.h/2);
+                    aCtx.scale(monsterScaleX, 1);
+
+                    if (m.action === 'punch') {
+                        aCtx.fillText('🔨', 10, -5); // Mengayun palu maut!
+                        aCtx.fillText(m.visualEmoji, -12, 12);
+                    } else if (m.action === 'hit') {
+                        aCtx.fillText('💥', -10, -5);
+                        aCtx.fillText('😭', -12, 12);
+                    } else {
+                        aCtx.fillText(m.visualEmoji, -12, 12);
+                    }
+                    aCtx.restore();
+                }
+
+                af.animationFrameId = requestAnimationFrame(loop);
+            }
+
+            af.animationFrameId = requestAnimationFrame(loop);
+        }
+
+        function loadAnimeStage(stage) {
+            if (!state.animeFight) return;
+            const af = state.animeFight;
+            af.stage = stage;
+
+            // Memilih emoji monster baru yang lebih menantang seiring meningkatnya stage
+            const monsters = [
+                { emoji: '👹', name: 'RED SLIME', hp: 80, speed: 1.5 },
+                { emoji: '🐉', name: 'NIGHT DRAGON', hp: 110, speed: 1.8 },
+                { emoji: '🧌', name: 'FOREST TROLL', hp: 140, speed: 1.4 },
+                { emoji: '💀', name: 'SKELETON KING', hp: 170, speed: 2.0 },
+                { emoji: '👽', name: 'ALIEN OVERLORD', hp: 200, speed: 2.2 }
+            ];
+
+            const selected = monsters[(stage - 1) % monsters.length];
+
+            // Inisialisasi Monster Baru dengan penskalaan stat lebih menantang
+            af.monster = {
+                x: 300,
+                y: 120,
+                w: 35,
+                h: 45,
+                vx: 0,
+                vy: 0,
+                hp: selected.hp + (stage * 15), // HP bertambah tebal per stage
+                maxHp: selected.hp + (stage * 15),
+                speed: selected.speed + (stage * 0.05), // Kecepatan meningkat
+                action: 'idle',
+                actionTimer: 0,
+                grounded: false,
+                facing: 'left',
+                attackCooldown: 80,
+                visualEmoji: selected.emoji,
+                name: `${selected.name} (STG.${stage})`
+            };
+
+            // Healkan separuh darah jagoan di setiap transisi stage awal
+            af.hero.hp = Math.min(af.hero.maxHp, af.hero.hp + Math.round(af.hero.maxHp * 0.5));
+            af.hero.x = 60;
+            af.hero.y = 120;
+
+            updateAnimeFightUI();
+        }
+
+        function updateAnimeFightUI() {
+            if (!state.animeFight) return;
+            const af = state.animeFight;
+
+            // Render stats di HTML DOM HUD Melayang
+            document.getElementById('anime-hero-lvl').innerText = af.level;
+            document.getElementById('anime-hero-hp-text').innerText = af.hero.hp;
+            document.getElementById('anime-hero-maxhp-text').innerText = af.hero.maxHp;
+            document.getElementById('anime-hero-bar').style.width = `${(af.hero.hp / af.hero.maxHp) * 100}%`;
+
+            document.getElementById('anime-monster-name').innerText = af.monster.name;
+            document.getElementById('anime-monster-hp-text').innerText = af.monster.hp;
+            document.getElementById('anime-monster-maxhp-text').innerText = af.monster.maxHp;
+            document.getElementById('anime-monster-bar').style.width = `${(af.monster.hp / af.monster.maxHp) * 100}%`;
+        }
+
+        // FUNGSI PENERAPAN UPGRADE KEKUATAN HERO ANIME
+        function applyAnimeUpgrade(type) {
+            playSynthSound('click');
+            const upgradeModal = document.getElementById('anime-upgrade-modal');
+            if (upgradeModal) {
+                upgradeModal.classList.add('hidden');
+            }
+
+            if (!state.animeFight) return;
+            const af = state.animeFight;
+            const h = af.hero;
+
+            // Proses leveling jagoan
+            af.level++;
+
+            if (type === 'atk') {
+                h.dmgPunch += 3;
+                h.dmgKick += 4;
+                alert(`🥋 Pukulan & Tendangan naik level! (+3/4 Damage)`);
+            } else if (type === 'hp') {
+                h.maxHp += 30;
+                h.hp = h.maxHp; // Sembuhkan penuh
+                alert(`❤️ Kesehatan meningkat! Darah maksimal kini ${h.maxHp} HP.`);
+            } else if (type === 'spd') {
+                h.speed += 0.5;
+                alert(`⚡ Kelincahan lari meningkat! (+0.5 Speed)`);
+            }
+
+            // Melangkah ke Stage Berikutnya secara Otomatis
+            if (af.stage < 30) {
+                const nextStg = af.stage + 1;
+                
+                // Tambahkan poin akumulasi global
+                state.score = state.score + 100;
+                document.getElementById('game-score').innerText = state.score;
+
+                document.getElementById('game-progress-text').innerText = `Stage ${nextStg} / 30`;
+                document.getElementById('game-progress-bar').style.width = `${(nextStg / 30) * 100}%`;
+
+                loadAnimeStage(nextStg);
+                restartPlatformerLoop(); // Memicu loop internal canvas restart
+            } else {
+                // Menamatkan game Pertarungan Anime!
+                state.score = state.score + 500; // Bonus mutlak tamat master anime
+                document.getElementById('game-score').innerText = state.score;
+                endGameSession();
+                state.animeFight = null;
+            }
+        }
+
+
+        // ==========================================
+        // PROSES PENILAIAN JAWABAN KUIS (SELAIN PLATFORMER)
+        // ==========================================
         function checkAnswer(answerSelected, buttonElement) {
             const parent = buttonElement.parentElement;
             const buttons = parent.querySelectorAll('button');
@@ -1750,6 +2374,20 @@
             }
         }
 
+        // Suntik Animasi Shake getar ke dokumen
+        const animStyle = document.createElement('style');
+        animStyle.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-8px); }
+                75% { transform: translateX(8px); }
+            }
+        `;
+        document.head.appendChild(animStyle);
+
+        // ==========================================
+        // SELEBRASI SELESAI GAME & RATING BINTANG
+        // ==========================================
         function endGameSession() {
             playSynthSound('complete');
             triggerConfetti();
